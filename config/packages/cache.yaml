@@ -1,0 +1,7 @@
+framework:
+    cache:
+        app: cache.adapter.filesystem
+
+        pools:
+            book_summary_cache:
+                adapter: cache.app

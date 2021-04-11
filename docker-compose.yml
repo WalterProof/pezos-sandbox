@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+    nginx:
+        build:
+            dockerfile: docker/php/Dockerfile
+            context: .
+            target: symfony_nginx
+        depends_on:
+            - php
+
+    php:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+            target: symfony_php
+            args:
+                SYMFONY_VERSION: ${SYMFONY_VERSION:-}
+                STABILITY: ${STABILITY:-stable}
+        healthcheck:
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 30s
+        environment:
+            - SYMFONY_VERSION
+        volumes:
+            - var:/srv/app/var/
+
+    db:
+        image: mariadb:10.5.9
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+        volumes:
+            - db_data:/var/lib/mysql
+        ports:
+            - 3306:3306
+
+    adminer:
+        image: adminer
+        ports:
+            - 7000:8080
+
+volumes:
+    var:
+    db_data:

@@ -1,0 +1,68 @@
+SHELL=/bin/bash
+
+export HOST_UID := $(shell id -u)
+export HOST_GID := $(shell id -g)
+
+RUN_PHP:=docker-compose run --rm php
+DOCKER_COMPOSE_DEV:=docker-compose
+DOCKER_COMPOSE_DEBUG:=docker-compose -f docker-compose.yml -f docker-compose.debug.yml
+DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
+
+HOSTNAME:=pezos-sandbox.localdev
+HOSTS_ENTRY:=127.0.0.1 ${HOSTNAME}
+
+.PHONY: hosts-entry
+ifeq ($(PLATFORM), $(filter $(PLATFORM), Darwin Linux))
+hosts-entry:
+	(grep "$(HOSTS_ENTRY)" /etc/hosts) || echo '$(HOSTS_ENTRY)' | sudo tee -a /etc/hosts
+else
+hosts-entry:
+	$(warning Make sure to add "${HOSTS_ENTRY}" to your operating system's hosts file)
+endif
+
+.PHONY: migrations
+migrations:
+	${RUN_PHP} bin/console doctrine:migrations:diff
+
+.PHONY: migrate
+migrate:
+	${RUN_PHP} bin/console doctrine:migrations:migrate --no-interaction
+
+.PHONY: pull
+pull:
+	${DOCKER_COMPOSE_DEV} pull
+
+.PHONY: push
+push:
+	${DOCKER_COMPOSE_DEV} push
+
+.PHONY: push-prod
+push-prod:
+	${DOCKER_COMPOSE_PROD} push
+
+.PHONY: build
+build:
+	${DOCKER_COMPOSE_DEV} build
+
+.PHONY: build-prod
+build-prod:
+	${DOCKER_COMPOSE_PROD} build
+
+.PHONY: up
+debug: hosts-entry down
+	${DOCKER_COMPOSE_DEBUG} up -d
+
+.PHONY: up
+up: hosts-entry down
+	${DOCKER_COMPOSE_DEV} up -d
+
+.PHONY: down
+down:
+	${DOCKER_COMPOSE_DEV} down --remove-orphans
+
+.PHONY: deploy
+deploy:
+	./deploy.sh
+
+.PHONY: release
+release: build-prod push-prod deploy

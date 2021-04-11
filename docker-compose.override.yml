@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+    nginx:
+        image: bzzhh/pezos-sandbox-development-nginx:latest
+        ports:
+            - '80:80'
+        volumes:
+            - ./public:/srv/app/public
+
+    php:
+        image: bzzhh/pezos-sandbox-development-php:latest
+        volumes:
+            - .:/srv/app
+        depends_on:
+            - mailhog
+        env_file:
+            - .env
+
+    mailhog:
+        image: mailhog/mailhog
+        ports:
+            - '8025:8025'

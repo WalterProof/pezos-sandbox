@@ -1,0 +1,4 @@
+services:
+    Infrastructure\ServiceContainer:
+        alias: 'Infrastructure\ProductionServiceContainer'
+        public: true
