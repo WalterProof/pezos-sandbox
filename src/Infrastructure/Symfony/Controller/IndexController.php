@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Infrastructure\Symfony\Controller;
@@ -25,10 +26,6 @@ final class IndexController extends AbstractController
      */
     public function indexAction(): Response
     {
-        return $this->render(
-            'index.html.twig',
-            [
-            ]
-        );
+        return $this->render('index.html.twig', []);
     }
 }
