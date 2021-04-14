@@ -17,7 +17,8 @@
         "symfony/console": "^5.2",
         "symfony/orm-pack": "^2.1",
         "symfony/flex": "^1.12",
-        "symfony/webpack-encore-bundle": "^1.11"
+        "symfony/webpack-encore-bundle": "^1.11",
+        "symfony/security-bundle": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -29,7 +30,11 @@
         "symfony/debug-bundle": "^5.2",
         "symfony/stopwatch": "^5.2",
         "symfony/twig-bundle": "^5.2",
-        "symfony/web-profiler-bundle": "^5.2"
+        "symfony/web-profiler-bundle": "^5.2",
+        "symfony/maker-bundle": "^1.30"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
     },
     "scripts": {
         "auto-scripts": {
