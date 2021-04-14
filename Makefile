@@ -48,7 +48,7 @@ build:
 build-prod:
 	${DOCKER_COMPOSE_PROD} build
 
-.PHONY: up
+.PHONY: debug
 debug: hosts-entry down
 	${DOCKER_COMPOSE_DEBUG} up -d
 
