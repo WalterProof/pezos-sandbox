@@ -16,16 +16,18 @@
     {% endblock %}
   </head>
   <body>
-    <div class="container" data-controller="hello">
-      <div class="alerts">
-        {% for key, messages in app.flashes() %}
-          {% for message in messages %}
-            <div class="alert alert-{{ key }}">
-              {{ message }}
-            </div>
-          {% endfor %}
-        {% endfor %}
+    <div class="container">
+      <div class="page-top">
+        <header class="header">
+          <div data-controller="wallet">
+            <div data-wallet-target="activeAccount"></div>
+            <button data-action="wallet#requestPermissions">
+              Connect Wallet
+            </button>
+          </div>
+        </header>
       </div>
+
       {% block body %}
 
       {% endblock %}
