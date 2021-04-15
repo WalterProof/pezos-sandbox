@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Infrastructure;
+namespace PezosSandbox\Infrastructure;
 
 use Assert\Assert;
-use Application\Application;
-use Application\ApplicationInterface;
-use Application\EventDispatcher;
-use Application\EventDispatcherWithSubscribers;
+use PezosSandbox\Application\Application;
+use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Application\EventDispatcher;
+use PezosSandbox\Application\EventDispatcherWithSubscribers;
 
 abstract class ServiceContainer
 {
@@ -24,7 +24,9 @@ abstract class ServiceContainer
             $this->registerEventSubscribers($this->eventDispatcher);
         }
 
-        Assert::that($this->eventDispatcher)->isInstanceOf(EventDispatcher::class);
+        Assert::that($this->eventDispatcher)->isInstanceOf(
+            EventDispatcher::class,
+        );
 
         return $this->eventDispatcher;
     }
@@ -38,7 +40,8 @@ abstract class ServiceContainer
         return $this->application;
     }
 
-    protected function registerEventSubscribers(EventDispatcherWithSubscribers $eventDispatcher): void
-    {
+    protected function registerEventSubscribers(
+        EventDispatcherWithSubscribers $eventDispatcher
+    ): void {
     }
 }

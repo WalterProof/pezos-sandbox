@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Infrastructure\Symfony\Kernel;
+use PezosSandbox\Infrastructure\Symfony\Kernel;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 

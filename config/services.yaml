@@ -24,32 +24,34 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
-    Infrastructure\Symfony\Controller\:
-        resource: '../src/Infrastructure/Symfony/Controller'
+    PezosSandbox\Infrastructure\Symfony\Controller\:
+        resource: '../src/PezosSandbox/Infrastructure/Symfony/Controller'
         tags: ['controller.service_arguments']
 
-    Infrastructure\Symfony\Command\:
-        resource: '../src/Infrastructure/Symfony/Command'
+    PezosSandbox\Infrastructure\Symfony\Command\:
+        resource: '../src/PezosSandbox/Infrastructure/Symfony/Command'
 
-    Infrastructure\Symfony\Form\:
-        resource: '../src/Infrastructure/Symfony/Form'
+    PezosSandbox\Infrastructure\Symfony\Form\:
+        resource: '../src/PezosSandbox/Infrastructure/Symfony/Form'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    Application\ApplicationInterface:
-        factory: ['@Infrastructure\ServiceContainer', 'application']
+    PezosSandbox\Application\ApplicationInterface:
+        factory:
+            ['@PezosSandbox\Infrastructure\ServiceContainer', 'application']
         public: true
 
-    Application\EventDispatcher:
-        factory: ['@Infrastructure\ServiceContainer', 'eventDispatcher']
+    PezosSandbox\Application\EventDispatcher:
+        factory:
+            ['@PezosSandbox\Infrastructure\ServiceContainer', 'eventDispatcher']
 
-    Infrastructure\ProductionServiceContainer: ~
+    PezosSandbox\Infrastructure\ProductionServiceContainer: ~
 
-    Infrastructure\Symfony\SetSchemeOnRequestContext: ~
+    PezosSandbox\Infrastructure\Symfony\SetSchemeOnRequestContext: ~
 
-    Infrastructure\Symfony\AddFlashMessageToSession:
+    PezosSandbox\Infrastructure\Symfony\AddFlashMessageToSession:
         public: true
-    
-    Infrastructure\Symfony\LogEvents:
+
+    PezosSandbox\Infrastructure\Symfony\LogEvents:
         public: true

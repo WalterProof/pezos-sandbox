@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Infrastructure\Symfony;
+namespace PezosSandbox\Infrastructure\Symfony;
 
-use Application\ProducesFlashMessage;
+use PezosSandbox\Application\ProducesFlashMessage;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -14,9 +15,11 @@ final class AddFlashMessageToSession
 
     private TranslatorInterface $translator;
 
-    public function __construct(SessionInterface $session, TranslatorInterface $translator)
-    {
-        $this->session = $session;
+    public function __construct(
+        SessionInterface $session,
+        TranslatorInterface $translator
+    ) {
+        $this->session    = $session;
         $this->translator = $translator;
     }
 
@@ -30,9 +33,14 @@ final class AddFlashMessageToSession
             return;
         }
 
-        $this->session->getFlashBag()->add(
-            $event->flashType(),
-            $this->translator->trans($event->flashTranslatableMessage(), $event->flashTranslationVariables())
-        );
+        $this->session
+            ->getFlashBag()
+            ->add(
+                $event->flashType(),
+                $this->translator->trans(
+                    $event->flashTranslatableMessage(),
+                    $event->flashTranslationVariables(),
+                ),
+            );
     }
 }

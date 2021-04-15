@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Infrastructure\Symfony;
+namespace PezosSandbox\Infrastructure\Symfony;
 
-use Infrastructure\Event;
+use PezosSandbox\Infrastructure\Event;
 use Psr\Log\LoggerInterface;
 
 final class LogEvents
@@ -18,7 +19,7 @@ final class LogEvents
     public function notify(object $event): void
     {
         $this->logger->debug(
-            'An event was dispatched: ' . Event::asString($event)
+            'An event was dispatched: '.Event::asString($event),
         );
     }
 }

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Application;
+namespace PezosSandbox\Application;
 
 final class EventDispatcherWithSubscribers implements EventDispatcher
 {
@@ -19,8 +20,10 @@ final class EventDispatcherWithSubscribers implements EventDispatcher
     {
     }
 
-    public function subscribeToSpecificEvent(string $eventType, callable $subscriber): void
-    {
+    public function subscribeToSpecificEvent(
+        string $eventType,
+        callable $subscriber
+    ): void {
         $this->subscribersForEvent[$eventType][] = $subscriber;
     }
 
@@ -35,7 +38,10 @@ final class EventDispatcherWithSubscribers implements EventDispatcher
             $subscriber($event);
         }
 
-        foreach ($this->subscribersForEvent[get_class($event)] ?? [] as $subscriber) {
+        foreach (
+            $this->subscribersForEvent[\get_class($event)] ?? []
+            as $subscriber
+        ) {
             $subscriber($event);
         }
     }

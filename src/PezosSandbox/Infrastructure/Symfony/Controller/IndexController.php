@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Infrastructure\Symfony\Controller;
+namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
-use Application\ApplicationInterface;
+use PezosSandbox\Application\ApplicationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

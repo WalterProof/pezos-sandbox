@@ -1,4 +1,4 @@
 services:
-    Infrastructure\ServiceContainer:
-        alias: 'Infrastructure\ProductionServiceContainer'
+    PezosSandbox\Infrastructure\ServiceContainer:
+        alias: 'PezosSandbox\Infrastructure\ProductionServiceContainer'
         public: true

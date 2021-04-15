@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Infrastructure;
+namespace PezosSandbox\Infrastructure;
 
 final class Event
 {
     public static function asString(object $event): string
     {
         if (method_exists($event, '__toString')) {
-            return (string)$event;
+            return (string) $event;
         }
 
-        return get_class($event);
+        return \get_class($event);
     }
 }

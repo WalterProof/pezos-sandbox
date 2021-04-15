@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Infrastructure;
+namespace PezosSandbox\Infrastructure;
 
 class ProductionServiceContainer extends ServiceContainer
 {
