@@ -32,6 +32,7 @@ ARG APCU_VERSION=5.1.18
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps \
 	    $PHPIZE_DEPS \
+        gmp-dev \
 	    icu-dev \
 	    libzip-dev \
 	    zlib-dev \
@@ -39,6 +40,7 @@ RUN set -eux; \
 	\
 	docker-php-ext-configure zip; \
 	docker-php-ext-install -j$(nproc) \
+        gmp \
 	    intl \
 	    zip \
         pdo \

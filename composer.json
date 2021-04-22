@@ -18,7 +18,11 @@
         "symfony/orm-pack": "^2.1",
         "symfony/flex": "^1.12",
         "symfony/webpack-encore-bundle": "^1.11",
-        "symfony/security-bundle": "^5.2"
+        "symfony/security-bundle": "^5.2",
+        "symfony/http-client": "^5.2",
+        "nyholm/psr7": "^1.4",
+        "symfony/psr-http-message-bridge": "^2.1",
+        "bzzhh/pezos": "dev-main"
     },
     "autoload": {
         "psr-4": {
@@ -41,5 +45,11 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "/srv/pezos"
+        }
+    ]
 }

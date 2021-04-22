@@ -25,6 +25,7 @@ services:
 
         volumes:
             - .:/srv/app
+            - ../pezos:/srv/pezos
         depends_on:
             - mailhog
         env_file:
