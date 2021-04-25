@@ -19,7 +19,7 @@
     <div class="container">
       <div class="page-top">
         <header class="header">
-          <div data-controller="wallet">
+          <div {{ stimulus_controller('wallet') }}>
             <div data-wallet-target="activeAccount"></div>
             <button data-action="wallet#requestPermissions">
               Connect Wallet

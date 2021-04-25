@@ -136,6 +136,9 @@
     "league/uri-interfaces": {
         "version": "2.2.0"
     },
+    "matthiasnoback/talis-orm": {
+        "version": "v0.2.1"
+    },
     "mdanter/ecc": {
         "version": "v0.5.2"
     },
@@ -180,6 +183,15 @@
     },
     "php-jsonpointer/php-jsonpointer": {
         "version": "v3.0.2"
+    },
+    "phpstan/phpstan": {
+        "version": "0.12.84"
+    },
+    "phpstan/phpstan-beberlei-assert": {
+        "version": "0.12.6"
+    },
+    "phpstan/phpstan-phpunit": {
+        "version": "0.12.18"
     },
     "pleonasm/merkle-tree": {
         "version": "1.0.0"
@@ -533,10 +545,16 @@
     "symfony/yaml": {
         "version": "v5.2.5"
     },
+    "thecodingmachine/safe": {
+        "version": "v1.3.3"
+    },
     "twig/extra-bundle": {
         "version": "v3.3.0"
     },
     "twig/twig": {
         "version": "v3.3.0"
+    },
+    "webmozart/assert": {
+        "version": "1.10.0"
     }
 }

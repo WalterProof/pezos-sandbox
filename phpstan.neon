@@ -1,0 +1,14 @@
+parameters:
+  level: max
+  paths:
+    - src/
+    - test/
+  excludes_analyse:
+    - src/PezosSandbox/Infrastructure/Doctrine/Migrations
+    - src/PezosSandbox/Infrastructure/TalisOrm/TalisOrmBundle/DependencyInjection/Configuration.php
+    - src/PezosSandbox/Infrastructure/Symfony
+    - test/bootstrap.php
+    - test/Functional/
+includes:
+  - vendor/phpstan/phpstan-beberlei-assert/extension.neon
+  - vendor/phpstan/phpstan-phpunit/extension.neon

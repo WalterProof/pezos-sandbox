@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure;
 
 use Assert\Assert;
+use PezosSandbox\Application\AccessPolicy;
 use PezosSandbox\Application\Application;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
+use PezosSandbox\Domain\Model\Member\MemberRepository;
+use PezosSandbox\Domain\Model\Tezos\AddressWasVerified;
 
 abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
 
-    protected ?ApplicationInterface $application = null;
+    protected ?ApplicationInterface $application  = null;
+    protected ?MemberRepository $memberRepository = null;
 
     public function eventDispatcher(): EventDispatcher
     {
@@ -43,5 +47,16 @@ abstract class ServiceContainer
     protected function registerEventSubscribers(
         EventDispatcherWithSubscribers $eventDispatcher
     ): void {
+        $eventDispatcher->subscribeToSpecificEvent(AddressWasVerified::class, [
+            $this->accessPolicy(),
+            'whenAddressWasVerified',
+        ]);
+    }
+
+    abstract protected function memberRepository(): MemberRepository;
+
+    private function accessPolicy(): AccessPolicy
+    {
+        return new AccessPolicy($this->application());
     }
 }

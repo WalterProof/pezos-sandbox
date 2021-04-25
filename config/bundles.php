@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use PezosSandbox\Infrastructure\TalisOrm\TalisOrmBundle\TalisOrmBundle;
+
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class                => ['all' => true],
     Symfony\Bundle\TwigBundle\TwigBundle::class                          => ['all' => true],
@@ -25,5 +27,8 @@ return [
     ],
     Symfony\Bundle\MakerBundle\MakerBundle::class       => ['dev' => true],
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
-    Bzzhh\Pezos\Bridge\Symfony\BzzhhPezosBundle::class  => ['all' => true],
+    TalisOrmBundle::class                               => [
+        'all' => true,
+    ],
+    Bzzhh\Pezos\Bridge\Symfony\BzzhhPezosBundle::class => ['all' => true],
 ];

@@ -1,5 +1,6 @@
 import { Controller } from 'stimulus';
-import { DAppClient } from '@airgap/beacon-sdk';
+import { useDispatch } from 'stimulus-use';
+import { BeaconEvent, DAppClient } from '@airgap/beacon-sdk';
 
 export default class extends Controller {
   static targets = ['activeAccount'];
@@ -7,7 +8,11 @@ export default class extends Controller {
   dAppClient = null;
 
   async connect() {
+    useDispatch(this);
     this.dAppClient = new DAppClient({ name: 'Pezos Sandbox' });
+    this.dAppClient.subscribeToEvent(BeaconEvent.PAIR_SUCCESS, (data) => {
+      console.log(`${BeaconEvent.PAIR_SUCCESS} triggered: `, data);
+    });
     const activeAccount = await this.dAppClient.getActiveAccount();
 
     if (activeAccount) {
@@ -36,5 +41,9 @@ export default class extends Controller {
     });
 
     console.log(`Signature: ${response.signature}`);
+  }
+
+  toggle(event) {
+    console.log(event);
   }
 }
