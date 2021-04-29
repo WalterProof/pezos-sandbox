@@ -1,49 +1,49 @@
 import { Controller } from 'stimulus';
-import { useDispatch } from 'stimulus-use';
-import { BeaconEvent, DAppClient } from '@airgap/beacon-sdk';
+import { BeaconEvent, DAppClient, SigningType } from '@airgap/beacon-sdk';
 
 export default class extends Controller {
   static targets = ['activeAccount'];
 
   dAppClient = null;
 
-  async connect() {
-    useDispatch(this);
+  async initialize() {
     this.dAppClient = new DAppClient({ name: 'Pezos Sandbox' });
-    this.dAppClient.subscribeToEvent(BeaconEvent.PAIR_SUCCESS, (data) => {
-      console.log(`${BeaconEvent.PAIR_SUCCESS} triggered: `, data);
+    this.dAppClient.subscribeToEvent(BeaconEvent.PAIR_SUCCESS, async () => {
+      await this.updateAccount();
     });
-    const activeAccount = await this.dAppClient.getActiveAccount();
+    await this.updateAccount();
+  }
 
-    if (activeAccount) {
-      this.activeAccountTarget.innerHTML =
-        'Already connected:' + activeAccount.address;
-    } else {
-      this.activeAccountTarget.innerHTML = 'Not connected!';
+  async updateAccount() {
+    const activeAccount = await this.dAppClient.getActiveAccount();
+    this.activeAccountTarget.innerHTML = activeAccount
+      ? `${activeAccount.address} <button data-action="wallet#toggle">Disconnect Wallet</button>`
+      : `anon. <button data-action="wallet#toggle">Connect Wallet</button>`;
+    console.log({ activeAccount });
+  }
+
+  async toggle() {
+    (await (this.dAppClient.getActiveAccount() && this.clearActiveAccount())) ||
       this.requestPermissions();
-    }
   }
 
   async requestPermissions() {
-    const permissions = this.dAppClient.requestPermissions();
-    console.log('New connection:', permissions.address);
-    return permissions;
+    await this.dAppClient.requestPermissions();
+    await this.updateAccount();
   }
 
   async clearActiveAccount() {
     await this.dAppClient.clearActiveAccount();
+    await this.updateAccount();
   }
 
-  async requestSignPayload() {
-    const response = await dAppClient.requestSignPayload({
+  async requestSignPayload(event) {
+    const response = await this.dAppClient.requestSignPayload({
       signingType: SigningType.RAW,
-      payload: 'any string that will be signed',
+      payload: event.currentTarget.getAttribute('data-payload'),
     });
 
     console.log(`Signature: ${response.signature}`);
-  }
-
-  toggle(event) {
-    console.log(event);
+    console.log({ response });
   }
 }

@@ -20,13 +20,17 @@
       <div class="page-top">
         <header class="header">
           <div {{ stimulus_controller('wallet') }}>
-            <div data-wallet-target="activeAccount"></div>
-            <button data-action="wallet#requestPermissions">
-              Connect Wallet
-            </button>
-            <button data-action="wallet#clearActiveAccount">
-              Disconnect Wallet
-            </button>
+            <div data-wallet-target="activeAccount">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+              <button data-action="wallet#requestSignPayload"
+                data-payload="testing stuff">
+                Connect backend
+              </button>
+            {% endif %}
           </div>
         </header>
       </div>

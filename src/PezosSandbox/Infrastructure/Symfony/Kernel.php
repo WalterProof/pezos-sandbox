@@ -31,7 +31,7 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
-        return \dirname(\dirname(\dirname(\dirname(__DIR__))));
+        return \dirname(__DIR__, 4);
     }
 
     public function boot(): void

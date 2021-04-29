@@ -22,6 +22,18 @@ class Application implements ApplicationInterface
 
     private Members $members;
 
+    public function __construct(
+        MemberRepository $memberRepository,
+        EventDispatcher $eventDispatcher,
+        AccessTokenGenerator $accessTokenGenerator,
+        Members $members
+    ) {
+        $this->memberRepository     = $memberRepository;
+        $this->eventDispatcher      = $eventDispatcher;
+        $this->accessTokenGenerator = $accessTokenGenerator;
+        $this->members              = $members;
+    }
+
     public function verifyAddress(Address $address): void
     {
         /* try { */
@@ -70,6 +82,21 @@ class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
+    public function clearAccessToken($memberAddress): void
+    {
+        if (!$memberAddress instanceof Address) {
+            $memberAddress = Address::fromString($memberAddress);
+        }
+
+        $member = $this->memberRepository->getByAddress($memberAddress);
+
+        $member->clearAccessToken();
+
+        $this->memberRepository->save($member);
+
+        $this->eventDispatcher->dispatchAll($member->releaseEvents());
+    }
+
     public function getOneMemberByAccessToken(
         string $accessToken
     ): MemberReadModel {
@@ -83,5 +110,10 @@ class Application implements ApplicationInterface
         return $this->members->getOneByAddress(
             MemberAddress::fromString($address),
         );
+    }
+
+    public function listMembersForAdministrator(): array
+    {
+        return $this->members->listMembers();
     }
 }

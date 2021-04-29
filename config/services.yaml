@@ -55,3 +55,9 @@ services:
 
     PezosSandbox\Infrastructure\Symfony\LogEvents:
         public: true
+
+    PezosSandbox\Infrastructure\Symfony\Security\AccessTokenAuthenticator: ~
+
+    PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider: ~
+
+    PezosSandbox\Infrastructure\Symfony\SetSchemeOnRequestContext: ~

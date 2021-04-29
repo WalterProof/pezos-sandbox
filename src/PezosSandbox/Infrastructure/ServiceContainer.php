@@ -10,8 +10,10 @@ use PezosSandbox\Application\Application;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
+use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
 use PezosSandbox\Domain\Model\Tezos\AddressWasVerified;
+use PezosSandbox\Domain\Service\AccessTokenGenerator;
 
 abstract class ServiceContainer
 {
@@ -38,7 +40,12 @@ abstract class ServiceContainer
     public function application(): ApplicationInterface
     {
         if (null === $this->application) {
-            $this->application = new Application();
+            $this->application = new Application(
+                $this->memberRepository(),
+                $this->eventDispatcher(),
+                $this->accessTokenGenerator(),
+                $this->members(),
+            );
         }
 
         return $this->application;
@@ -54,6 +61,13 @@ abstract class ServiceContainer
     }
 
     abstract protected function memberRepository(): MemberRepository;
+
+    abstract protected function members(): Members;
+
+    private function accessTokenGenerator(): AccessTokenGenerator
+    {
+        return new RealUuidAccessTokenGenerator();
+    }
 
     private function accessPolicy(): AccessPolicy
     {

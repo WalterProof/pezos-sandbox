@@ -6,25 +6,25 @@ namespace PezosSandbox\Application\Members;
 
 final class MemberForAdministrator
 {
-    private string $memberId;
+    private string $memberAddress;
 
     private string $requestedAccessAt;
 
     private bool $accessWasGranted;
 
     public function __construct(
-        string $memberId,
+        string $memberAddress,
         string $requestedAccessAt,
         bool $accessWasGranted
     ) {
-        $this->memberId          = $memberId;
+        $this->memberAddress     = $memberAddress;
         $this->requestedAccessAt = $requestedAccessAt;
         $this->accessWasGranted  = $accessWasGranted;
     }
 
-    public function memberId(): string
+    public function memberAddress(): string
     {
-        return $this->memberId;
+        return $this->memberAddress;
     }
 
     public function requestedAccessAt(): string

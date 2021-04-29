@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use PezosSandbox\Application\Members\Member;
+use PezosSandbox\Application\Members\MemberForAdministrator;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Domain\Model\Member\AccessToken;
 use PezosSandbox\Domain\Model\Member\Address;
@@ -58,6 +59,28 @@ final class MembersUsingDoctrineDbal implements Members
         } catch (NoResult $exception) {
             throw CouldNotFindMember::withAddress($address);
         }
+    }
+
+    public function listMembers(): array
+    {
+        $records = $this->connection->selectAll(
+            $this->connection
+                ->createQueryBuilder()
+                ->select('*')
+                ->from('members')
+                ->orderBy('wasGrantedAccess', 'desc'),
+        );
+
+        return array_map(
+            fn (
+                array $record
+            ): MemberForAdministrator => new MemberForAdministrator(
+                self::asString($record, 'address'),
+                self::asString($record, 'requestedAccessAt'),
+                self::asBool($record, 'wasGrantedAccess'),
+            ),
+            $records,
+        );
     }
 
     /**

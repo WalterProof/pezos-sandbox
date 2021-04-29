@@ -4,6 +4,7 @@
         "bzzhh/pezos": "dev-main",
         "matthiasnoback/talis-orm": "^0.2.1",
         "nyholm/psr7": "^1.4",
+        "ramsey/uuid": "^4.1",
         "sensio/framework-extra-bundle": "^6.1",
         "symfony/config": "^5.2",
         "symfony/console": "^5.2",

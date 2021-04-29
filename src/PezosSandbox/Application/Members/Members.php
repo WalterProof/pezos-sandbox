@@ -19,4 +19,9 @@ interface Members
      * @throws CouldNotFindMember
      */
     public function getOneByAddress(Address $address): Member;
+
+    /**
+     * @return array<MemberForAdministrator>
+     */
+    public function listMembers(): array;
 }
