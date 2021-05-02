@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
 use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Application\RequestAccess\RequestAccess;
+use PezosSandbox\Domain\Model\Common\UserFacingError;
+use PezosSandbox\Domain\Model\Member\CouldNotGrantAccess;
+use PezosSandbox\Infrastructure\Symfony\Form\RequestAccessForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class IndexController extends AbstractController
 {
     private ApplicationInterface $application;
-
-    private TranslatorInterface $translator;
 
     public function __construct(ApplicationInterface $application)
     {
@@ -31,42 +36,90 @@ final class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/request-access-token", name="request_access_token", methods={"POST"})
+     * @Route("/request-access", name="request_access", methods={"POST"})
      */
-    public function requestAccessTokenAction(Request $request): Response
+    public function requestAccessAction(Request $request): Response
     {
-        $form = $this->createForm(RequestAccessTokenForm::class);
-        $form->handleRequest($request);
+        $json = $this->getJson($request);
+        $form = $this->createForm(RequestAccessForm::class);
+        $form->submit($json);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isValid()) {
             $formData = $form->getData();
 
             try {
-                $this->application->generateAccessToken(
-                    $formData['leanpubInvoiceId'],
+                $token = $this->application->requestAccess(
+                    new RequestAccess(
+                        bin2hex($formData['payload']),
+                        $formData['publicKey'],
+                        $formData['signature'],
+                    ),
                 );
 
-                return $this->redirectToRoute('index');
-            } catch (CouldNotFindMember $exception) {
+                return $this->json(['token' => $token]);
+            } catch (CouldNotGrantAccess $exception) {
                 $this->convertExceptionToFormError(
                     $form,
-                    'leanpubInvoiceId',
-                    $exception,
-                );
-            } catch (CouldNotGenerateAccessToken $exception) {
-                $this->convertExceptionToFormError(
-                    $form,
-                    'leanpubInvoiceId',
+                    'address',
                     $exception,
                 );
             }
         }
 
-        return $this->render('index.html.twig', [
-            'requestAccessTokenForm' => $form->createView(),
-            'requestAccessForm'      => $this->createForm(
-                RequestAccessForm::class,
-            )->createView(),
-        ]);
+        if (\count($form->getErrors() > 0)) {
+            return $this->json(
+                ['errors' => $form->getErrors()],
+                Response::HTTP_BAD_REQUEST,
+            );
+        }
+    }
+
+    /**
+     * @Route("/login", name="login", methods={"GET"})
+     */
+    public function loginAction(): Response
+    {
+        return new RedirectResponse($this->generateUrl('index'));
+    }
+
+    /**
+     * @Route("/logout", name="logout", methods={"GET"})
+     */
+    public function logoutAction(): Response
+    {
+        return new RedirectResponse($this->generateUrl('index'));
+    }
+
+    /**
+     * @throws HttpException
+     */
+    private function getJson(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new HttpException(400, 'Invalid json');
+        }
+
+        return $data;
+    }
+
+    private function convertExceptionToFormError(
+        FormInterface $form,
+        string $field,
+        UserFacingError $exception
+    ): void {
+        $form
+            ->get($field)
+            ->addError(
+                new FormError(
+                    $this->translator->trans(
+                        $exception->translationId(),
+                        $exception->translationParameters(),
+                    ),
+                    $exception->translationId(),
+                    $exception->translationParameters(),
+                ),
+            );
     }
 }

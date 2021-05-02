@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class RequestAccessTokenForm extends AbstractType
+final class VerifySignedAccessTokenForm extends AbstractType
 {
     private UrlGeneratorInterface $urlGenerator;
 
@@ -22,7 +22,6 @@ final class RequestAccessTokenForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('payload', TextType::class)
             ->add('signature', TextType::class)
             ->add('publicKey', TextType::class);
     }
@@ -31,7 +30,7 @@ final class RequestAccessTokenForm extends AbstractType
     {
         $resolver->setDefault(
             'action',
-            $this->urlGenerator->generate('request_access_token'),
+            $this->urlGenerator->generate('verify_signed_access_token'),
         );
     }
 }

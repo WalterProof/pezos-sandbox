@@ -3,6 +3,7 @@
         "@airgap/beacon-sdk": "^2.2.3",
         "@symfony/stimulus-bridge": "^2.0.0",
         "@symfony/webpack-encore": "^1.1.2",
+        "axios": "^0.21.1",
         "bootstrap": "^5.0.0-beta3",
         "core-js": "^3.0.0",
         "node-polyfill-webpack-plugin": "^1.1.0",

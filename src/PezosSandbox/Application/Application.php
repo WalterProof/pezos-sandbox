@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Application;
 
+use Bzzhh\Pezos\Keys\Ed25519;
+use Bzzhh\Pezos\Keys\PubKey;
 use PezosSandbox\Application\Members\Member as MemberReadModel;
 use PezosSandbox\Application\Members\Members;
+use PezosSandbox\Application\RequestAccess\RequestAccess;
 use PezosSandbox\Domain\Model\Member\AccessToken;
 use PezosSandbox\Domain\Model\Member\Address;
 use PezosSandbox\Domain\Model\Member\Address as MemberAddress;
+use PezosSandbox\Domain\Model\Member\CouldNotGrantAccess;
+use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
 use PezosSandbox\Domain\Service\AccessTokenGenerator;
 
@@ -22,79 +27,49 @@ class Application implements ApplicationInterface
 
     private Members $members;
 
+    private Clock $clock;
+
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
         AccessTokenGenerator $accessTokenGenerator,
-        Members $members
+        Members $members,
+        Clock $clock
     ) {
         $this->memberRepository     = $memberRepository;
         $this->eventDispatcher      = $eventDispatcher;
         $this->accessTokenGenerator = $accessTokenGenerator;
         $this->members              = $members;
+        $this->clock                = $clock;
     }
 
-    public function verifyAddress(Address $address): void
+    public function requestAccess(RequestAccess $command): void
     {
-        /* try { */
-        /*     $purchase = $this->purchaseRepository->getByAddress($address); */
-        /* } catch (CouldNotFindAddress $exception) { */
-        /*     $this->eventDispatcher->dispatch( */
-        /*         new ClaimWasDenied($address, 'invalid_purchase_id'), */
-        /*     ); */
+        $pubKey  = PubKey::fromBase58($command->publicKey(), new Ed25519());
+        $address = Address::fromString($pubKey->getAddress());
 
-        /* return; */
-        /* } */
+        if (
+            !$pubKey->verifySignedHex(
+                $command->signature(),
+                $command->payload(),
+            )
+        ) {
+            throw CouldNotGrantAccess::becauseSignatureIsInvalid($address);
 
-        /* $purchase->claim(); */
-
-        /* $this->purchaseRepository->save($purchase); */
-
-        /* $this->eventDispatcher->dispatchAll($purchase->releaseEvents()); */
-    }
-
-    public function grantAccess(Address $address): void
-    {
-        $member = $this->memberRepository->getByAddress($address);
-
-        $member->grantAccess();
-
-        $this->memberRepository->save($member);
-
-        $this->eventDispatcher->dispatchAll($member->releaseEvents());
-    }
-
-    /**
-     * @param string|Address $memberAddress
-     */
-    public function generateAccessToken($memberAddress): void
-    {
-        if (!$memberAddress instanceof Address) {
-            $memberAddress = Address::fromString($memberAddress);
+            return;
         }
 
-        $member = $this->memberRepository->getByAddress($memberAddress);
+        if (!$this->memberRepository->exists($address)) {
+            $member = Member::requestAccess(
+                $address,
+                $this->clock->currentTime(),
+            );
 
-        $member->generateAccessToken($this->accessTokenGenerator);
-
-        $this->memberRepository->save($member);
-
-        $this->eventDispatcher->dispatchAll($member->releaseEvents());
-    }
-
-    public function clearAccessToken($memberAddress): void
-    {
-        if (!$memberAddress instanceof Address) {
-            $memberAddress = Address::fromString($memberAddress);
+            $member->grantAccess();
+            $member->generateAccessToken($this->accessTokenGenerator);
         }
 
-        $member = $this->memberRepository->getByAddress($memberAddress);
-
-        $member->clearAccessToken();
-
         $this->memberRepository->save($member);
-
-        $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
     public function getOneMemberByAccessToken(

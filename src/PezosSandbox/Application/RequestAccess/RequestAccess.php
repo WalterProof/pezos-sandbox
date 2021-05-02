@@ -4,19 +4,31 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Application\RequestAccess;
 
-use PezosSandbox\Domain\Model\Member\Address;
-
 final class RequestAccess
 {
-    private string $address;
+    private string $payload;
+    private string $publicKey;
+    private string $signature;
 
-    public function __construct(string $address)
+    public function __construct(string $payload, $publicKey, $signature)
     {
-        $this->address = $address;
+        $this->payload   = $payload;
+        $this->publicKey = $publicKey;
+        $this->signature = $signature;
     }
 
-    public function address(): Address
+    public function payload(): string
     {
-        return Address::fromString($this->address);
+        return $this->payload;
+    }
+
+    public function publicKey(): string
+    {
+        return $this->publicKey;
+    }
+
+    public function signature(): string
+    {
+        return $this->signature;
     }
 }

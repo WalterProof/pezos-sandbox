@@ -20,14 +20,14 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         member_area:
-            pattern: ^/member-area
+            pattern: ^/
             anonymous: lazy
             provider: members
             guard:
                 authenticator:
                     - PezosSandbox\Infrastructure\Symfony\Security\AccessTokenAuthenticator
             logout:
-                path: member_area_logout
+                path: logout
 
         admin_area:
             pattern: ^/admin-area
@@ -38,6 +38,7 @@ security:
                 path: admin_area_logout
 
     access_control:
-        - { path: ^/member-area/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin-area, roles: ROLE_ADMIN }
         - { path: ^/member-area, roles: ROLE_MEMBER }

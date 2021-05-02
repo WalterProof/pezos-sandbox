@@ -1,0 +1,3 @@
+# request access
+POST http://pezos-sandbox.localdev/request-access
+{"publicKey": "xx", "payload": "xx", "signature": ""}

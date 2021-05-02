@@ -102,7 +102,6 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
         string $providerKey
     ): ?Response {
         $memberId = $token->getUser()->getUsername();
-        $this->application->clearAccessToken($memberId);
 
         return $this->redirectToRoute($request, 'member_area_index');
     }

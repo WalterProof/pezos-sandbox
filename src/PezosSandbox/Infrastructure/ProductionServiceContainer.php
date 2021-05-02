@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure;
 
 use Doctrine\DBAL\Connection as DbalConnection;
+use PezosSandbox\Application\Clock;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
 use PezosSandbox\Infrastructure\Doctrine\Connection;
@@ -20,6 +21,11 @@ class ProductionServiceContainer extends ServiceContainer
     public function __construct(DbalConnection $connection)
     {
         $this->dbalConnection = $connection;
+    }
+
+    protected function clock(): Clock
+    {
+        return new SystemClock();
     }
 
     protected function memberRepository(): MemberRepository

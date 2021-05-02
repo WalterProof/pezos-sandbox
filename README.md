@@ -2,6 +2,10 @@
 
 Tezos PHP Sandbox
 
-http://pezos-sandbox.localdev/
+Just run `make` to add the hostname to you host.
 
-yarn run encore dev-server --host pezos-sandbox.localdev
+Run `make debug` to launch containers.
+
+Run `yarn run dev-server` for the frontend.
+
+You should see something at http://pezos-sandbox.localdev/

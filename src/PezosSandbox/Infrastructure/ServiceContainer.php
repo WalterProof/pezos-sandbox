@@ -8,12 +8,13 @@ use Assert\Assert;
 use PezosSandbox\Application\AccessPolicy;
 use PezosSandbox\Application\Application;
 use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Application\Clock;
 use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
-use PezosSandbox\Domain\Model\Tezos\AddressWasVerified;
 use PezosSandbox\Domain\Service\AccessTokenGenerator;
+use Test\Acceptance\FakeClock;
 
 abstract class ServiceContainer
 {
@@ -21,6 +22,7 @@ abstract class ServiceContainer
 
     protected ?ApplicationInterface $application  = null;
     protected ?MemberRepository $memberRepository = null;
+    private ?Clock $clock                         = null;
 
     public function eventDispatcher(): EventDispatcher
     {
@@ -45,19 +47,29 @@ abstract class ServiceContainer
                 $this->eventDispatcher(),
                 $this->accessTokenGenerator(),
                 $this->members(),
+                $this->clock(),
             );
         }
 
         return $this->application;
     }
 
+    protected function clock(): Clock
+    {
+        if (null === $this->clock) {
+            $this->clock = new FakeClock();
+        }
+
+        return $this->clock;
+    }
+
     protected function registerEventSubscribers(
         EventDispatcherWithSubscribers $eventDispatcher
     ): void {
-        $eventDispatcher->subscribeToSpecificEvent(AddressWasVerified::class, [
-            $this->accessPolicy(),
-            'whenAddressWasVerified',
-        ]);
+        /* $eventDispatcher->subscribeToSpecificEvent(AccessWasGranted::class, [ */
+        /*     $this->accessPolicy(), */
+        /*     'whenAccessWasGranted', */
+        /* ]); */
     }
 
     abstract protected function memberRepository(): MemberRepository;

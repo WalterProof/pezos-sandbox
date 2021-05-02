@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PezosSandbox\Domain\Model\Member;
 
 use Assert\Assert;
+use Bzzhh\Pezos\Validator;
 use TalisOrm\AggregateId;
 
 final class Address implements AggregateId
@@ -13,7 +14,6 @@ final class Address implements AggregateId
 
     private function __construct(string $address)
     {
-        Assert::that($address)->regex('/^[A-Za-z0-9_\-]{22}$/');
         $this->address = $address;
     }
 
