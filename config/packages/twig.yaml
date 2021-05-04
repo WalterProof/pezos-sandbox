@@ -2,3 +2,4 @@ twig:
     default_path: '%kernel.project_dir%/config/templates'
     globals:
         siteTitle: '%env(SITE_TITLE)%'
+    form_themes: ['bootstrap_4_layout.html.twig']

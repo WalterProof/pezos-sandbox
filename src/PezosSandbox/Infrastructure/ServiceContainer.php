@@ -13,13 +13,13 @@ use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
-use PezosSandbox\Domain\Service\AccessTokenGenerator;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Test\Acceptance\FakeClock;
 
 abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
-
     protected ?ApplicationInterface $application  = null;
     protected ?MemberRepository $memberRepository = null;
     private ?Clock $clock                         = null;
@@ -45,7 +45,6 @@ abstract class ServiceContainer
             $this->application = new Application(
                 $this->memberRepository(),
                 $this->eventDispatcher(),
-                $this->accessTokenGenerator(),
                 $this->members(),
                 $this->clock(),
             );
@@ -75,11 +74,6 @@ abstract class ServiceContainer
     abstract protected function memberRepository(): MemberRepository;
 
     abstract protected function members(): Members;
-
-    private function accessTokenGenerator(): AccessTokenGenerator
-    {
-        return new RealUuidAccessTokenGenerator();
-    }
 
     private function accessPolicy(): AccessPolicy
     {

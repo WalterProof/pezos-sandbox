@@ -6,7 +6,7 @@ namespace Test\Acceptance;
 use Assert\Assert;
 use DateTimeImmutable;
 use DateTimeZone;
-use LeanpubBookClub\Application\Clock;
+use PezosSandbox\Application\Clock;
 
 final class FakeClock implements Clock
 {

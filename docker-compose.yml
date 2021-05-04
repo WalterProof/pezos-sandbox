@@ -28,13 +28,14 @@ services:
             - var:/srv/app/var/
 
     db:
-        image: mariadb:10.5.9
+        image: postgres
         environment:
-            MYSQL_ROOT_PASSWORD: secret
+            POSTGRES_PASSWORD: 'secret'
+            POSTGRES_USER: 'pezos_sandbox'
         volumes:
-            - db_data:/var/lib/mysql
+            - db_data:/var/lib/postgresql/data
         ports:
-            - 3306:3306
+            - 5432:5432
 
     adminer:
         image: adminer

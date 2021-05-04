@@ -6,7 +6,6 @@ namespace PezosSandbox\Domain\Model\Member;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Schema\Schema;
-use PezosSandbox\Domain\Service\AccessTokenGenerator;
 use PezosSandbox\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
@@ -19,65 +18,28 @@ final class Member implements Aggregate, SpecifiesSchema
     use Mapping;
 
     private Address $address;
+    private string $password;
+    private DateTimeImmutable $registeredAt;
 
-    private ?AccessToken $accessToken = null;
 
-    private bool $wasGrantedAccess = false;
-
-    private DateTimeImmutable $requestedAccessAt;
-
-    private function __construct()
-    {
-    }
-
-    public static function requestAccess(
+    public static function register(
         Address $address,
         DateTimeImmutable $requestedAccessAt
     ): self {
         $member = new self();
 
-        $member->address           = $address;
-        $member->requestedAccessAt = self::removeMicrosecondsPart(
-            $requestedAccessAt,
-        );
+        $member->address = $address;
+        $member->requestedAccessAt = self::removeMicrosecondsPart($requestedAccessAt);
 
-        $member->events[] = new MemberRequestedAccess(
-            $address,
-            $requestedAccessAt,
-        );
+        $member->events[] = new MemberRegistered($address, $requestedAccessAt);
 
         return $member;
     }
 
-    public function grantAccess(): void
-    {
-        if ($this->wasGrantedAccess) {
-            return;
-        }
-
-        $this->wasGrantedAccess = true;
-
-        $this->events[] = new AccessWasGrantedToMember($this->address);
-    }
 
     public function memberAddress(): Address
     {
         return $this->address;
-    }
-
-    public function generateAccessToken(
-        AccessTokenGenerator $accessTokenGenerator
-    ): void {
-        if (!$this->wasGrantedAccess) {
-            throw CouldNotGenerateAccessToken::becauseMemberHasNotBeenGrantedAccessYet($this->address, );
-        }
-
-        $this->accessToken = $accessTokenGenerator->generate();
-
-        $this->events[] = new AnAccessTokenWasGenerated(
-            $this->address,
-            $this->accessToken,
-        );
     }
 
     /**
@@ -110,18 +72,9 @@ final class Member implements Aggregate, SpecifiesSchema
             self::asString($aggregateState, 'address'),
         );
 
-        $accessToken           = self::asStringOrNull($aggregateState, 'accessToken');
-        $instance->accessToken = \is_string($accessToken)
-            ? AccessToken::fromString($accessToken)
-            : null;
-
-        $instance->wasGrantedAccess = self::asBool(
+        $instance->registeredAt = self::dateTimeAsDateTimeImmutable(
             $aggregateState,
-            'wasGrantedAccess',
-        );
-        $instance->requestedAccessAt = self::dateTimeAsDateTimeImmutable(
-            $aggregateState,
-            'requestedAccessAt',
+            'registeredAt',
         );
 
         return $instance;
@@ -134,12 +87,8 @@ final class Member implements Aggregate, SpecifiesSchema
     {
         return [
             'address'     => $this->address->asString(),
-            'accessToken' => $this->accessToken instanceof AccessToken
-                    ? $this->accessToken->asString()
-                    : null,
-            'wasGrantedAccess'  => $this->wasGrantedAccess,
-            'requestedAccessAt' => self::dateTimeImmutableAsDateTimeString(
-                $this->requestedAccessAt,
+            'registeredAt' => self::dateTimeImmutableAsDateTimeString(
+                $this->registeredAt,
             ),
         ];
     }
@@ -176,16 +125,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $table->addColumn('address', 'string')->setNotnull(true);
         $table->setPrimaryKey(['address']);
 
-        $table->addColumn('accessToken', 'string')->setNotnull(false);
-        $table
-            ->addColumn('wasGrantedAccess', 'boolean')
-            ->setNotnull(true)
-            ->setDefault(false);
-        $table->addColumn('requestedAccessAt', 'datetime')->setNotnull(false);
-    }
-
-    public function clearAccessToken(): void
-    {
-        $this->accessToken = null;
+        $table->addColumn('password', 'string')->setNotnull(false);
+        $table->addColumn('registeredAt', 'datetime')->setNotnull(false);
     }
 }

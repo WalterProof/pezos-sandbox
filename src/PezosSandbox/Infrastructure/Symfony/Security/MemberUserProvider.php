@@ -26,14 +26,20 @@ final class MemberUserProvider implements UserProviderInterface
         try {
             return $this->application->getOneMemberByAddress($username);
         } catch (CouldNotFindMember $exception) {
-            throw new UsernameNotFoundException('User not found', 0, $exception, );
+            throw new UsernameNotFoundException(
+                'User not found',
+                0,
+                $exception,
+            );
         }
     }
 
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof Member) {
-            throw new UnsupportedUserException(sprintf('Invalid user class "%s".', \get_class($user)), );
+            throw new UnsupportedUserException(
+                sprintf('Invalid user class "%s".', \get_class($user)),
+            );
         }
 
         return $this->loadUserByUsername($user->getUsername());

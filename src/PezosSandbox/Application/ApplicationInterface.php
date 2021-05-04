@@ -5,22 +5,12 @@ declare(strict_types=1);
 namespace PezosSandbox\Application;
 
 use PezosSandbox\Application\Members\Member;
-use PezosSandbox\Application\RequestAccess\RequestAccess;
-use PezosSandbox\Domain\Model\Member\Address;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
+use PezosSandbox\Application\Register\Register;
 
 interface ApplicationInterface
 {
-    public function requestAccess(RequestAccess $command): void;
-
-    /* public function grantAccess(Address $address): void; */
-
-    /* public function generateAccessToken(Address $address): void; */
-
-    /**
-     * @throws CouldNotFindMember
-     */
-    public function getOneMemberByAccessToken(string $accessToken): Member;
+    public function register(Register $command): void;
 
     /**
      * @throws CouldNotFindMember

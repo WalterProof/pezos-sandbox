@@ -7,7 +7,6 @@ namespace PezosSandbox\Infrastructure\TalisOrm;
 use PezosSandbox\Application\Members\Member;
 use PezosSandbox\Application\Members\MemberForAdministrator;
 use PezosSandbox\Application\Members\Members;
-use PezosSandbox\Domain\Model\Member\AccessToken;
 use PezosSandbox\Domain\Model\Member\Address;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
 use PezosSandbox\Infrastructure\Doctrine\Connection;
@@ -23,24 +22,6 @@ final class MembersUsingDoctrineDbal implements Members
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-    }
-
-    public function getOneByAccessToken(AccessToken $accessToken): Member
-    {
-        try {
-            $data = $this->connection->selectOne(
-                $this->connection
-                    ->createQueryBuilder()
-                    ->select('*')
-                    ->from('members')
-                    ->andWhere('accessToken = :accessToken')
-                    ->setParameter('accessToken', $accessToken->asString()),
-            );
-
-            return $this->createMember($data);
-        } catch (NoResult $exception) {
-            throw CouldNotFindMember::withAccessToken($accessToken);
-        }
     }
 
     public function getOneByAddress(Address $address): Member

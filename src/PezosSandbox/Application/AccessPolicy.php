@@ -15,15 +15,4 @@ final class AccessPolicy
     {
         $this->application = $application;
     }
-
-    public function whenMemberRequestedAccess(
-        MemberRequestedAccess $event
-    ): void {
-        $this->application->verifyAddress($event->address());
-    }
-
-    public function whenAddressWasVerified(AddressWasVerified $event): void
-    {
-        $this->application->grantAccess($event->memberAddress());
-    }
 }

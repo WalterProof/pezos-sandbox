@@ -10,10 +10,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class Member implements UserInterface
 {
     private string $address;
+    private string $password;
 
-    public function __construct(string $address)
+    public function __construct(string $address, string $password)
     {
         $this->address = $address;
+        $this->password = $password;
     }
 
     /**
@@ -26,7 +28,7 @@ final class Member implements UserInterface
 
     public function getPassword(): ?string
     {
-        return null;
+        return $this->password;
     }
 
     public function getSalt(): ?string

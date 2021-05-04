@@ -6,39 +6,17 @@ security:
     providers:
         members:
             id: PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider
-        admins:
-            memory:
-                users:
-                    admin:
-                        {
-                            password: '%env(ADMIN_PASSWORD)%',
-                            roles: ['ROLE_ADMIN'],
-                        }
 
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        member_area:
+        main:
             pattern: ^/
             anonymous: lazy
+            form_login: ~
             provider: members
             guard:
                 authenticator:
-                    - PezosSandbox\Infrastructure\Symfony\Security\AccessTokenAuthenticator
-            logout:
-                path: logout
-
-        admin_area:
-            pattern: ^/admin-area
-            http_basic:
-                provider: admins
-                realm: Admin area
-            logout:
-                path: admin_area_logout
+                    - PezosSandbox\Infrastructure\Symfony\Security\LoginFormAuthenticator
 
     access_control:
-        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin-area, roles: ROLE_ADMIN }
-        - { path: ^/member-area, roles: ROLE_MEMBER }
+        - { path: ^/$, roles: ROLE_MEMBER }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }

@@ -56,7 +56,7 @@ services:
     PezosSandbox\Infrastructure\Symfony\LogEvents:
         public: true
 
-    PezosSandbox\Infrastructure\Symfony\Security\AccessTokenAuthenticator: ~
+    PezosSandbox\Infrastructure\Symfony\Security\LoginFormAuthenticator: ~
 
     PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider: ~
 

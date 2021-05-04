@@ -13,11 +13,6 @@ interface Members
     /**
      * @throws CouldNotFindMember
      */
-    public function getOneByAccessToken(AccessToken $accessToken): Member;
-
-    /**
-     * @throws CouldNotFindMember
-     */
     public function getOneByAddress(Address $address): Member;
 
     /**
