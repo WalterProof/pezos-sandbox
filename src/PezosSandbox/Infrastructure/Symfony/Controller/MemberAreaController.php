@@ -5,19 +5,43 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
 use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use PezosSandbox\Infrastructure\Symfony\Form\SignupForm;
 
-final class RegisterController extends AbstractController
+final class MemberAreaController extends AbstractController
 {
     private ApplicationInterface $application;
 
     public function __construct(ApplicationInterface $application)
     {
         $this->application = $application;
+    }
+
+    /**
+     * @Route("/membership", name="app_membership", methods={"GET", "POST"})
+     */
+    public function membership(Request $request): Response
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
+        $loginForm = $this->createForm(LoginForm::class);
+        $signupForm = $this->createForm(SignupForm::class);
+        $signupForm->handleRequest($request);
+
+        if ($signupForm->isSubmitted() && $signupForm->isValid()) {
+            $formData = $signupForm->getData();
+        }
+
+        return $this->render('member_area/membership.html.twig', [
+            'loginForm' => $loginForm->createView(),
+            'signupForm' => $signupForm->createView(),
+        ]);
     }
 
     /**

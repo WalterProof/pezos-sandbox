@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  Welcome {{ app.user.address }}! <a href="{{ path('app_logout') }}">log out</a>
+  {% if is_granted('ROLE_MEMBER') %}
+    Welcome {{ app.user.address }}! <a href="{{ path('app_logout') }}">log out</a>
+  {% else %}
+    You are not authenticated, <a href="{{ path('app_membership') }}">authenticate</a>
+  {% endif %}
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Membership
+{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-sm">
+      {{ form(loginForm) }}
+    </div>
+    <div class="col-sm">
+      {{ form(signupForm) }}
+    </div>
+  </div>
+{% endblock %}

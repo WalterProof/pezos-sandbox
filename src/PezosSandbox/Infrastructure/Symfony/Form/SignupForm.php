@@ -24,11 +24,11 @@ final class SignupForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('publicKey', TextType::class)
+            ->add('pubKey', PubKeyField::class)
             ->add('password', PasswordType::class)
             ->add('signature', TextType::class)
-            ->add('register', SubmitType::class, [
-                'label' => 'register_form.register.label',
+            ->add('signup', SubmitType::class, [
+                'label' => 'signup_form.signup.label',
             ])
             ->getForm();
     }
@@ -36,7 +36,7 @@ final class SignupForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'action' => $this->urlGenerator->generate('app_signup'),
+            'action' => $this->urlGenerator->generate('app_membership'),
             'attr' => ['novalidate' => 'novalidate'],
         ]);
     }

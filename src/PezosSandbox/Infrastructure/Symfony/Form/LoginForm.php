@@ -35,10 +35,6 @@ final class LoginForm extends AbstractType
         $builder
             ->add('_username', TextType::class)
             ->add('_password', PasswordType::class)
-            ->add('_remember_me', CheckboxType::class, [
-                'required' => false,
-                'data' => true,
-            ])
             ->add('login', SubmitType::class, [
                 'label' => 'login_form.login.label',
             ]);
@@ -58,7 +54,7 @@ final class LoginForm extends AbstractType
 
             $event->setData(
                 array_replace((array) $event->getData(), [
-                    'address' => $authUtils->getLastUsername(),
+                    '_username' => $authUtils->getLastUsername(),
                 ]),
             );
         });

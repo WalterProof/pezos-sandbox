@@ -13,23 +13,17 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="app_login", methods={"POST"})
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(): void
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('index');
-        }
-
-        $form = $this->createForm(LoginForm::class);
-
-        return $this->render('security/login.html.twig', [
-            'loginForm' => $form->createView(),
-        ]);
+        throw new \LogicException(
+            'This method can be blank - it will be intercepted by the login key on your firewall.',
+        );
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route("/logout", name="app_logout", methods={"GET"})
      */
     public function logout(): void
     {

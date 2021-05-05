@@ -20,5 +20,6 @@ security:
                     - PezosSandbox\Infrastructure\Symfony\Security\LoginFormAuthenticator
 
     access_control:
-        - { path: ^/$, roles: ROLE_MEMBER }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/profile$, roles: ROLE_MEMBER }
         - { path: ^/login$, roles: PUBLIC_ACCESS }

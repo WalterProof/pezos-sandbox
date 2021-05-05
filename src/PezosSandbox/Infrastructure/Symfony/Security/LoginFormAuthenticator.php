@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,6 +32,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
+    private const MEMBERSHIP_ROUTE = 'app_membership';
 
     private ApplicationInterface $application;
     private SessionInterface $session;
@@ -131,7 +131,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
                 );
         }
 
-        return $this->redirectToRoute($request, 'index');
+        return $this->redirectToRoute($request, self::MEMBERSHIP_ROUTE);
     }
 
     public function onAuthenticationSuccess(
@@ -148,15 +148,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
             return new RedirectResponse($targetPath);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception(
-            'TODO: provide a valid redirect inside ' . __FILE__,
-        );
+        return $this->httpUtils->createRedirectResponse($request, 'index');
     }
 
     protected function getLoginUrl(): string
     {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        return $this->urlGenerator->generate(self::MEMBERSHIP_ROUTE);
     }
 
     private function redirectToRoute(Request $request, string $route): Response
