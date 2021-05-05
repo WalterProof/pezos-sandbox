@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  Welcome !
+  Welcome {{ app.user.address }}! <a href="{{ path('app_logout') }}">log out</a>
 {% endblock %}

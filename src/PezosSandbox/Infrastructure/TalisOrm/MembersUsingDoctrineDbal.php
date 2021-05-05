@@ -53,7 +53,7 @@ final class MembersUsingDoctrineDbal implements Members
         );
 
         return array_map(
-            fn (
+            fn(
                 array $record
             ): MemberForAdministrator => new MemberForAdministrator(
                 self::asString($record, 'address'),
@@ -69,6 +69,9 @@ final class MembersUsingDoctrineDbal implements Members
      */
     private function createMember($data): Member
     {
-        return new Member(self::asString($data, 'address'));
+        return new Member(
+            self::asString($data, 'address'),
+            self::asString($data, 'password'),
+        );
     }
 }

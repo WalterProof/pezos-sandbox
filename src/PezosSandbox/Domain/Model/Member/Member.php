@@ -21,7 +21,6 @@ final class Member implements Aggregate, SpecifiesSchema
     private string $password;
     private DateTimeImmutable $registeredAt;
 
-
     public static function register(
         Address $address,
         DateTimeImmutable $requestedAccessAt
@@ -29,13 +28,14 @@ final class Member implements Aggregate, SpecifiesSchema
         $member = new self();
 
         $member->address = $address;
-        $member->requestedAccessAt = self::removeMicrosecondsPart($requestedAccessAt);
+        $member->requestedAccessAt = self::removeMicrosecondsPart(
+            $requestedAccessAt,
+        );
 
         $member->events[] = new MemberRegistered($address, $requestedAccessAt);
 
         return $member;
     }
-
 
     public function memberAddress(): Address
     {
@@ -86,7 +86,7 @@ final class Member implements Aggregate, SpecifiesSchema
     public function state(): array
     {
         return [
-            'address'     => $this->address->asString(),
+            'address' => $this->address->asString(),
             'registeredAt' => self::dateTimeImmutableAsDateTimeString(
                 $this->registeredAt,
             ),
@@ -125,7 +125,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $table->addColumn('address', 'string')->setNotnull(true);
         $table->setPrimaryKey(['address']);
 
-        $table->addColumn('password', 'string')->setNotnull(false);
-        $table->addColumn('registeredAt', 'datetime')->setNotnull(false);
+        $table->addColumn('password', 'string')->setNotnull(true);
+        $table->addColumn('registeredAt', 'datetime')->setNotnull(true);
     }
 }

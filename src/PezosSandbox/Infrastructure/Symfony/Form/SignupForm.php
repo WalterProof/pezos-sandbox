@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class RegisterForm extends AbstractType
+final class SignupForm extends AbstractType
 {
     private UrlGeneratorInterface $urlGenerator;
 
@@ -36,7 +36,7 @@ final class RegisterForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'action' => $this->urlGenerator->generate('register'),
+            'action' => $this->urlGenerator->generate('app_signup'),
             'attr' => ['novalidate' => 'novalidate'],
         ]);
     }
