@@ -2,36 +2,26 @@
 
 declare(strict_types=1);
 
-namespace PezosSandbox\Application\Register;
+namespace PezosSandbox\Application\Signup;
 
 final class Signup
 {
-    private string $password;
-    private string $pubKey;
-    private string $signature;
+    private string $address;
+    private string $plainTextPassword;
 
-    public function __construct(
-        string $password,
-        string $pubKey,
-        string $signature
-    ) {
-        $this->password = $password;
-        $this->pubKey = $pubKey;
-        $this->signature = $signature;
+    public function __construct(string $address, string $plainTextPassword)
+    {
+        $this->address = $address;
+        $this->plainTextPassword = $plainTextPassword;
     }
 
-    public function password(): string
+    public function address(): string
     {
-        return $this->password;
+        return $this->address;
     }
 
-    public function pubKey(): string
+    public function plainTextPassword(): string
     {
-        return $this->pubKey;
-    }
-
-    public function signature(): string
-    {
-        return $this->signature;
+        return $this->plainTextPassword;
     }
 }

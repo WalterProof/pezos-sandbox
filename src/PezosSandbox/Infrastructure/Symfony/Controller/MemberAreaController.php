@@ -4,21 +4,40 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
+use Bzzhh\Pezos\Keys\Ed25519;
+use Bzzhh\Pezos\Keys\PubKey;
+use InvalidArgumentException;
 use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Application\FlashType;
+use PezosSandbox\Application\Signup\Signup;
 use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use PezosSandbox\Infrastructure\Symfony\Form\SignupForm;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class MemberAreaController extends AbstractController
 {
     private ApplicationInterface $application;
+    private UserPasswordEncoderInterface $passwordEncoder;
+    private SessionInterface $session;
+    private TranslatorInterface $translator;
 
-    public function __construct(ApplicationInterface $application)
-    {
+    public function __construct(
+        ApplicationInterface $application,
+        UserPasswordEncoderInterface $passwordEncoder,
+        SessionInterface $session,
+        TranslatorInterface $translator
+    ) {
         $this->application = $application;
+        $this->passwordEncoder = $passwordEncoder;
+        $this->session = $session;
+        $this->translator = $translator;
     }
 
     /**
@@ -36,48 +55,45 @@ final class MemberAreaController extends AbstractController
 
         if ($signupForm->isSubmitted() && $signupForm->isValid()) {
             $formData = $signupForm->getData();
+            $pubKey = PubKey::fromBase58($formData['pubKey'], new Ed25519());
+
+            try {
+                $validSign = $pubKey->verifySignedHex(
+                    $formData['signature'],
+                    bin2hex($formData['password']),
+                );
+
+                if (!$validSign) {
+                    $signupForm
+                        ->get('signature')
+                        ->addError(new FormError('Invalid signature'));
+                }
+            } catch (\Throwable $t) {
+                $signupForm
+                    ->get('signature')
+                    ->addError(new FormError($t->getMessage()));
+            }
+
+            if (isset($validSign) && $validSign) {
+                $this->application->signup(
+                    new Signup($pubKey->getAddress(), $formData['password']),
+                    $this->passwordEncoder,
+                );
+
+                $this->session
+                    ->getFlashBag()
+                    ->add(
+                        FlashType::SUCCESS,
+                        $this->translator->trans(
+                            'signup_success.flash_message',
+                        ),
+                    );
+            }
         }
 
         return $this->render('member_area/membership.html.twig', [
             'loginForm' => $loginForm->createView(),
             'signupForm' => $signupForm->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/signup", name="app_signup", methods={"GET", "POST"})
-     */
-    public function signup(Request $request): Response
-    {
-        $form = $this->createForm(SignupForm::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $formData = $form->getData();
-
-            dump($formData);
-
-            /*             try { */
-            /*                 $this->application->requestAccess( */
-            /*                     new RequestAccess( */
-            /*                         $formData['leanpubInvoiceId'], */
-            /*                         $formData['emailAddress'], */
-            /*                         $formData['timeZone'], */
-            /*                     ), */
-            /*                 ); */
-
-            /*                 return $this->redirectToRoute('access_requested'); */
-            /*             } catch (LeanpubInvoiceIdHasBeenUsedBefore $exception) { */
-            /*                 $this->convertExceptionToFormError( */
-            /*                     $form, */
-            /*                     'leanpubInvoiceId', */
-            /*                     $exception, */
-            /*                 ); */
-            /*             } */
-        }
-
-        return $this->render('register/signup.html.twig', [
-            'signupForm' => $this->createForm(SignupForm::class)->createView(),
         ]);
     }
 }

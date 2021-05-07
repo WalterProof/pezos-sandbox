@@ -5,12 +5,28 @@
 {% endblock %}
 
 {% block body %}
-  <div class="row">
-    <div class="col-sm">
-      {{ form(loginForm) }}
+  <div {{ stimulus_controller('wallet') }}>
+    <div class="row">
+      <div class="col-md-5 offset-md-7 d-flex justify-content-end"
+        data-wallet-target="activeAccount">
+        <span class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </div>
     </div>
-    <div class="col-sm">
-      {{ form(signupForm) }}
+    <div class="row">
+      <div class="col-md">
+        <h2>
+          Log In
+        </h2>
+        {{ form(loginForm) }}
+      </div>
+      <div class="col-md">
+        <h2>
+          Register or Update Password
+        </h2>
+        {{ form(signupForm) }}
+      </div>
     </div>
   </div>
 {% endblock %}

@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace PezosSandbox\Application;
 
 use PezosSandbox\Application\Members\Member;
+use PezosSandbox\Application\Signup\Signup;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
-use PezosSandbox\Application\Register\Register;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 interface ApplicationInterface
 {
-    public function register(Register $command): void;
+    public function signup(
+        Signup $command,
+        UserPasswordEncoderInterface $passwordEncoder
+    ): void;
 
     /**
      * @throws CouldNotFindMember

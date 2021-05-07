@@ -33,7 +33,10 @@ final class LoginForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('_username', TextType::class)
+            ->add('_username', TextType::class, [
+                'label' => 'login_form.username.label',
+                'help' => 'login_form.username.help',
+            ])
             ->add('_password', PasswordType::class)
             ->add('login', SubmitType::class, [
                 'label' => 'login_form.login.label',
@@ -64,7 +67,10 @@ final class LoginForm extends AbstractType
     {
         $resolver->setDefaults([
             'action' => $this->urlGenerator->generate('app_login'),
-            'attr' => ['novalidate' => 'novalidate'],
+            'attr' => [
+                'novalidate' => 'novalidate',
+                'data-wallet-target' => 'loginForm',
+            ],
             'csrf_field_name' => '_csrf_token',
             'csrf_token_id' => 'authenticate',
         ]);

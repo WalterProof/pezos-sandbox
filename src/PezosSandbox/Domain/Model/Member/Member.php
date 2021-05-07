@@ -23,18 +23,23 @@ final class Member implements Aggregate, SpecifiesSchema
 
     public static function register(
         Address $address,
-        DateTimeImmutable $requestedAccessAt
+        string $password,
+        DateTimeImmutable $registeredAt
     ): self {
         $member = new self();
 
         $member->address = $address;
-        $member->requestedAccessAt = self::removeMicrosecondsPart(
-            $requestedAccessAt,
-        );
-
-        $member->events[] = new MemberRegistered($address, $requestedAccessAt);
+        $member->password = $password;
+        $member->registeredAt = self::removeMicrosecondsPart($registeredAt);
 
         return $member;
+    }
+
+    public function grantAccess(string $password): void
+    {
+        $this->password = $password;
+
+        $this->events[] = new AccessWasGrantedToMember($this->address);
     }
 
     public function memberAddress(): Address
@@ -72,6 +77,8 @@ final class Member implements Aggregate, SpecifiesSchema
             self::asString($aggregateState, 'address'),
         );
 
+        $instance->password = self::asString($aggregateState, 'password');
+
         $instance->registeredAt = self::dateTimeAsDateTimeImmutable(
             $aggregateState,
             'registeredAt',
@@ -87,6 +94,7 @@ final class Member implements Aggregate, SpecifiesSchema
     {
         return [
             'address' => $this->address->asString(),
+            'password' => $this->password,
             'registeredAt' => self::dateTimeImmutableAsDateTimeString(
                 $this->registeredAt,
             ),

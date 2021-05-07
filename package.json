@@ -3,6 +3,7 @@
         "@airgap/beacon-sdk": "^2.2.3",
         "@popperjs/core": "^2.9.2",
         "@symfony/stimulus-bridge": "^2.0.0",
+        "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/Resources/assets",
         "@symfony/webpack-encore": "^1.1.2",
         "axios": "^0.21.1",
         "bootstrap": "^5.0.0-beta3",
