@@ -48,8 +48,6 @@ services:
 
     PezosSandbox\Infrastructure\ProductionServiceContainer: ~
 
-    PezosSandbox\Infrastructure\Symfony\SetSchemeOnRequestContext: ~
-
     PezosSandbox\Infrastructure\Symfony\AddFlashMessageToSession:
         public: true
 

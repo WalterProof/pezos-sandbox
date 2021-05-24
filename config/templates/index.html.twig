@@ -1,11 +1,103 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  {% if is_granted('ROLE_MEMBER') %}
-    Welcome {{ app.user.address }}! <a href="{{ path('app_logout') }}">log out</a>
-  {% else %}
-    You are not authenticated, <a href="{{ path('app_membership') }}">authenticate</a>
-  {% endif %}
+    {{ include('_account.html.twig') }}
 
-  <!-- {{ render_chart(chart) }} -->
+    <hr />
+
+    <p>
+        Welcome to Pezos Sandbox, this is a sandbox website to experiment
+        working with PHP and Tezos. <br />
+        {% if not is_granted('ROLE_MEMBER') %}
+            You can login with a tz1 account to access the backend.
+        {% endif %}
+    </p>
+    <p>
+        {% set fa2 =
+            constant('PezosSandbox\\Domain\\Model\\Token\\Token::KIND_FA2')
+        %}
+        {% set fa1_2 =
+            constant('PezosSandbox\\Domain\\Model\\Token\\Token::KIND_FA1_2')
+        %}
+    </p>There are currently {{ tokensByKind[fa2]|length }} {{ fa2 }} tokens
+    {{ tokensByKind[fa1_2]|length }} {{ fa1_2 }} tokens in the db.<hr />
+
+    <h2>
+        Quipuswap Pairs
+    </h2>
+
+    <form>
+        <div class="form-group">
+            <select class="form-control"
+                onchange="window.location.replace('?address=' + this.value)">
+                {% for token in tokens %}
+                    {% set selected = token.symbol == selectedToken.symbol
+                        ? 'selected'
+                        : ''
+                    %}
+                    <option value="{{ token.address }}" {{ selected }}>
+                        {{ token.symbol }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <br />
+
+    <div class="row">
+        <div class="col-md">
+            <h3>
+                Token
+            </h3>
+            <p>
+                {{ selectedToken.kind }} <br />
+                {{ selectedToken.decimals }} decimals <br />
+                <a href="https://better-call.dev/mainnet/{{
+                    infos.token_address
+                    }}/tokens">
+                    {{ infos.token_address }}
+                </a>
+            </p>
+        </div>
+
+        <div class="col-md">
+            <h3>
+                Pool
+            </h3>
+            <p>
+                {{ infos.tez_pool|number_format(6) }}&nbsp;ꜩ / {{
+                    infos.token_pool|number_format(selectedToken.decimals)
+                }} {{ selectedToken.symbol }}
+                <br />
+                1&nbsp;{{ selectedToken.symbol }} = {{
+                    (infos.tez_pool / infos.token_pool)|number_format(6)
+                }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
+                    (infos.token_pool / infos.tez_pool)|number_format(
+                        selectedToken.decimals
+                    )
+                }}
+                {{ selectedToken.symbol }} <br />
+                <a href="https://better-call.dev/mainnet/{{
+                    selectedToken.addressQuipuswap
+                    }}">
+                    {{ selectedToken.addressQuipuswap }}
+                </a>
+            </p>
+        </div>
+
+        {% if infos.total_supply is not null %}
+            <div class="col-md">
+                <h3>
+                    Supply
+                </h3>
+                <p>
+                    {{ infos.total_supply|number_format }} <br />
+                </p>
+            </div>
+        {% endif %}
+    </div>
+    <hr />
+
+    {{ render_chart(chart) }}
 {% endblock %}

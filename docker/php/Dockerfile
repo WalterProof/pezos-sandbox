@@ -12,9 +12,6 @@ ARG NGINX_VERSION=1.17
 # "php" stage
 FROM php:${PHP_VERSION}-fpm-alpine AS symfony_php
 
-# For Inky
-RUN apk add libxslt-dev && docker-php-ext-configure xsl --with-xsl && docker-php-ext-install xsl
-
 # Install pcntl for long-running processes
 RUN docker-php-ext-install pcntl
 
@@ -128,14 +125,25 @@ WORKDIR /srv/app
 COPY ./public public/
 
 FROM symfony_php as symfony_php_production
-COPY . .
 
+WORKDIR /srv/app
+
+COPY . .
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
 	composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev; \
-    composer dump-autoload --classmap-authoritative --no-dev; sync
+    composer dump-autoload --classmap-authoritative --no-dev; sync; \
+    apk add --no-cache --virtual .build-deps nodejs nodejs-npm; \
+    npm install -g yarn; \
+    yarn install && yarn run build; \
+    apk del .build-deps
 
-# Dockerfile
+FROM symfony_nginx AS symfony_nginx_production
+
+WORKDIR /srv/app
+
+COPY --from=symfony_php_production /srv/app/public /srv/app/public
+
 FROM symfony_php as symfony_php_debug
 
 ARG XDEBUG_VERSION=3.0.1

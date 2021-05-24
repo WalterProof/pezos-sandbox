@@ -1,0 +1,15 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "twigPrintWidth": 80,
+    "plugins": ["./node_modules/prettier-plugin-twig-melody"],
+    "twigMultiTags": [
+        "nav,endnav",
+        "switch,case,default,endswitch",
+        "ifchildren,endifchildren",
+        "cache,endcache",
+        "js,endjs"
+    ]
+}

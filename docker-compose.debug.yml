@@ -35,3 +35,21 @@ services:
         image: mailhog/mailhog
         ports:
             - '8025:8025'
+
+    db:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: 'secret'
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+
+    adminer:
+        image: adminer
+        ports:
+            - 7000:8080
+
+volumes:
+    var:
+    db_data:

@@ -1,0 +1,32 @@
+name: main
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build:
+        name: Build and Push Docker image to Docker Hub
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repo
+              uses: actions/checkout@v2
+            - name: Build the stack
+              run: make build-prod
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Push to Docker Hub
+              run: make push-prod
+            - name: Install SSH Key
+              uses: shimataro/ssh-key-action@v2
+              with:
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  known_hosts: ${{ secrets.KNOWN_HOSTS }}
+            - name: Deploy
+              run: |
+                  echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET}}" >> .env.prod
+                  scp deploy.sh docker-compose.yml docker-compose.prod.yml .env.prod deploy@${{ secrets.PROD_SERVER_IP }}:/home/deploy/pezos_sandbox
+                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "cd ./pezos_sandbox && ./deploy.sh"

@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace PezosSandbox\Domain\Model\Member;
+namespace PezosSandbox\Domain\Model\Token;
 
-use Assert\Assert;
-use Bzzhh\Pezos\Validator;
 use TalisOrm\AggregateId;
 
 final class Address implements AggregateId

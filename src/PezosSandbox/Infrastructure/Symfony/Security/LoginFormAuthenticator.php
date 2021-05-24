@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PezosSandbox\Infrastructure\Symfony\Security;
 
+use Bzzhh\Pezos\Keys\Ed25519;
+use Bzzhh\Pezos\Keys\PubKey;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
+use PezosSandbox\Application\RequestAccess\RequestAccess;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,24 +20,18 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
-use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
-    PasswordAuthenticatedInterface
+class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
-
-    public const LOGIN_ROUTE = 'app_login';
-    private const MEMBERSHIP_ROUTE = 'app_membership';
 
     private ApplicationInterface $application;
     private SessionInterface $session;
@@ -51,33 +50,29 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
         CsrfTokenManagerInterface $csrfTokenManager,
         UserPasswordEncoderInterface $passwordEncoder
     ) {
-        $this->application = $application;
-        $this->session = $session;
-        $this->httpUtils = $httpUtils;
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
+        $this->application      = $application;
+        $this->session          = $session;
+        $this->httpUtils        = $httpUtils;
+        $this->translator       = $translator;
+        $this->urlGenerator     = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordEncoder  = $passwordEncoder;
     }
 
     public function supports(Request $request): bool
     {
-        return self::LOGIN_ROUTE === $request->attributes->get('_route') &&
+        return 'app_login' === $request->attributes->get('_route') &&
             $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
-            '_username' => $request->request->get('_username'),
-            '_password' => $request->request->get('_password'),
+        return [
+            'msg'        => $request->request->get('msg'),
+            'sig'        => $request->request->get('sig'),
+            'pubKey'     => $request->request->get('pubKey'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
-        $request
-            ->getSession()
-            ->set(Security::LAST_USERNAME, $credentials['_username']);
-
-        return $credentials;
     }
 
     public function getUser(
@@ -90,11 +85,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
         }
 
         try {
-            $user = $this->application->getOneMemberByAddress(
-                $credentials['_username'],
-            );
+            $user = $this->application->getOneMemberByPubKey($credentials['pubKey']);
         } catch (CouldNotFindMember $exception) {
-            return null;
+            $this->application->requestAccess(new RequestAccess($credentials['pubKey']));
+            $user = $this->application->getOneMemberByPubKey($credentials['pubKey']);
         }
 
         return $user;
@@ -102,18 +96,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        return $this->passwordEncoder->isPasswordValid(
-            $user,
-            $credentials['_password'],
-        );
-    }
+        $pubKey = PubKey::fromBase58($credentials['pubKey'], new Ed25519());
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
-    public function getPassword($credentials): ?string
-    {
-        return $credentials['_password'];
+        return $pubKey->verifySignedHex($credentials['sig'], bin2hex($credentials['msg']));
     }
 
     public function onAuthenticationFailure(
@@ -131,7 +116,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
                 );
         }
 
-        return $this->redirectToRoute($request, self::MEMBERSHIP_ROUTE);
+        return $this->redirectToRoute($request, 'index');
     }
 
     public function onAuthenticationSuccess(
@@ -153,7 +138,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements
 
     protected function getLoginUrl(): string
     {
-        return $this->urlGenerator->generate(self::MEMBERSHIP_ROUTE);
+        return $this->urlGenerator->generate('index');
     }
 
     private function redirectToRoute(Request $request, string $route): Response

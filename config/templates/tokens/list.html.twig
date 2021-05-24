@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Membership
+{% endblock %}
+
+{% block body %}
+  {{ include('_account.html.twig') }}
+
+  <hr />
+
+  <a href="{{ path('app_token_new') }}" class="btn btn-primary">Add Token</a>
+
+  <hr />
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">
+          Thumbnail
+        </th>
+        <th scope="col">
+          Symbol
+        </th>
+        <th scope="col">
+          Name
+        </th>
+        <th scope="col">
+          Standard
+        </th>
+        <th scope="col">
+          Decimals
+        </th>
+        <th scope="col">
+          Address(_Id)
+        </th>
+        <th scope="col">
+          Address Quipuswap
+        </th>
+        <th scope="col">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for token in tokens %}
+        <tr>
+          <th scope="row">
+            <img src="{{ token.thumbnailUri }}" width="50" />
+          </th>
+          <td>
+            {{ token.symbol }}
+          </td>
+          <td>
+            {{ token.name }}
+          </td>
+          <td>
+            {{ token.kind }}
+          </td>
+          <td>
+            {{ token.decimals }}
+          </td>
+          <td>
+            {{ token.address }}
+          </td>
+          <td>
+            {{ token.addressQuipuswap }}
+          </td>
+          <td>
+            <a href="{{
+              path(
+                'app_token_edit',
+                {
+                  address: token.address
+                }
+              )
+              }}"
+              class="btn btn-primary">
+              Edit
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

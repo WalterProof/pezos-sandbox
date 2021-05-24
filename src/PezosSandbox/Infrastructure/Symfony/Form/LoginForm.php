@@ -5,62 +5,25 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 final class LoginForm extends AbstractType
 {
     private UrlGeneratorInterface $urlGenerator;
-    private AuthenticationUtils $authenticationUtils;
 
-    public function __construct(
-        UrlGeneratorInterface $urlGenerator,
-        AuthenticationUtils $authenticationUtils
-    ) {
+    public function __construct(UrlGeneratorInterface $urlGenerator) {
         $this->urlGenerator = $urlGenerator;
-        $this->authenticationUtils = $authenticationUtils;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('_username', TextType::class, [
-                'label' => 'login_form.username.label',
-                'help' => 'login_form.username.help',
-            ])
-            ->add('_password', PasswordType::class)
-            ->add('login', SubmitType::class, [
-                'label' => 'login_form.login.label',
-            ]);
-
-        $authUtils = $this->authenticationUtils;
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (
-            FormEvent $event
-        ) use ($authUtils) {
-            $error = $authUtils->getLastAuthenticationError();
-
-            if ($error) {
-                $event
-                    ->getForm()
-                    ->addError(new FormError($error->getMessage()));
-            }
-
-            $event->setData(
-                array_replace((array) $event->getData(), [
-                    '_username' => $authUtils->getLastUsername(),
-                ]),
-            );
-        });
+            ->add('msg', HiddenType::class)
+            ->add('sig', HiddenType::class)
+            ->add('pubKey', HiddenType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

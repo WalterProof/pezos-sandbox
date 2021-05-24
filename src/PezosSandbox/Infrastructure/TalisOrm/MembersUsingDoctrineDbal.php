@@ -7,8 +7,8 @@ namespace PezosSandbox\Infrastructure\TalisOrm;
 use PezosSandbox\Application\Members\Member;
 use PezosSandbox\Application\Members\MemberForAdministrator;
 use PezosSandbox\Application\Members\Members;
-use PezosSandbox\Domain\Model\Member\Address;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
+use PezosSandbox\Domain\Model\Member\PubKey;
 use PezosSandbox\Infrastructure\Doctrine\Connection;
 use PezosSandbox\Infrastructure\Doctrine\NoResult;
 use PezosSandbox\Infrastructure\Mapping;
@@ -24,7 +24,7 @@ final class MembersUsingDoctrineDbal implements Members
         $this->connection = $connection;
     }
 
-    public function getOneByAddress(Address $address): Member
+    public function getOneByPubKey(PubKey $pubKey): Member
     {
         try {
             $data = $this->connection->selectOne(
@@ -32,13 +32,13 @@ final class MembersUsingDoctrineDbal implements Members
                     ->createQueryBuilder()
                     ->select('*')
                     ->from('members')
-                    ->andWhere('address = :address')
-                    ->setParameter('address', $address->asString()),
+                    ->andWhere('pub_key = :pub_key')
+                    ->setParameter('pub_key', $pubKey->asString()),
             );
 
             return $this->createMember($data);
         } catch (NoResult $exception) {
-            throw CouldNotFindMember::withAddress($address);
+            throw CouldNotFindMember::withPubKey($pubKey);
         }
     }
 
@@ -53,7 +53,7 @@ final class MembersUsingDoctrineDbal implements Members
         );
 
         return array_map(
-            fn(
+            fn (
                 array $record
             ): MemberForAdministrator => new MemberForAdministrator(
                 self::asString($record, 'address'),
@@ -69,9 +69,6 @@ final class MembersUsingDoctrineDbal implements Members
      */
     private function createMember($data): Member
     {
-        return new Member(
-            self::asString($data, 'address'),
-            self::asString($data, 'password'),
-        );
+        return new Member(self::asString($data, 'pub_key'));
     }
 }

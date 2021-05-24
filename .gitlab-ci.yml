@@ -1,0 +1,34 @@
+stages:
+    - build-front
+    - build-docker
+    - deploy
+
+build-master-docker:
+    stage: build-docker
+    image: docker:stable
+    services:
+        - docker:dind
+    before_script:
+        - apk add --no-cache docker-compose
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    script:
+        - rm .env && cp .env.prod .env
+        - docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+        - docker push "$CI_REGISTRY_IMAGE"/php
+        - docker push "$CI_REGISTRY_IMAGE"/nginx
+    only:
+        - master
+
+deploy-image:
+    stage: deploy
+    before_script:
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - ssh-keyscan $PROD_SERVER_IP >> ~/.ssh/known_hosts
+        - chmod 644 ~/.ssh/known_hosts
+    script:
+        - scp deploy.sh docker-compose.yml docker-compose.prod.yml .env.prod deploy@$PROD_SERVER_IP:/home/deploy/pezos_sandbox
+        - ssh deploy@$PROD_SERVER_IP "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ./pezos_sandbox && ./deploy.sh"

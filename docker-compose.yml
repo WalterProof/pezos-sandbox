@@ -11,8 +11,8 @@ services:
 
     php:
         build:
-            context: .
             dockerfile: docker/php/Dockerfile
+            context: .
             target: symfony_php
             args:
                 SYMFONY_VERSION: ${SYMFONY_VERSION:-}
@@ -27,21 +27,5 @@ services:
         volumes:
             - var:/srv/app/var/
 
-    db:
-        image: postgres
-        environment:
-            POSTGRES_PASSWORD: 'secret'
-            POSTGRES_USER: 'pezos_sandbox'
-        volumes:
-            - db_data:/var/lib/postgresql/data
-        ports:
-            - 5432:5432
-
-    adminer:
-        image: adminer
-        ports:
-            - 7000:8080
-
 volumes:
     var:
-    db_data:

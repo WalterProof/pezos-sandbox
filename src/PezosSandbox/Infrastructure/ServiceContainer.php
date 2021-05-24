@@ -12,14 +12,14 @@ use PezosSandbox\Application\Clock;
 use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
 use PezosSandbox\Application\Members\Members;
+use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use PezosSandbox\Domain\Model\Token\TokenRepository;
 use Test\Acceptance\FakeClock;
 
 abstract class ServiceContainer
 {
-    protected ?EventDispatcher $eventDispatcher = null;
+    protected ?EventDispatcher $eventDispatcher   = null;
     protected ?ApplicationInterface $application  = null;
     protected ?MemberRepository $memberRepository = null;
     private ?Clock $clock                         = null;
@@ -44,8 +44,10 @@ abstract class ServiceContainer
         if (null === $this->application) {
             $this->application = new Application(
                 $this->memberRepository(),
+                $this->tokenRepository(),
                 $this->eventDispatcher(),
                 $this->members(),
+                $this->tokens(),
                 $this->clock(),
             );
         }
@@ -73,7 +75,11 @@ abstract class ServiceContainer
 
     abstract protected function memberRepository(): MemberRepository;
 
+    abstract protected function tokenRepository(): TokenRepository;
+
     abstract protected function members(): Members;
+
+    abstract protected function tokens(): Tokens;
 
     private function accessPolicy(): AccessPolicy
     {

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use Assert\Assert;
-use PezosSandbox\Domain\Model\Member\Address;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
 use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
+use PezosSandbox\Domain\Model\Member\PubKey;
 use TalisOrm\AggregateNotFoundException;
 use TalisOrm\AggregateRepository;
 
@@ -26,26 +26,26 @@ final class MemberTalisOrmRepository implements MemberRepository
         $this->aggregateRepository->save($member);
     }
 
-    public function getByAddress(Address $address): Member
+    public function getByPubKey(PubKey $pubKey): Member
     {
         try {
             $member = $this->aggregateRepository->getById(
                 Member::class,
-                $address,
+                $pubKey,
             );
             Assert::that($member)->isInstanceOf(Member::class);
             /* @var Member $member */
 
             return $member;
         } catch (AggregateNotFoundException $exception) {
-            throw CouldNotFindMember::withAddress($address);
+            throw CouldNotFindMember::withPubKey($pubKey);
         }
     }
 
-    public function exists(Address $address): bool
+    public function exists(PubKey $pubKey): bool
     {
         try {
-            $this->getByAddress($address);
+            $this->getByPubKey($pubKey);
 
             return true;
         } catch (CouldNotFindMember $exception) {

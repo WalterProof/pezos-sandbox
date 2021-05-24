@@ -11,7 +11,7 @@ interface MemberRepository
     /**
      * @throws CouldNotFindMember
      */
-    public function getByAddress(Address $address): Member;
+    public function getByPubKey(PubKey $pubKey): Member;
 
-    public function exists(Address $address): bool;
+    public function exists(PubKey $pubKey): bool;
 }

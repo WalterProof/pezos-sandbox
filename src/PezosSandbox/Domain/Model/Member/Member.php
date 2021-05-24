@@ -17,34 +17,34 @@ final class Member implements Aggregate, SpecifiesSchema
     use AggregateBehavior;
     use Mapping;
 
-    private Address $address;
-    private string $password;
+    private PubKey $pubKey;
+    private bool $wasGrantedAccess = false;
     private DateTimeImmutable $registeredAt;
 
-    public static function register(
-        Address $address,
-        string $password,
+    public static function requestAccess(
+        PubKey $pubKey,
         DateTimeImmutable $registeredAt
     ): self {
         $member = new self();
 
-        $member->address = $address;
-        $member->password = $password;
+        $member->pubKey       = $pubKey;
         $member->registeredAt = self::removeMicrosecondsPart($registeredAt);
 
         return $member;
     }
 
-    public function grantAccess(string $password): void
+    public function grantAccess(): void
     {
-        $this->password = $password;
+        if ($this->wasGrantedAccess) {
+            return;
+        }
 
-        $this->events[] = new AccessWasGrantedToMember($this->address);
+        $this->wasGrantedAccess = true;
     }
 
-    public function memberAddress(): Address
+    public function memberPubKey(): PubKey
     {
-        return $this->address;
+        return $this->pubKey;
     }
 
     /**
@@ -73,15 +73,14 @@ final class Member implements Aggregate, SpecifiesSchema
     ): self {
         $instance = new self();
 
-        $instance->address = Address::fromString(
-            self::asString($aggregateState, 'address'),
+        $instance->pubKey = PubKey::fromString(
+            self::asString($aggregateState, 'pub_key'),
         );
 
-        $instance->password = self::asString($aggregateState, 'password');
-
-        $instance->registeredAt = self::dateTimeAsDateTimeImmutable(
+        $instance->wasGrantedAccess = self::asBool($aggregateState, 'was_granted_access');
+        $instance->registeredAt     = self::dateTimeAsDateTimeImmutable(
             $aggregateState,
-            'registeredAt',
+            'registered_at',
         );
 
         return $instance;
@@ -93,9 +92,9 @@ final class Member implements Aggregate, SpecifiesSchema
     public function state(): array
     {
         return [
-            'address' => $this->address->asString(),
-            'password' => $this->password,
-            'registeredAt' => self::dateTimeImmutableAsDateTimeString(
+            'pub_key'            => $this->pubKey->asString(),
+            'was_granted_access' => \intval($this->wasGrantedAccess),
+            'registered_at'      => self::dateTimeImmutableAsDateTimeString(
                 $this->registeredAt,
             ),
         ];
@@ -112,7 +111,7 @@ final class Member implements Aggregate, SpecifiesSchema
     public function identifier(): array
     {
         return [
-            'address' => $this->address->asString(),
+            'pub_key' => $this->pubKey->asString(),
         ];
     }
 
@@ -122,7 +121,7 @@ final class Member implements Aggregate, SpecifiesSchema
     public static function identifierForQuery(AggregateId $aggregateId): array
     {
         return [
-            'address' => (string) $aggregateId,
+            'pub_key' => (string) $aggregateId,
         ];
     }
 
@@ -130,10 +129,9 @@ final class Member implements Aggregate, SpecifiesSchema
     {
         $table = $schema->createTable(self::tableName());
 
-        $table->addColumn('address', 'string')->setNotnull(true);
-        $table->setPrimaryKey(['address']);
-
-        $table->addColumn('password', 'string')->setNotnull(true);
-        $table->addColumn('registeredAt', 'datetime')->setNotnull(true);
+        $table->addColumn('pub_key', 'string')->setNotnull(true);
+        $table->setPrimaryKey(['pub_key']);
+        $table->addColumn('was_granted_access', 'boolean')->setNotnull(true)->setDefault(false);
+        $table->addColumn('registered_at', 'datetime')->setNotnull(true);
     }
 }

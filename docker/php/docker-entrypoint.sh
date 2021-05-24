@@ -17,6 +17,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
     if [ "$APP_ENV" = 'prod' ]; then
       rm -rf var/cache
+      bin/console secrets:decrypt-to-local --force --env=prod
       bin/console cache:warm
     # Modification >>>
     elif [ "$APP_ENV" != 'prod' ]; then
@@ -24,15 +25,11 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     fi
 
     # <<< Modifications
-    # if [ "$1" = 'php-fpm' ]; then
+    if [ "$1" = 'php-fpm' ]; then
       # For PHP-FPM we first have to get the database in the right shape
-
-      # if [ ! -f "var/db/${APP_ENV}/db.sqlite" ]; then
-      #     bin/console doctrine:database:create --if-not-exists
-      # fi
-
-      # bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
-    # fi
+      bin/console doctrine:database:create --if-not-exists
+      bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+    fi
     # # Modification >>>
 
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var

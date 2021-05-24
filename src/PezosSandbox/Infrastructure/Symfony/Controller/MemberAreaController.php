@@ -6,18 +6,17 @@ namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
 use Bzzhh\Pezos\Keys\Ed25519;
 use Bzzhh\Pezos\Keys\PubKey;
-use InvalidArgumentException;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
 use PezosSandbox\Application\Signup\Signup;
 use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
+use PezosSandbox\Infrastructure\Symfony\Form\SignupForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use PezosSandbox\Infrastructure\Symfony\Form\SignupForm;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -34,10 +33,10 @@ final class MemberAreaController extends AbstractController
         SessionInterface $session,
         TranslatorInterface $translator
     ) {
-        $this->application = $application;
+        $this->application     = $application;
         $this->passwordEncoder = $passwordEncoder;
-        $this->session = $session;
-        $this->translator = $translator;
+        $this->session         = $session;
+        $this->translator      = $translator;
     }
 
     /**
@@ -49,13 +48,13 @@ final class MemberAreaController extends AbstractController
             return $this->redirectToRoute('index');
         }
 
-        $loginForm = $this->createForm(LoginForm::class);
+        $loginForm  = $this->createForm(LoginForm::class);
         $signupForm = $this->createForm(SignupForm::class);
         $signupForm->handleRequest($request);
 
         if ($signupForm->isSubmitted() && $signupForm->isValid()) {
             $formData = $signupForm->getData();
-            $pubKey = PubKey::fromBase58($formData['pubKey'], new Ed25519());
+            $pubKey   = PubKey::fromBase58($formData['pubKey'], new Ed25519());
 
             try {
                 $validSign = $pubKey->verifySignedHex(
@@ -92,7 +91,7 @@ final class MemberAreaController extends AbstractController
         }
 
         return $this->render('member_area/membership.html.twig', [
-            'loginForm' => $loginForm->createView(),
+            'loginForm'  => $loginForm->createView(),
             'signupForm' => $signupForm->createView(),
         ]);
     }

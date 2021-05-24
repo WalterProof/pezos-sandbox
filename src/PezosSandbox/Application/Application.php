@@ -6,75 +6,122 @@ namespace PezosSandbox\Application;
 
 use PezosSandbox\Application\Members\Member as MemberReadModel;
 use PezosSandbox\Application\Members\Members;
-use PezosSandbox\Application\Signup\Signup;
-use PezosSandbox\Domain\Model\Member\Address as MemberAddress;
-use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
+use PezosSandbox\Application\RequestAccess\RequestAccess;
+use PezosSandbox\Application\Tokens\Token as TokenReadModel;
+use PezosSandbox\Application\Tokens\Tokens;
+use PezosSandbox\Application\Tokens\TokenWasAlreadyAdded;
 use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authenticator\Passport\UserPassportInterface;
+use PezosSandbox\Domain\Model\Member\PubKey;
+use PezosSandbox\Domain\Model\Token\Address as TokenAddress;
+use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
+use PezosSandbox\Domain\Model\Token\Token;
+use PezosSandbox\Domain\Model\Token\TokenRepository;
 
 class Application implements ApplicationInterface
 {
     private MemberRepository $memberRepository;
+    private TokenRepository $tokenRepository;
     private EventDispatcher $eventDispatcher;
     private Members $members;
+    private Tokens $tokens;
     private Clock $clock;
 
     public function __construct(
         MemberRepository $memberRepository,
+        TokenRepository $tokenRepository,
         EventDispatcher $eventDispatcher,
         Members $members,
+        Tokens $tokens,
         Clock $clock
     ) {
         $this->memberRepository = $memberRepository;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->members = $members;
-        $this->clock = $clock;
+        $this->tokenRepository  = $tokenRepository;
+        $this->eventDispatcher  = $eventDispatcher;
+        $this->members          = $members;
+        $this->tokens           = $tokens;
+        $this->clock            = $clock;
     }
 
-    public function signup(
-        Signup $command,
-        UserPasswordEncoderInterface $passwordEncoder
-    ): void {
-        $address = MemberAddress::fromString($command->address());
-        try {
-            $memberRead = $this->members->getOneByAddress($address);
-            $encodedPassword = $passwordEncoder->encodePassword(
-                $memberRead,
-                $command->plainTextPassword(),
-            );
-            $member = $this->memberRepository->getByAddress($address);
-            $member->grantAccess($encodedPassword);
-        } catch (CouldNotFindMember $exception) {
-            $encodedPassword = $passwordEncoder->encodePassword(
-                new MemberReadModel(
-                    $command->address(),
-                    $command->plainTextPassword(),
-                ),
-                $command->plainTextPassword(),
-            );
-            $member = Member::register(
-                $address,
-                $encodedPassword,
-                $this->clock->currentTime(),
-            );
-        }
+    public function requestAccess(RequestAccess $command): void
+    {
+        $member = Member::requestAccess($command->pubKey(), $this->clock->currentTime());
 
         $this->memberRepository->save($member);
-
-        $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
-    public function getOneMemberByAddress(string $address): MemberReadModel
+    public function grantAccess(PubKey $pubKey): void
     {
-        return $this->members->getOneByAddress(
-            MemberAddress::fromString($address),
+        $member = $this->memberRepository->getByPubKey($pubKey);
+        $member->grantAccess();
+        $this->memberRepository->save($member);
+    }
+
+    public function addToken(AddToken $command): void
+    {
+        try {
+            $this->tokenRepository->getByAddress($command->address());
+
+            throw new TokenWasAlreadyAdded($command->address());
+        } catch (CouldNotFindToken $exception) {
+            $token = Token::createToken(
+                $command->address(),
+                $command->kind(),
+                $command->symbol(),
+                $command->name(),
+                $command->decimals(),
+                $command->addressQuipuswap(),
+            );
+
+            $this->tokenRepository->save($token);
+        }
+    }
+
+    public function updateToken(UpdateToken $command): void
+    {
+        $token = $this->tokenRepository->getByAddress($command->address());
+        $token->update(
+            $command->symbol(),
+            $command->name(),
+            $command->thumbnailUri(),
+            $command->decimals(),
+            $command->active(),
+        );
+        $this->tokenRepository->save($token);
+    }
+
+    public function getOneMemberByPubKey(string $pubKey): MemberReadModel
+    {
+        return $this->members->getOneByPubKey(
+            PubKey::fromString($pubKey),
+        );
+    }
+
+    public function getOneTokenByAddress(string $address): TokenReadModel
+    {
+        return $this->tokens->getOneByAddress(
+            TokenAddress::fromString($address),
         );
     }
 
     public function listMembersForAdministrator(): array
     {
         return $this->members->listMembers();
+    }
+
+    /**
+     * @return array<TokenReadModel>
+     */
+    public function listTokens(): array
+    {
+        return $this->tokens->listTokens();
+    }
+
+    /**
+     * @return array<TokenReadModel>
+     */
+    public function listTokensForAdmin(): array
+    {
+        return $this->tokens->listTokensForAdmin();
     }
 }

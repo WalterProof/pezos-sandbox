@@ -1,0 +1,20 @@
+<div class="d-flex flex-row-reverse" {{ stimulus_controller('wallet') }}>
+    <div>
+        {% if is_granted('ROLE_MEMBER') %}
+            Welcome {{ (app.user.pubKey|slice(0, 6)) ~ '...'
+                ~ (app.user.pubKey|slice(- 6)) }}! | <a href="{{
+                path(
+                    'app_logout'
+                )
+                }}">
+                log out
+            </a> | <a href="{{ path('index') }}">home</a> | <a href="{{ path('app_token_list') }}">tokens
+                admin</a>
+        {% else %}
+            You are not authenticated, <button data-action="wallet#login">
+                login (tz1)
+            </button>
+            {{ form(loginForm) }}
+        {% endif %}
+    </div>
+</div>

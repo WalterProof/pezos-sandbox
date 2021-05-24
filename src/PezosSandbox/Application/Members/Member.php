@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Application\Members;
 
-use PezosSandbox\Domain\Model\Member\Address;
+use PezosSandbox\Domain\Model\Member\PubKey;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 final class Member implements UserInterface
 {
-    private string $address;
-    private string $password;
+    private string $pubKey;
 
-    public function __construct(string $address, string $password)
+    public function __construct(string $pubKey)
     {
-        $this->address = $address;
-        $this->password = $password;
+        $this->pubKey = $pubKey;
     }
 
     /**
@@ -28,7 +26,7 @@ final class Member implements UserInterface
 
     public function getPassword(): ?string
     {
-        return $this->password;
+        return null;
     }
 
     public function getSalt(): ?string
@@ -38,12 +36,12 @@ final class Member implements UserInterface
 
     public function getUsername(): string
     {
-        return $this->address;
+        return $this->pubKey;
     }
 
-    public function address(): Address
+    public function pubKey(): PubKey
     {
-        return Address::fromString($this->address);
+        return PubKey::fromString($this->pubKey);
     }
 
     public function eraseCredentials(): void

@@ -1,3 +1,4 @@
 talis_orm:
     aggregates:
         - PezosSandbox\Domain\Model\Member\Member
+        - PezosSandbox\Domain\Model\Token\Token

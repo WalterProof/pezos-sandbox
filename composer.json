@@ -4,8 +4,10 @@
         "bzzhh/pezos": "dev-main",
         "matthiasnoback/talis-orm": "^0.2.1",
         "nyholm/psr7": "^1.4",
+        "phpmd/phpmd": "^2.10",
         "ramsey/uuid": "^4.1",
         "sensio/framework-extra-bundle": "^6.1",
+        "squizlabs/php_codesniffer": "^3.6",
         "symfony/config": "^5.2",
         "symfony/console": "^5.2",
         "symfony/dependency-injection": "^5.2",
@@ -65,10 +67,6 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "/srv/pezos"
-        }
-    ]
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

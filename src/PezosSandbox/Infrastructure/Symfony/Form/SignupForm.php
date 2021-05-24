@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -29,15 +28,15 @@ final class SignupForm extends AbstractType
         $builder
             ->add('pubKey', PubKeyField::class)
             ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
+                'type'            => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
-                'first_options' => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
-                'constraints' => [new NotBlank()],
+                'first_options'   => ['label' => 'Password'],
+                'second_options'  => ['label' => 'Repeat Password'],
+                'constraints'     => [new NotBlank()],
             ])
             ->add('signature', TextType::class, [
-                'label' => 'signup_form.signature.label',
-                'help' => 'signup_form.signature.help',
+                'label'       => 'signup_form.signature.label',
+                'help'        => 'signup_form.signature.help',
                 'constraints' => [new NotBlank()],
             ])
             ->add('signup', SubmitType::class, [
@@ -50,8 +49,8 @@ final class SignupForm extends AbstractType
     {
         $resolver->setDefaults([
             'action' => $this->urlGenerator->generate('app_membership'),
-            'attr' => [
-                'novalidate' => 'novalidate',
+            'attr'   => [
+                'novalidate'         => 'novalidate',
                 'data-wallet-target' => 'signupForm',
             ],
         ]);

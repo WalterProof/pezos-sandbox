@@ -2,16 +2,18 @@ version: '3.4'
 
 services:
     nginx:
+        image: bzzhh/pezos-sandbox-nginx:latest
+        build:
+            target: symfony_nginx_production
         container_name: pezos_sandbox_nginx
-        image: bzzhh/pezos-sandbox-production-nginx:latest
         ports: ['7700:80']
         restart: 'unless-stopped'
 
     php:
-        image: bzzhh/pezos-sandbox-production-php:latest
+        image: bzzhh/pezos-sandbox-php:latest
         build:
             target: symfony_php_production
         container_name: pezos_sandbox_php
         restart: 'unless-stopped'
         env_file:
-            - .env.prod.local
+            - .env.prod

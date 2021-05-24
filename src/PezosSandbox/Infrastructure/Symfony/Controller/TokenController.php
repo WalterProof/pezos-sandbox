@@ -1,0 +1,142 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PezosSandbox\Infrastructure\Symfony\Controller;
+
+use Bzzhh\Tzkt\Api\ContractsApi;
+use PezosSandbox\Application\AddToken;
+use PezosSandbox\Application\ApplicationInterface;
+use PezosSandbox\Application\UpdateToken;
+use PezosSandbox\Domain\Model\Token\Token;
+use PezosSandbox\Infrastructure\Symfony\Form\EditTokenForm;
+use PezosSandbox\Infrastructure\Symfony\Form\TokenForm;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+final class TokenController extends AbstractController
+{
+    private ApplicationInterface $application;
+    private TranslatorInterface $translator;
+    private ContractsApi $contractsApi;
+
+    public function __construct(
+        ApplicationInterface $application,
+        TranslatorInterface $translator,
+        ContractsApi $contractsApi
+    ) {
+        $this->application  = $application;
+        $this->translator   = $translator;
+        $this->contractsApi = $contractsApi;
+    }
+
+    /**
+     * @Route("/tokens", name="app_token_list", methods={"GET"})
+     */
+    public function list(): Response
+    {
+        $tokens = $this->application->listTokensForAdmin();
+
+        return $this->render('tokens/list.html.twig', [
+            'tokens' => $tokens,
+        ]);
+    }
+
+    /**
+     * @Route("/tokens/new", name="app_token_new", methods={"GET", "POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $tokenForm = $this->createForm(TokenForm::class);
+        $tokenForm->handleRequest($request);
+
+        if ($tokenForm->isSubmitted() && $tokenForm->isValid()) {
+            $formData = $tokenForm->getData();
+
+            try {
+                $dex = json_decode(
+                    $this->contractsApi
+                        ->contractsGetStorage($formData['address_quipuswap'])
+                        ->current(),
+                );
+
+                $kind = isset($dex->storage->token_id)
+                    ? Token::KIND_FA2
+                    : Token::KIND_FA1_2;
+                $address =
+                    Token::KIND_FA1_2 === $kind
+                        ? $dex->storage->token_address
+                        : sprintf(
+                            '%s_%s',
+                            $dex->storage->token_address,
+                            $dex->storage->token_id,
+                        );
+
+                $addToken = new AddToken(
+                    $address,
+                    $kind,
+                    $formData['symbol'],
+                    $formData['name'],
+                    \intval($formData['decimals']),
+                    $formData['address_quipuswap'],
+                );
+
+                $this->application->addToken($addToken);
+
+                $this->redirectToRoute('app_token_list');
+            } catch (\Exception $e) {
+                $tokenForm->addError(new FormError($e->getMessage()));
+            }
+        }
+
+        return $this->render('tokens/new.html.twig', [
+            'tokenForm' => $tokenForm->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/tokens/edit/{address}", name="app_token_edit", methods={"GET", "POST"})
+     */
+    public function edit(Request $request): Response
+    {
+        $address   = $request->attributes->get('address');
+        $token     = $this->application->getOneTokenByAddress($address);
+        $tokenForm = $this->createForm(EditTokenForm::class, [
+            'symbol'       => $token->symbol(),
+            'name'         => $token->name(),
+            'thumbnailUri' => $token->thumbnailUri(),
+            'decimals'     => $token->decimals(),
+            'active'       => $token->active(),
+        ]);
+        $tokenForm->handleRequest($request);
+
+        if ($tokenForm->isSubmitted() && $tokenForm->isValid()) {
+            $formData = $tokenForm->getData();
+
+            try {
+                $updateToken = new UpdateToken(
+                    $address,
+                    $formData['symbol'],
+                    $formData['name'],
+                    $formData['thumbnailUri'],
+                    \intval($formData['decimals']),
+                    \boolval($formData['active']),
+                );
+
+                $this->application->updateToken($updateToken);
+
+                $this->redirectToRoute('app_token_list');
+            } catch (\Exception $e) {
+                $tokenForm->addError(new FormError($e->getMessage()));
+            }
+        }
+
+        return $this->render('tokens/edit.html.twig', [
+            'tokenForm' => $tokenForm->createView(),
+        ]);
+    }
+}

@@ -1,8 +1,4 @@
 security:
-    encoders:
-        PezosSandbox\Application\Members\Member:
-            algorithm: auto
-
     providers:
         members:
             id: PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider
@@ -11,7 +7,8 @@ security:
         main:
             pattern: ^/
             anonymous: lazy
-            form_login: ~
+            form_login:
+                login_path: /
             logout:
                 path: app_logout
             provider: members
@@ -21,5 +18,5 @@ security:
 
     access_control:
         - { path: ^/$, roles: PUBLIC_ACCESS }
-        - { path: ^/profile$, roles: ROLE_MEMBER }
+        - { path: ^/tokens, roles: ROLE_MEMBER }
         - { path: ^/login$, roles: PUBLIC_ACCESS }
