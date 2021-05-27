@@ -9,6 +9,7 @@ use Bzzhh\Tzkt\Model\StorageRecord;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\Tokens\Token;
 use PezosSandbox\Domain\Model\Token\Token as TokenToken;
+use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
-use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
 
 final class IndexController extends AbstractController
 {
@@ -86,7 +86,7 @@ final class IndexController extends AbstractController
         ]);
 
         return $this->render('index.html.twig', [
-            'loginForm' => $loginForm->createView(),
+            'loginForm'     => $loginForm->createView(),
             'tokensByKind'  => $tokensByKind,
             'chart'         => $chart,
             'tokens'        => $tokens,
@@ -216,7 +216,7 @@ final class IndexController extends AbstractController
             $cached
                 ->set($data)
                 ->expiresAfter(
-                    \DateInterval::createFromDateString('1500 seconds'),
+                    \DateInterval::createFromDateString('300 seconds'),
                 );
             $this->cache->save($cached);
         }
