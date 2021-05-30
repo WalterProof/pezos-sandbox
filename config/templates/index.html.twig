@@ -5,27 +5,8 @@
 
     <hr />
 
-    <div class="d-flex justify-content-between">
+    <div>
         <div>
-            <p>
-                Welcome to Pezos Sandbox, this is a sandbox website to
-                experiment working with PHP and Tezos. (<a href="https://github.com/bzzhh/pezos-sandbox"
-                    class="text-decoration-none">
-                    Github&nbsp;<svg xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-github"
-                        viewBox="0 0 16 16">
-                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                    </svg>
-                </a>)<br />
-                Charts are refreshed every 5 minutes, after firstly being cached
-                (basic filesystem cache).<br />
-                {% if not is_granted('ROLE_MEMBER') %}
-                    You can login with a tz1 account to access the backend.
-                {% endif %}
-            </p>
             <p>
                 {% set fa2 =
                     constant(
@@ -40,10 +21,10 @@
             </p>There are currently {{ tokensByKind[fa2]|length }} {{ fa2 }} tokens
             {{ tokensByKind[fa1_2]|length }} {{ fa1_2 }} tokens in the db.<hr />
         </div>
-        <div class="justify-content-around align-self-center">
+        <div>
             <a href="https://tzkt.io/buy-tezos"
                 target="new"
-                class="btn btn-success">
+                class="btn btn-blue">
                 BUY TEZOS
             </a>
         </div>
@@ -53,9 +34,8 @@
     </h2>
 
     <form>
-        <div class="form-group">
-            <select class="form-control"
-                onchange="window.location.replace('?address=' + this.value)">
+        <div>
+            <select onchange="window.location.replace('?address=' + this.value)">
                 {% for token in tokens %}
                     {% set selected = token.symbol == selectedToken.symbol
                         ? 'selected'
@@ -71,8 +51,8 @@
 
     <br />
 
-    <div class="row">
-        <div class="col-md">
+    <div>
+        <div>
             <h3>
                 Token
             </h3>
@@ -87,7 +67,7 @@
             </p>
         </div>
 
-        <div class="col-md">
+        <div>
             <h3>
                 Pool
             </h3>
@@ -113,7 +93,7 @@
         </div>
 
         {% if infos.total_supply is not null %}
-            <div class="col-md">
+            <div>
                 <h3>
                     Supply
                 </h3>
@@ -126,10 +106,9 @@
 
     <hr />
 
-    <div class="d-flex justify-content-between">
+    <div>
         <div>
             <a href="https://tzkt.io/{{ selectedToken.addressQuipuswap }}/dex"
-                class="btn btn-info"
                 target="new">
                 Candles chart (tzkt)
             </a>
@@ -139,14 +118,12 @@
             <a href="https://quipuswap.com/swap?from=tez&to={{
                 selectedToken.address
                 }}"
-                class="btn btn-success"
                 target="new">
                 BUY
             </a>
             <a href="https://quipuswap.com/swap?from={{
                 selectedToken.address
                 }}&to=tez"
-                class="btn btn-danger"
                 target="new">
                 SELL
             </a>

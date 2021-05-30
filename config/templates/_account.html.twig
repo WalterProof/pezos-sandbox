@@ -1,4 +1,4 @@
-<div class="d-flex flex-row-reverse" {{ stimulus_controller('wallet') }}>
+<div {{ stimulus_controller('wallet') }}>
     <div>
         {% if is_granted('ROLE_MEMBER') %}
             Welcome {{ (app.user.pubKey|slice(0, 6)) ~ '...'

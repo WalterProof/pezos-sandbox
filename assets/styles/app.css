@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+
+body {
+    @apply text-sm;
+}
+
+/* Sticky footer */
+.g-Page {
+    @apply flex flex-col h-screen bg-blue-50;
+}
+
+.g-MainContent {
+    @apply container flex-grow;
+}
+
+.g-Header {
+    @apply flex my-4;
+}
+
+/* Footer */
+footer {
+    @apply bg-blue-100;
+}
+
+.g-Footer {
+    @apply flex p-4;
+
+    ul a {
+        @apply underline;
+    }
+}
+.g-Footer a {
+    @apply ml-auto;
+}
+
+.g-ErrorMessage {
+    @apply font-bold text-red-500;
+}
+
+h1 {
+    @apply text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500;
+}
+
+h3 {
+    @apply font-bold;
+}
+
+.btn {
+    @apply px-4 py-2 font-bold rounded;
+}
+.btn-blue {
+    @apply text-white bg-blue-500;
+}
+.btn-blue:hover {
+    @apply bg-blue-700;
+}
+
+@tailwind utilities;

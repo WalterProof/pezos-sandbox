@@ -1,34 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>
-      {{ siteTitle }} -{% block title %}
+    <head>
+        <meta charset="UTF-8" />
+        <title>
+            {{ siteTitle }} -{% block title %}
 
-      {% endblock %}
-    </title>
-    {% block stylesheets %}
-      {{ encore_entry_link_tags('app') }}
-    {% endblock %}
+            {% endblock %}
+        </title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
 
-    {% block javascripts %}
-      {{ encore_entry_script_tags('app') }}
-    {% endblock %}
-  </head>
-  <body>
-    <div class="container">
-      <div class="alerts mb-3 mt-3">
-        {% for key, messages in app.flashes() %}
-          {% for message in messages %}
-            <div class="alert alert-{{ key }}">
-              {{ message }}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="g-Page">
+            <div class="g-MainContent">
+                <div className="g-Header">
+                    <h1>
+                        <span>Pezos Sandbox</span>
+                    </h1>
+                </div>
+                <div class="mt-3 mb-3 alerts">
+                    {% for key, messages in app.flashes() %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ key }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% block body %}
+
+                {% endblock %}
             </div>
-          {% endfor %}
-        {% endfor %}
-      </div>
-      {% block body %}
-
-      {% endblock %}
-    </div>
-  </body>
+            <footer>
+                <div class="container">
+                    <div class="g-Footer">
+                        <p>
+                            Welcome to Pezos Sandbox, this is a sandbox website
+                            to experiment working with PHP and Tezos. (<a href="https://github.com/bzzhh/pezos-sandbox">
+                                Github&nbsp;
+                            </a>)<br />
+                            Charts are refreshed every 5 minutes, after firstly being
+                            cached (basic filesystem cache).<br />
+                            {% if not is_granted('ROLE_MEMBER') %}
+                                You can login with a tz1 account to access the
+                                backend.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </body>
 </html>
