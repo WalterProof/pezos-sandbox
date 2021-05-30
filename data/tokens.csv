@@ -1,0 +1,112 @@
+address,symbol,decimals,kind,active,address_quipuswap,name,description,homepage,thumbnail_uri
+KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW_0,hDAO,6,FA2,t,KT1QxLqukyfohPV5kPkw97Rs6cw1DDDvYgbB,hDAO,Hic et nunc DAO FA2 Token,https://hicetnunc.xyz,https://ipfs.io/ipfs/QmPfBrZiRsC39S2VvNbhuxH9HnNcSx8aef9uBCG51J5c4e
+KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd_0,WRAP,8,FA2,t,KT1FG63hhFtMEEEtmBSX2vuFmP87t9E7Ab4t,Wrap Governance Token,,https://app.tzwrap.com,https://ipfs.io/ipfs/Qma2o69VRZe8aPsuCUN1VRUE5k67vw2mFDXb35uDkqn17o
+KT1LVnyY5cSCVpFMGXzqVsWNiSkJYA8w1rZk_0,tCow,2,FA2,t,KT1XQZxsG4pMgcN7q7Nu3XFihsb9mEvqBmAT,tCow,The Tezos Cow for all your needs.,,https://cloudflare-ipfs.com/ipfs/QmcRQKxJvnrzmKMH7y7ftkSraKB1rfXqeX4Etz6ve5r278
+KT1GUNKmkrgtMQjJp3XxcmCj6HZBhkUmMbge_0,bDAO,6,FA2,t,KT1DssMzoSr8fnUUq1WxeSuHfLG4gzS7pgge,Bazaar DAO ,bDAO is the official governance token for Bazaar Community,,https://ipfs.io/ipfs/QmVMyqkFKAeyfGBeR81h72ugqj4UM8hjqA7KaKcnc35Vtt
+KT19ovJhcsUn4YU8Q5L3BGovKSixfbWcecEA_0,RSAL,0,FA2,t,KT1WDe2vJCDqz5euKupppQsioPcakUd45Tfo,Red Salsa,,https://salsadao.xyz,https://ipfs.io/ipfs/QmV7t21TwpmjRNWoXiqKhudVfZ8gYBDZksmzgDUHGpwz2z
+KT1XQZxsG4pMgcN7q7Nu3XFihsb9mEvqBmAT_0,tCowLP,0,FA2,t,KT1UEfXGj5Ag73qCdZTk2534SZDT7cd7J8m8,,,,
+KT1AEfeckNbdEYwaMKkytBwPJPycz7jdSGea,STKR,18,FA1.2,t,KT1BMEEPX7MWzwwadW3NCSZe9XGmFJ7rs7Dr,STKR,STKR is the community-owned token used to govern StakerDAO,https://www.stakerdao.com/products/stkr,
+KT1Nbc9cmx19qFrYYFpkiDoojVYL8UZJYVcj_0,GUTS,0,FA2,t,KT1GaR1CmFoTTjqRwYSE8WdpBuxuviKGbcqs,Guts Gaming,"This is the core token of the Guts Gaming ecosystem. Each game has different use cases for the token. For example, GUTS holders may gain stat bonuses on their character, use GUTS to purchase limited items and equipment, etc.
+
+Do you have the GUTS?",,https://cloudflare-ipfs.com/ipfs/Qmd5PwBHVLAUN1kRWAebDVjrMogJ9oUnNn8sowwTC7HgEv
+KT1GGxCNiJ7yaBAH4hAw5AHXbP3PSmAiy3wK₀,Tacoz,18,FA2,t,KT1VfiExduEkrpM4TbsnAw9QV1VURqaRFGKs,Tacoz,Tacoz - Tezos first meme coin.,https://tacoz.cash,https://tacoz.cash/images/logo_small.png
+KT1EpihM8tQSBwqYB6NtCT8N67pq8rKwoD93_0,T42,0,FA2,t,KT1M5H8qkJEzhdC3ZxZ78bSxgmcddrcusbry,Token 42,The World is The Biggest Mystery,,https://i.postimg.cc/MpKJW5pX/Icon.png
+KT1XRxmUFNcbzGTwQPvNPa5FuuM43uEunp8K_0,TZS,0,FA2,t,KT1A834QfnWremTQ4tc63s8NKbHzLJVszgxc,Tezos Spanish,54686973206973207468652054657a6f73205370616e69736820636f6d6d756e69747920746f6b656e2e0a0a4573746520657320656c20746f6b656e206465206c6120636f6d756e696461642065737061f16f6c612054657a6f73205370616e6973682e,,https://ibb.co/zQLbthQ
+KT1M2JnD1wsg7w2B4UXJXtKQPuDUpU2L7cJH_79,tezos10x,0,FA2,t,KT1A4Sj8TBg4pazMkj226bAAcH6A4iCNQno4,Tezos10x,"10x the Tezos, with 10x less supply.",,https://ipfs.io/ipfs/Qmd6cte1kXCoQ7oXyRbLRiWxszdeYqkosfH4snkaKrd6oL
+KT19ovJhcsUn4YU8Q5L3BGovKSixfbWcecEA_1,sDAO,0,FA2,t,KT1PrRTVNgxkRgyqqNQvwTiVhd55dqyxXJ6n,Salsa DAO,,https://salsadao.xyz,https://ipfs.io/ipfs/QmPJ7dMS3T6McqPjjBioKhHqtEUEBhAXpcRf3aicaLNPtV
+KT19oivKN2qzeWgCs886BbttSVYtkcJHRtuQ_0,SHTz,2,FA2,t,KT1G7Z14RJLKbfu96Hc22bwNL67aykunAGyH,Shitz,,,https://ibb.co/km908CD
+KT1REEb5VxWRjcHm5GzDMwErMmNFftsE5Gpf_0,sUSD,6,FA2,t,KT1KFszq8UFCcWxnXuhZPUyHT9FK3gjmSKm6,Stably USD,,https://stably.io/,
+KT19at7rQUvyjxnZ2fBv7D9zc8rkyG7gAoU8,ETHtz,18,FA1.2,t,KT1Evsp2yA19Whm24khvFPcwimK6UaAJu8Zo,ETHtez,,,
+KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV,kUSD,18,FA1.2,t,KT1K4EwTpbvYN9agJdjpyJm4ZZdhpUNKB3F6,Kolibri USD,Kolibri is an algorithmic stablecoin built on the Tezos blockchain by Hover Labs.,https://kolibri.finance/,https://kolibri-data.s3.amazonaws.com/logo.png
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_17,wUSDC,6,FA2,t,KT1U2hs5eNdeCpHouAvQXGMzGFGJowbhjqmo,Wrapped USDC,,,https://ipfs.io/ipfs/QmQfHU9mYLRDU4yh2ihm3zrvVFxDrLPiXNYtMovUQE2S2t
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_20,wWETH,18,FA2,t,KT1DuYujxrmgepwSDHtADthhKBje9BosUs1w,Wrapped WETH,,,https://ipfs.io/ipfs/Qmezz1ztvo5JFshHupBEdUzVppyMfJH6K4kPjQRSZp8cLq
+KT19mgJ3sCytBWXzZ1xgkZ7UMZS4HPKyGNo7_0,MEL,6,FA2,t,KT1BsDKTXBiYck85fJnoDzedyKKNtMuC9B9h,Melon,Usual melon,,https://img.favpng.com/23/24/22/cantaloupe-juice-hami-melon-charentais-melon-png-favpng-pNbCBd1GXZuFBu4S5ddaL5E9b.jpg
+KT1EMarewvdmyV42FDgGuhUhTKxrjutQWEBA_0,BDoge,4,FA2,t,KT1Th57AbgJmiZWDny6Ewqd2sx5qSxJwu8ry,BULLDoge,404 MEME NOT FOUND!,,https://i.imgur.com/FPoMO8F.png
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_11,wMATIC,18,FA2,t,KT1RsfuBee5o7GtYrdB7bzQ1M6oVgyBnxY4S,Wrapped MATIC,,,https://ipfs.io/ipfs/QmchBnjRjpweznHes7bVKHwgzd8D6Q7Yzwf6KmA4KS6Dgi
+KT1TsUFkH4pa48wmrGRmFpFW13nxHbP4xEKN_0,TTT,8,FA2,t,KT1WYoYSdHNmNJf9pHWPoHJWDA3bid1NP9SJ,Taco truck token,Fresh baked tacos to your wallet,,
+KT1TtaMcoSx5cZrvaVBWsFoeZ1L15cxo5AEy_0,SOIL,4,FA2,t,KT1NXdxJkCiPkhwPvaT9CytFowuUoNcwGM1p,Soil,Need $SOIL to grow your $FARM,,https://i.ibb.co/4ML6VkV/kisspng-humus-portable-network-graphics-soil-clip-art-houm-5c4429fd079dc0-6393132415479710690312.jpg
+KT1T3Ly4RkMehwNpC4iWr86EV5D155bTRvce_0,BART,9,FA2,t,KT1WJVYEjLRirPQDSWqfggjqFGn14y9hiCBL,BullishArt Token,BART is the token of BullishArt.com,,https://i2.wp.com/bullishart.com/wp-content/uploads/2021/02/logo.jpg
+KT1SrP7phqe9meFbMF4Z2YsSq3XuLU1mw9BM_0,NOLA,6,FA2,t,KT1Fm5fS6VhFyE9wgopXcoQ3Nyb5awLY2sQH,Granola Token,Granola Tezos Token,,https://ipfs.io/ipfs/QmVk8qWMfJ79d3pVv6PnTpZerzP7cBjNhbmDyZrfF53TfD
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_15,wSUSHI,18,FA2,t,KT1Lotcahh85kp878JCEc1TjetZ2EgqB24vA,Wrapped SUSHI,,,https://ipfs.io/ipfs/QmTpss9a4uL3op7x5Lte7CcTKUSUhZsM1Gr34BWNvZCfy4
+KT1BCzAq3PrTKPsEBKuoTGZdwX6rN6WE8rJj_0,CVZA,8,FA2,t,KT1F3BqwEAoa2koYX4Hz7zJ8xfGSxxAGVT8t,Cerveza,Beer token,,https://i.ibb.co/KyQJRDt/output-onlineimagetools.png
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_5,wDAI,18,FA2,t,KT1PQ8TMzGMfViRq4tCMFKD2QF5zwJnY67Xn,Wrapped DAI,,,https://ipfs.io/ipfs/QmVov6RtfRNzuQGvGKmhnABUsfCiDKvn31amg8DUxzowtM
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_10,wLINK,18,FA2,t,KT1Lpysr4nzcFegC9ci9kjoqVidwoanEmJWt,Wrapped LINK,,,https://ipfs.io/ipfs/QmeaRuB578Xgy8jxbTxqmQ9s5wyioAEP85V7qbJFnn2uT8
+KT1Cjx8hYwzaCAke6rLWoZBLp8w89VeAduAR_0,tDAO,4,FA2,t,KT1X6dAh8fwQMkWC9yh4yuvkJaS5NjqY4NvW,Taco DAO,Governance Token for the Tezonians NFT Collection.,,https://www.cryptoliveleak.org/wp-content/uploads/2021/04/Taco-bold.png
+KT1EZ5Kerx82fxsvPSnMKsnvPp7Yue9oHNRY_0,rugDao,2,FA2,t,KT1D3tdqrEkcwKkhJso5jmrJiyiaNVWtYiFJ,rugDao,Do you like rugs?,,https://ipfs.io/ipfs/Qmdqbhy533eYfDvPMY4NS5Gpneezra7vJYFYCfLkkjyTmZ
+KT1T9kFJD5fKAT4LAZWjYBCaWNbD7cw1CUju_0,DONTz,2,FA2,t,KT1FaPEfr2hGTR1d4tN9VikubuSVS1CuuMJX,DONTz,Don't buy this token. It's useless and you will get rekt.,,https://i.imgur.com/axeSNTv.png
+KT1GAWT8469ueGEyzWyEgXtJJetgQEeZFnE2_0,BEEz,2,FA2,t,KT1A4tYKJDJHrLonvp4qkJpZz5fkoWcAxMxW,BEEz,bzzzzzzzzzzzz,,https://imgur.com/kKf8GaL.png
+KT1HU2eCMzZhSHUpuBQjaN3L6un77iQvbZgy_0,gDAO,6,FA2,t,KT198myhugqAVvtNbYgN4sBKMFRYBvprcKHf,Ghost DAO,Ghost chain governance token,,https://ipfs.io/ipfs/QmNv5MMjh3k86wPaDRnWeE8kY1PMV7eS4TS1TW9ZAe42aV?filename=gdao.PNG
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_14,wPAX,18,FA2,t,KT1Ca5FGSeFLH3ugstc5p56gJDMPeraBcDqE,Wrapped PAX,,,https://ipfs.io/ipfs/QmZD5QDAeAUyyLYKiMmxD4vfWpVeYHctcbTkPmo4NudDHt
+KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK_0,WEED,8,FA2,t,KT1TYjt5eLHRx3nQpSfaR94oQ6vehu24vvSQ,Weed,Tezos' first weed toke(n) - Come get your toke(n) and pass the joint.,,https://ibb.co/4j1y6dX
+KT1981tPmXh4KrUQKZpQKb55kREX7QGJcF3E_0,SEB,2,FA2,t,KT1S4WyNiYPoYheihysddNh5hojNFdiVBwZL,Sebuh.net ,The Sebuh.net Tezos Baker DAO token.,,https://tzstats.com/logos/tz1R664EP6wjcM1RSUVJ7nrJisTpBW9QyJzP.png
+KT1AGhcM4GAEo2obsFjuEERcGkURdDFUW86h_0,TITz,2,FA2,t,KT1BNRefGboWR4p2SFwDDTosjnPKPL9hVk3q,Tittiez,"Submit to the power of Tittiez, bringer of life and enjoy.",,https://ibb.co/KXT49FK
+KT1GorbQ7ZKetuCRQZrpgDq3QW1KAtqhzytk_0,F15H,2,FA2,t,KT1CNEgfKrGWtYdWAGG3cyZAUcFFpotmAme9,F15H,"Give a man a fish, and you will feed him for a day. Teach a man to ape, and he will be aping for a lifetime. Ape with us and save the fishies (TBD)",,https://i.ibb.co/Zhv6Tng/F15H.jpg
+KT1Wa8yqRBpFCusJWgcQyjhRz7hUQAmFxW7j_0,FLAME,6,FA2,t,KT1Q93ftAUzvfMGPwC78nX8eouL1VzmHPd4d,FLAME,,,https://spacefarm.xyz/images/flamelogo.png
+KT1UHNDNjrCAAiRbzZrtQF9qHSHVMYeJyX1y_0,BRR,6,FA2,t,KT1PmH3JCEo65koqSGGUArKSpbKMN8dJ3BPZ,FundMe,The use case of this token is to fund me. I will dump on you constantly. Feel free to ape in and trade it anyway.,,
+KT1M2Ws52krJrwJi1ZFsmVfazBiafWYKZTvd_0,BEEF,6,FA2,t,KT1BtmMAnmTGHAA9ZV8xPzuwZu4ibL7f5qb3,Beef,"These cows be making me hungry, dog. Cat-chya later when we make some of dem tacos.",,https://www.pngfind.com/pngs/m/173-1730620_beef-clipart-rare-meat-meat-icon-png-transparent.png
+KT1JG7MKVa2Pba2Q2VwB2TZLY9ZTKh9csC1E_0,RTT,2,FA2,t,KT1QoKSXVnvytnkbMLu8Nqh9vH9qPdtvxR6K,RoysTezosToken,RoysTezosTokens minted on Tezos Mainnet using Token Factory at https://deployer.sebuh.net/,,https://i.imgur.com/zNalRBN.jpg
+KT1QoDjTpkG9jmAMwrPCsaRR78xHDcRKydBp_0,tChicken,6,FA2,t,KT1JzZtBeHDBS9XyEqUc9nZhsqcfeNLxVV1T,tChicken,Tezos Chicken Token,,https://i.imgur.com/tJw9Cer.png
+KT1VHd7ysjnvxEzwtjBAmYAmasvVCfPpSkiG_0,GSAL,0,FA2,t,KT1BzNUUjURkTtNhXFkbGtu9fY3Q5scKZrvK,Green Salsa,,,https://ipfs.io/ipfs/QmeG8pd8PYRyPkCiL3nj4ghauuiYy13531vJYUfvNzyLX9
+KT1VHd7ysjnvxEzwtjBAmYAmasvVCfPpSkiG_1,sCAS,0,FA2,t,KT1HhUWkzjmdjFTgNMmGgdNWGb6wwEXA4XCT,sCasino Shares,,,https://ipfs.io/ipfs/QmaWmMKhxz5s2CdFkYpFqcQVZx3jjPNaMasuNnqCs4fCAr
+KT1BHCumksALJQJ8q8to2EPigPW6qpyTr7Ng_0,CRUNCH,8,FA2,t,KT1RRgK6eXvCWCiEGWhRZCSVGzhDzwXEEjS4,CRUNCH,CRUNCH is the utility token of crunchy.network. It will aid funding development and will be able to be used to pay for service fees and/or to pay reduced service fees. Additionally some services may require that you hold a certain amount of CRUNCH in your wallet in order to utilize the service. ,,https://ipfs.io/ipfs/bafybeienhhbxz53n3gtg7stjou2zs3lmhupahwovv2kxwh5uass3bc5xzq
+KT1B5LL3GRQL3uLbqwy3C8FL8H7CWj74EbnA,TSV,0,FA1.2,t,KT1Unphw5yMDcUNAtKpynxWPPLKDegAZQtzb,TezosSwap VOTES token,,,https://ipfs.io/ipfs/QmU8rRH1XDuFkZ2vDnHufop2brn6Y1TgqxpeeFcN1LvPVH
+KT1Q3oMXVxL12Rz4GCwztu8wXBTfWWAM4r5t,SWAP,0,FA1.2,t,KT1SArJcuCSKPzA2NBgR8QbXgD3acfDREBV5,TezosSwap SWAP token,,,https://ipfs.io/ipfs/QmfXjq2HzaA8oVmDU8TjMtsrjBYbF6RhFEKJQymbWZfwuE
+KT1AxaBxkFLCUi3f8rdDAAxBKHfzY8LfKDRA,QLkUSD,36,FA1.2,t,KT1WtFb1mTsFRd1n1nAYMdrE2Ud9XREz5hjK,Quipuswap Liquidating kUSD,,,https://kolibri-data.s3.amazonaws.com/logo.png
+KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9,USDTz,6,FA1.2,t,KT1WxgZ1ZSfMgmsSDDcUn8Xn577HwnQ7e1Lb,USDtz,,https://usdtz.com/,
+KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn,tzBTC,8,FA1.2,t,KT1WBLrLE2vG8SedBqiSJFm4VVAZZBytJYHc,tzBTC,,https://tzbtc.io/,
+KT1VYsVfmobT7rsMVivvZ4J8i3bPiqz12NaH,wXTZ,6,FA1.2,t,KT1W3VGRUjvS869r4ror8kdaxqJAZUbPyjMT,wXTZ,,https://www.stakerdao.com/products/wxtz,
+KT1WtCq6FuL2kYTK1x7AkmpPjb8wEJZTUwvX_0,wTaco,0,FA2,t,KT1UV2rW49MUxvYVHrrQZejkr7mzaADQ3Wa4,Wrapped Taco,,https://salsadao.xyz,https://ipfs.io/ipfs/QmXsbFanpa6rTYXCWMzvDsynqnqn33TpFxe4K7qmQFB7ez
+KT1CnuKyaAuYBAwJf9g5LobtxRZsF2KCD3o6_0,FARM,4,FA2,t,KT1NF5vZdWjYQcb8Uq9SkgTrLgc9P23AraX7,Farm,Use $SOIL to $FARM,,https://i.postimg.cc/mgWJwckY/Farmer.png
+KT1E6C7WkwG8GWnPBBJJDMADrYuuYaK7ddmM₀,FKB,6,FA2,t,KT1UyqBg82dWGBCyFbRD8J96Ud6diYLkt8Ca,FuckBoy,For all my real FuckBoys,,https://ipfs.io/ipfs/QmZbexkH5MYPc3UMpwkeKt18enUzbKGDCsmZonBdFjkM5T
+KT1T1PeeRDbsKDYM2nX8JjJ1kkAhHh5FnjgC_0,BDVXP,6,FA2,t,KT1C755xS3TLH4HEWaCJvWuoHTcytTBdEjgS,BohnerDyldoh VX Pro,Streamline your workflow with Bohner DyldohVX Pro. BDVXP was developed with g-wave alpha transports on the Tezos blockchain to suit a range of purposes.,https://bohnerdyldohvx.com/,https://gateway.pinata.cloud/ipfs/QmVbkmsnie44NUMFzhamLcDKTFAzVbPafYGLna65KfKCHK
+KT1ACFCHun5GvukxDQq3KpMPXLr9QgnqvFvd_0,HSK,2,FA2,f,KT19HJTgEqnmi1cYyq8z2WFtyNTECodfixmj,HSK,Husky (HSK),,https://i.ibb.co/M2fxvDC/unnamed.jpg
+KT1V5yCUQ73nUjrbk82ALcrGNdRFNk3k2tvX_0,PKA,3,FA2,t,KT1BAPAVXMuYz63HrF9CGM9Gu8JVYTFpYqao,Paprika,,,https://ipfs.io/ipfs/QmVAgWXYepnwEefk8jn4mFZkwvZZ7pTPCPELKgkRkZgk9i
+KT1Soa1U1fYRQEgg9No3Xvqxuv46kUZFFdJ6_0,RITA,6,FA2,f,KT1L98jqwZtKUZbcPNxb3pTY7b2WXUGEzn8G,RITA,,,https://static.thenounproject.com/png/72946-200.png
+KT18jLqWNnbYeA2593macdnbc6tkaaudH5fh_0,CUU,2,FA2,f,KT1W1hafYEzQkQLXyRPTxMeG3UaoUSsW7wNR,CUU,Chihuahua  (CUU),,https://i.ibb.co/F0sggDd/YPoYZuS.jpg
+KT1AhSVv4Se1j3Hf5Y6a56vBV44zNzjP91D2_0,BAN,2,FA2,f,KT1Sd8jvepChHEHo63owNfjnqgzJEkUWSj9q,Banana,There is always money at the banana stand.,,https://cloudflare-ipfs.com/ipfs/Qmaavk5fDP4g5e24R1KAntngK5Xo6Loj4cBu7KuYpqb6QW
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_19,wWBTC,8,FA2,t,KT1DksKXvCBJN7Mw6frGj6y6F3CbABWZVpj1,Wrapped WBTC,,,https://ipfs.io/ipfs/Qmdj6n9T48LDWex8NkBMKUQJfZgardxZVdtRRibYQVzLCJ
+KT1J4m9nxZQSKDwRNahAL1fziuwW9o5hb8Tb_0,Bezos,0,FA2,t,KT1ETAtdv2PTvXwbGGsWWjnswfagdUc77hiP,Bezos,Tezos till we Bezos,,https://cloudflare-ipfs.com/ipfs/QmfEbirSA7indrEzjFAtJ589oChBFrqLio9kwpJwR4ttHx
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_18,wAAVE,18,FA2,t,KT1T4pfr6NL8dUiz8ibesjEvH2Ne3k6AuXgn,Wrapped USDT,,,https://ipfs.io/ipfs/QmVbiHa37pe2U9FfXBYfvrLNpb38rbXwaN19HwZD2speFA
+KT1WHhATGLXFyhmZcK9k7NWo8nw53nDiBzWQ,FEM,0,FA1.2,t,KT1LtDLC8HYRi2E9vyb41AoYcmxT7N2QmpM7,Fuck Elon Musk,,,https://ipfs.io/ipfs/QmYFBpm7Pd49whTGhMZLh7Kkob6CfF2TP6EeLFBN2tePqG
+KT1GMM54j7d8chfEitzUNJ2rrsA9Rs1zGBmK_0,GHST,6,FA2,t,KT1X6MJFtzypK6yuMXzg4KQ9FJAccH8PazKz,GHOSTChain,Ghost token is a community meme token created in memory of all the unbelievers in Tezos. Use at own risk.,,https://ipfs.io/ipfs/QmNo5dyUEzJsVRYaqRHLsPq8K1JzJ6TcZvPQzyAvZ71Nit?filename=ghostlogo.PNG
+KT1G1cCRNBgQ48mVDjopHjEmTN5Sbtar8nn9,HEH,6,FA1.2,t,KT1BgezWwHBxA9NrczwK9x3zfgFnUkc7JJ4b,Hedgehoge,,,https://ipfs.io/ipfs/QmXL3FZ5kcwXC8mdwkS1iCHS2qVoyg69ugBhU2ap8z1zcs
+KT1Qf46j2x37sAN4t2MKRQRVt9gc4FZ5duMs_0,sVote,0,FA2,f,KT1VcUfNTWM8565RNLnwzmJRVHUNbZBKUtcj,sDAO Vote,,https://salsadao.xyz,https://cloudflare-ipfs.com/ipfs/QmQra8QK4zdE3vC7NZ5yyNsa7kP9Zjw3eMDiWoTBzAS9n3
+KT1TxyzQh7AqVHjjnPAAakuBwiCaWvVLp2pT_0,TACOS,2,FA2,t,KT1ERtmznJQj4JpX7q6dN3JLJXaDTnZkD7e4,Tacos,The original taco.,,https://ipfs.io/ipfs/QmRTWJ57ytvM4USQRtUC1ujXAncMJNUrUAMsFqjEKhKmcb/
+KT1JS6RrhJSbJhuYTdpUr8RA577gGrkbLj7E_0,RVN,18,FA2,t,KT1U21k5fMPxeZwj7ogASXyAwUHVT89U9X2S,Raven,"Ravens black
+On wings of night,
+Nine worlds circled
+In their flight,
+
+One-eyed Father
+Hears their call,
+Tidings brought
+To Asgard's hall.
+
+Thought as fast
+As lightning's flash,
+Memory old
+As sacred Ash,
+
+Huginn and Muninn
+See and hear,
+Whisper all
+In Odin's ear...
+",,https://imgpile.com/images/NnJ082.png
+KT1Gf5JGXC1M8GMji58pKraXiRLkzW2NRK1s_0,TOKENS,2,FA2,t,KT1ANEFHasacTTZxGPmQmZo7spj5YuLE6TL4,Tokens,,,https://user-images.githubusercontent.com/576184/118975372-3e72fc00-b974-11eb-9fa8-f0e86f4b1e31.png
+KT1AyVdjSZffJtiMkdwwztEK7ePVyTogzogr_0,ptai,4,FA2,t,KT1TtpMxWwAR41b8f8k4ujqjd8YoWvYDR5tN,Painters.ai,Utility token for Painters.ai,http://painters.ai,http://painters.ai/ptai.png
+KT1Vbrnm5HHc1j6ePoxJWyY92cxgVLkMUi9Y_0,HUNC,2,FA2,t,KT1Ji39TrkVBd6L2SL7H4u9yvA1sPuSygthq,HUNC,The official token of the HUNCs,,https://i.imgur.com/dcErUZK.png
+KT1GRSvLoikDsXujKgZPsGLX8k8VvR2Tq95b,PLENTY,18,FA1.2,t,KT1X1LgNkQShpF9nRLYw3Dgdy4qp38MX617z,Plenty DAO,,,https://raw.githubusercontent.com/Plenty-DeFi/Plenty-Logo/main/PlentyTokenIcon.png
+KT1JWJSB6wkAEm3TGk9WUFHWNstBTKvuXsMC_0,MIL,2,FA2,t,KT1LZqFas2GEUe5z5CFkL9Wqq6tZFzQbopm8,VETHELP,The first Tezos Token supporting all U.S. Military Veterans and their families,,https://ipfs.io/ipfs/QmUpnopKukCaZs38X9hFR3GxjsVk6Jecu7zuhACWU5KqN2
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_2,wCEL,4,FA2,t,KT1KuV43iebbbrkBMGov2QMgAbsnAksx6ncW,Wrapped CEL,,,https://ipfs.io/ipfs/QmfNuyU3V6XeS9PgVXMDq4h5ux1VciUXtApP2ZGC4VSGLd
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_8,wHUSD,8,FA2,t,KT1AN7BBmeSUN5eDDQLEhWmXv1gn4exc5k8R,Wrapped HUSD,,,https://ipfs.io/ipfs/QmT9bozupnmWjmjnXp8KcZqDY9HYLLr5KgojfxqgoWRgCt
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_13,wOKB,18,FA2,t,KT1NQyNPXmjYktNBDhYkBKyTGYcJSkNbYXuh,Wrapped OKB,,,https://ipfs.io/ipfs/QmPpmuLw4i9qJLMmGjXrGxrcPBwTiNZgLGuh7kYXeyTdyA
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_16,wUNI,18,FA2,t,KT1Ti3nJT85vNn81Dy5VyNzgufkAorUoZ96q,Wrapped UNI,,,https://ipfs.io/ipfs/QmQBezdVvotCGnFHgQNKduLdxEJhfgruSEqtwnWY7mESb2
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_12,wMKR,18,FA2,t,KT1MaefGJRtu57DiVhQNEjYgTYok3X71iEDj,Wrapped MKR,,,https://ipfs.io/ipfs/QmPTob6YP9waErN4gMXqHg6ZyazSFB9CEojot4BB2XPpZJ
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_3,wCOMP,18,FA2,t,KT1DA8NH6UqCiSZhEg5KboxosMqLghwwvmTe,Wrapped COMP,,,https://ipfs.io/ipfs/QmYy2jUUE69W5eE9uwh4x5LqUxHt3GVy8sjXHhpViqCspG
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_4,wCRO,8,FA2,t,KT1GSjkSg6MFmEMnTJSk6uyYpWXaEYFahrS4,Wrapped CRO,,,https://ipfs.io/ipfs/QmUuhxgCm2EXwddpU8ofBBh9z1qzxf2BJRbxxR1ebYr8Hd
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_6,wFTT,18,FA2,t,KT1SzCtZYesqXt57qHymr3Hj37zPQT47JN6x,Wrapped FTT,,,https://ipfs.io/ipfs/QmVBjgrJiUynv72MR6rRyUu1WLKX52bWGiKk7H2CaFDRNW
+KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ_7,wHT,18,FA2,t,KT1GsTjbWkTgtsWenM6oWuTuft3Qb46p2x4c,Wrapped HT,,,https://ipfs.io/ipfs/Qmayt4JbYTkQinNUeVGLhp51LTRMD1273HRgo9p96SoQaM
+KT1BRXzrMA8qHp9RkZmftV1YLCTdNrEXXBvu_0,BISA,3,FA2,f,KT1MrzcYWmMbPf3ftyKKH5RaMUVhQSXpZXjP,BISA,,,BISA
+KT1N77LZAWvhEpMnq8rLhA3vpNcbXGsGqBpW_0,DJKHALED,3,FA2,t,KT1WnUVk9Z1Ua2UEHEraNRw48LYkmPvHbJwG,Another One,"This token is dedicated to DJ Khaled & his famous wise words ""Another One"". It's basically another meme token with a max. supply of 1.111.111 & a circulating supply of 1.000.000. But don't worry, we have the best plan ever. 111.111 tokens will be reserved for DJ Khaled only. Once this token gets more awareness in the community, we will all contact him & convince him to get a Tezos Wallet. Then we send him his tokens and he will shill Tezos & our Token, afterwards it's a one-way ticket to moon. We smart, we the best, we win win win no matter what.",,https://gifimage.net/wp-content/uploads/2017/09/another-one-dj-khaled-gif.gif
+KT194SeMyG2Esh79sjTQjEBJuGeJmTbUn1gP_0,FuADA,6,FA2,t,KT1DxE2SLAVXWfbzAKHtKzdf4cvCSQtdVwUT,FU ADA,Meme coin with nothing to back it up. Just like the real thing!,,https://static.thenounproject.com/png/197746-200.png
+KT1SrgAVEF2jce4c2p1JAykWSGGzRgDwqmuL_0,TQLA,8,FA2,t,KT1SKEp4kiJSSfKG6FJiRV3ckympSuLhfCH6,Tequila,"Tequila token, buy a few shots and pass them around. :-)",,https://cryptocurrencytoday.net/images/TQLA-logo350x350.png

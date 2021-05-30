@@ -7,30 +7,36 @@ namespace PezosSandbox\Application\Tokens;
 final class Token
 {
     private string $address;
+    private string $addressQuipuswap;
     private string $kind;
+    private int $decimals;
     private string $symbol;
     private string $name;
-    private int $decimals;
-    private string $addressQuipuswap;
+    private string $description;
+    private string $homepage;
     private string $thumbnailUri;
     private bool $active;
 
     public function __construct(
         string $address,
+        string $addressQuipuswap,
         string $kind,
+        int $decimals,
         string $symbol,
         string $name,
-        int $decimals,
-        string $addressQuipuswap,
+        string $description,
+        string $homepage,
         string $thumbnailUri,
         bool $active
     ) {
         $this->address          = $address;
+        $this->addressQuipuswap = $addressQuipuswap;
         $this->kind             = $kind;
+        $this->decimals         = $decimals;
         $this->symbol           = $symbol;
         $this->name             = $name;
-        $this->decimals         = $decimals;
-        $this->addressQuipuswap = $addressQuipuswap;
+        $this->description      = $description;
+        $this->homepage         = $homepage;
         $this->thumbnailUri     = $thumbnailUri;
         $this->active           = $active;
     }
@@ -73,5 +79,15 @@ final class Token
     public function active(): bool
     {
         return $this->active;
+    }
+
+    public function description(): string
+    {
+        return $this->description;
+    }
+
+    public function homepage(): string
+    {
+        return $this->homepage;
     }
 }

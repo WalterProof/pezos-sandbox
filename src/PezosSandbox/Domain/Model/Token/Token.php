@@ -26,6 +26,8 @@ final class Token implements Aggregate, SpecifiesSchema
     private int $decimals;
     private ?string $addressQuipuswap;
     private ?string $thumbnailUri;
+    private ?string $description;
+    private ?string $homepage;
     private bool $active = true;
 
     public function address(): Address
@@ -81,22 +83,26 @@ final class Token implements Aggregate, SpecifiesSchema
 
     public static function createToken(
         Address $address,
+        ?string $addressQuipuswap,
         string $kind,
+        int $decimals,
         string $symbol,
         string $name,
-        int $decimals,
-        ?string $addressQuipuswap,
+        string $description,
+        string $homepage,
         ?string $thumbnailUri = null,
         bool $active = true
     ): self {
         $token = new self();
 
         $token->address          = $address;
+        $token->addressQuipuswap = $addressQuipuswap;
         $token->kind             = $kind;
+        $token->decimals         = $decimals;
         $token->symbol           = $symbol;
         $token->name             = $name;
-        $token->decimals         = $decimals;
-        $token->addressQuipuswap = $addressQuipuswap;
+        $token->description      = $description;
+        $token->homepage         = $homepage;
         $token->thumbnailUri     = $thumbnailUri;
         $token->active           = $active;
 

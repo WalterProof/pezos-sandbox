@@ -66,11 +66,15 @@ class Application implements ApplicationInterface
         } catch (CouldNotFindToken $exception) {
             $token = Token::createToken(
                 $command->address(),
+                $command->addressQuipuswap(),
                 $command->kind(),
+                $command->decimals(),
                 $command->symbol(),
                 $command->name(),
-                $command->decimals(),
-                $command->addressQuipuswap(),
+                $command->description(),
+                $command->homepage(),
+                $command->thumbnailUri(),
+                $command->active()
             );
 
             $this->tokenRepository->save($token);

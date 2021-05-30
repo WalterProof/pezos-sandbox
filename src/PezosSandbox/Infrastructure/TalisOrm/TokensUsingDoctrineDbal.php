@@ -9,6 +9,7 @@ use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Token\Address;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Infrastructure\Doctrine\Connection;
+use PezosSandbox\Infrastructure\Doctrine\NoResult;
 use PezosSandbox\Infrastructure\Mapping;
 
 final class TokensUsingDoctrineDbal implements Tokens
@@ -54,11 +55,13 @@ final class TokensUsingDoctrineDbal implements Tokens
         return array_map(
             fn (array $record): Token => new Token(
                 self::asString($record, 'address'),
+                self::asString($record, 'address_quipuswap'),
                 self::asString($record, 'kind'),
+                self::asInt($record, 'decimals'),
                 self::asString($record, 'symbol'),
                 self::asString($record, 'name'),
-                self::asInt($record, 'decimals'),
-                self::asString($record, 'address_quipuswap'),
+                self::asString($record, 'description'),
+                self::asString($record, 'homepage'),
                 self::asString($record, 'thumbnail_uri'),
                 self::asBool($record, 'active'),
             ),
@@ -79,11 +82,13 @@ final class TokensUsingDoctrineDbal implements Tokens
         return array_map(
             fn (array $record): Token => new Token(
                 self::asString($record, 'address'),
+                self::asString($record, 'address_quipuswap'),
                 self::asString($record, 'kind'),
+                self::asInt($record, 'decimals'),
                 self::asString($record, 'symbol'),
                 self::asString($record, 'name'),
-                self::asInt($record, 'decimals'),
-                self::asString($record, 'address_quipuswap'),
+                self::asString($record, 'description'),
+                self::asString($record, 'homepage'),
                 self::asString($record, 'thumbnail_uri'),
                 self::asBool($record, 'active'),
             ),
@@ -98,11 +103,13 @@ final class TokensUsingDoctrineDbal implements Tokens
     {
         return new Token(
             self::asString($data, 'address'),
+            self::asString($data, 'address_quipuswap'),
             self::asString($data, 'kind'),
+            self::asInt($data, 'decimals'),
             self::asString($data, 'symbol'),
             self::asString($data, 'name'),
-            self::asInt($data, 'decimals'),
-            self::asString($data, 'address_quipuswap'),
+            self::asString($data, 'description'),
+            self::asString($data, 'homepage'),
             self::asString($data, 'thumbnail_uri'),
             self::asBool($data, 'active'),
         );
