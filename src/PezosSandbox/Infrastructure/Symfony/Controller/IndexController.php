@@ -216,7 +216,7 @@ final class IndexController extends AbstractController
             $cached
                 ->set($data)
                 ->expiresAfter(
-                    \DateInterval::createFromDateString('30000 seconds'),
+                    \DateInterval::createFromDateString('300 seconds'),
                 );
             $this->cache->save($cached);
         }
