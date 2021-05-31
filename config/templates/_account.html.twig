@@ -11,7 +11,7 @@
             </a> | <a href="{{ path('index') }}">home</a> | <a href="{{ path('app_token_list') }}">tokens
                 admin</a>
         {% else %}
-            You are not authenticated, <button data-action="wallet#login">
+            <button data-action="wallet#login" class="btn btn-primary">
                 login (tz1)
             </button>
             {{ form(loginForm) }}

@@ -2,12 +2,12 @@
 @tailwind components;
 
 body {
-    @apply text-sm;
+    @apply font-mono text-sm;
 }
 
 /* Sticky footer */
 .g-Page {
-    @apply flex flex-col h-screen bg-blue-50;
+    @apply flex flex-col h-screen bg-gray-100;
 }
 
 .g-MainContent {
@@ -15,12 +15,16 @@ body {
 }
 
 .g-Header {
-    @apply flex my-4;
+    @apply flex flex-row my-8;
+}
+
+.g-Header > div {
+    @apply flex flex-col justify-center;
 }
 
 /* Footer */
 footer {
-    @apply bg-blue-100;
+    @apply bg-gray-200;
 }
 
 .g-Footer {
@@ -31,7 +35,7 @@ footer {
     }
 }
 .g-Footer a {
-    @apply ml-auto;
+    @apply float-right ml-auto;
 }
 
 .g-ErrorMessage {
@@ -39,7 +43,7 @@ footer {
 }
 
 h1 {
-    @apply text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500;
+    @apply flex-grow font-extrabold;
 }
 
 h3 {
@@ -49,11 +53,53 @@ h3 {
 .btn {
     @apply px-4 py-2 font-bold rounded;
 }
-.btn-blue {
-    @apply text-white bg-blue-500;
+.btn-small {
+    @apply px-1 py-1 font-bold rounded;
 }
-.btn-blue:hover {
-    @apply bg-blue-700;
+
+.btn-primary {
+    @apply text-white bg-gray-400;
+}
+.btn-primary:hover {
+    @apply bg-gray-300;
+}
+.btn-buy {
+    @apply text-white bg-green-400;
+}
+.btn-buy:hover {
+    @apply bg-green-300;
+}
+.btn-sell {
+    @apply text-white bg-red-400;
+}
+.btn-sell:hover {
+    @apply bg-red-300;
+}
+
+/* Index */
+.i-Banner {
+    @apply flex;
+}
+.i-Banner div {
+    @apply self-center p-3 mr-3;
+}
+.i-Banner div:nth-child(1),
+.i-Banner div:nth-child(2) {
+    @apply flex-grow bg-gray-50;
+}
+
+.i-Dashboard {
+    @apply flex flex-col my-8;
+}
+.i-Dashboard form div {
+    @apply flex-grow;
+}
+
+.i-Token {
+    @apply flex flex-row my-8;
+}
+.i-Chart {
+    @apply my-8;
 }
 
 @tailwind utilities;
