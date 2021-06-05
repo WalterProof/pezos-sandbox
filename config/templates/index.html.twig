@@ -5,6 +5,11 @@
 
 {% extends 'base.html.twig' %}
 
+{% block meta %}
+    <meta http-equiv="refresh"
+        content="60;URL=/?address={{ selectedToken.address }}" />
+{% endblock %}
+
 {% block body %}
     <div class="i-Banner">
         <div>

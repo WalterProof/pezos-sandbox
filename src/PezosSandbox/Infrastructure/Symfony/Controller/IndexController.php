@@ -69,7 +69,6 @@ final class IndexController extends AbstractController
             'labels'   => array_keys($data),
             'datasets' => [
                 [
-                    /* 'backgroundColor' => 'rgb(255, 99, 132)', */
                     'borderColor' => 'rgb(51, 51, 51)',
                     'borderWidth' => 1,
                     'data'        => array_values($data),
@@ -129,7 +128,7 @@ final class IndexController extends AbstractController
             $cached
                 ->set($data)
                 ->expiresAfter(
-                    \DateInterval::createFromDateString('1500 seconds'),
+                    \DateInterval::createFromDateString('60 seconds'),
                 );
             $this->cache->save($cached);
         }
@@ -164,14 +163,15 @@ final class IndexController extends AbstractController
 
     private function getPoolData(Token $token)
     {
-        $key    = sprintf('price_dynamics_%s', $token->symbol());
-        $cached = $this->cache->getItem($key);
+        $cached       = $this->cache->getItem(sprintf('price_dynamics_%s', $token->symbol()));
+        $cachedbackup = $this->cache->getItem(sprintf('price_dynamics_backup_%s', $token->symbol()));
+        $cachedLastId = $this->cache->getItem(sprintf('last_id_%s', $token->symbol()));
+        $lastId       = $cachedLastId->isHit() ? $cachedLastId->get() : 0;
 
         if (!$cached->isHit()) {
-            $lastId = 0;
             $limit  = 1000;
 
-            $data = [];
+            $data = $cachedbackup->isHit() ? array_reverse($cachedbackup->get()) : [];
 
             do {
                 $storage = $this->apiInstance->contractsGetStorageHistory(
@@ -208,7 +208,7 @@ final class IndexController extends AbstractController
                     ),
                 );
 
-                $lastId = end($storage)->getId();
+                $lastId = \count($storage) > 0 ? end($storage)->getId() : $lastId;
             } while (\count($storage) === $limit);
 
             $data = array_reverse($data);
@@ -216,9 +216,14 @@ final class IndexController extends AbstractController
             $cached
                 ->set($data)
                 ->expiresAfter(
-                    \DateInterval::createFromDateString('300 seconds'),
+                    \DateInterval::createFromDateString('60 seconds'),
                 );
+            $cachedbackup->set($data);
+            $cachedLastId->set($lastId);
+
             $this->cache->save($cached);
+            $this->cache->save($cachedLastId);
+            $this->cache->save($cachedbackup);
         }
 
         return $cached->get();
