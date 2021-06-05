@@ -29,8 +29,8 @@ final class Token implements Aggregate, SpecifiesSchema
     private ?string $description;
     private ?string $homepage;
     private ?array $social;
-    private bool $active = true;
-    private ?int $supplyAdjustment;
+    private bool $active           = true;
+    private ?int $supplyAdjustment = null;
 
     public function address(): Address
     {
@@ -114,6 +114,11 @@ final class Token implements Aggregate, SpecifiesSchema
         $token->active           = $active;
 
         return $token;
+    }
+
+    public function toggleActive(): void
+    {
+        $this->active = !$this->active;
     }
 
     public function update(

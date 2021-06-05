@@ -64,15 +64,30 @@
                                     {% set checked = '' %}
                                 {% endif %}
                                 <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                    <input type="checkbox"
-                                        name="toggle-{{ token.symbol }}"
-                                        id="toggle-{{ token.symbol }}"
-                                        {{ checked }}
-                                        class="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer toggle-checkbox" />
-                                    <label for="toggle-{{ token.symbol }}"
-                                        class="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer toggle-label">
+                                    {% set formId = 'toggle-' ~ token.symbol %}
+                                    <form id="{{ formId }}"
+                                        action="{{
+                                        path(
+                                            'app_token_toggle',
+                                            {
+                                                address: token.address
+                                            }
+                                        )
+                                        }}"
+                                        method="post">
+                                        <input type="checkbox"
+                                            name="toggle-{{ token.symbol }}"
+                                            id="toggle-{{ token.symbol }}"
+                                            {{ checked }}
+                                            class="absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer toggle-checkbox"
+                                            onclick="document.getElementById('{{
+                                            formId
+                                            }}').submit();" />
+                                        <label for="toggle-{{ token.symbol }}"
+                                            class="block h-6 overflow-hidden bg-gray-300 rounded-full cursor-pointer toggle-label">
 
-                                    </label>
+                                        </label>
+                                    </form>
                                 </div>
                             </td>
                             <td class="px-4 py-3">

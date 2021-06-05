@@ -13,6 +13,7 @@ use PezosSandbox\Infrastructure\Symfony\Form\AddTokenForm;
 use PezosSandbox\Infrastructure\Symfony\Form\EditTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -148,7 +149,8 @@ final class TokenController extends AbstractController
     public function toggleActive(Request $request): Response
     {
         $address   = $request->attributes->get('address');
-        $token     = $this->application->getOneTokenByAddress($address);
-        $this->application->toggleToken();
+        $this->application->toggleToken($address);
+
+        return new RedirectResponse('/tokens');
     }
 }

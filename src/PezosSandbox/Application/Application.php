@@ -82,6 +82,13 @@ class Application implements ApplicationInterface
         }
     }
 
+    public function toggleToken(string $address): void
+    {
+        $token = $this->tokenRepository->getByAddress(TokenAddress::fromString($address));
+        $token->toggleActive();
+        $this->tokenRepository->save($token);
+    }
+
     public function updateToken(UpdateToken $command): void
     {
         $token = $this->tokenRepository->getByAddress($command->address());
