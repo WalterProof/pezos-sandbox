@@ -70,6 +70,7 @@ final class TokenController extends AbstractController
                     $token['name'],
                     $token['description'],
                     $token['homepage'],
+                    json_decode($token['social'], true),
                     $token['thumbnailUri'],
                     $token['active'],
                 );
