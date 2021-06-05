@@ -17,6 +17,7 @@ final class Token
     private string $thumbnailUri;
     private bool $active;
     private array $social;
+    private ?int $supplyAdjustment;
 
     public function __construct(
         string $address,
@@ -29,7 +30,8 @@ final class Token
         string $homepage,
         string $thumbnailUri,
         bool $active,
-        array $social
+        array $social,
+        ?int $supplyAdjustment
     ) {
         $this->address          = $address;
         $this->addressQuipuswap = $addressQuipuswap;
@@ -42,6 +44,7 @@ final class Token
         $this->thumbnailUri     = $thumbnailUri;
         $this->active           = $active;
         $this->social           = $social;
+        $this->supplyAdjustment = $supplyAdjustment;
     }
 
     public function address(): string
@@ -97,5 +100,10 @@ final class Token
     public function social(): array
     {
         return $this->social;
+    }
+
+    public function supplyAdjustment(): ?int
+    {
+        return $this->supplyAdjustment;
     }
 }

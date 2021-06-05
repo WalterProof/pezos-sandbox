@@ -65,6 +65,7 @@ final class TokensUsingDoctrineDbal implements Tokens
                 self::asString($record, 'thumbnail_uri'),
                 self::asBool($record, 'active'),
                 self::AsArray($record, 'social'),
+                self::asIntOrNull($record, 'supply_adjustment')
             ),
             $records,
         );
@@ -93,6 +94,7 @@ final class TokensUsingDoctrineDbal implements Tokens
                 self::asString($record, 'thumbnail_uri'),
                 self::asBool($record, 'active'),
                 self::AsArray($record, 'social'),
+                self::asIntOrNull($record, 'supply_adjustment')
             ),
             $records,
         );
@@ -115,6 +117,7 @@ final class TokensUsingDoctrineDbal implements Tokens
             self::asString($data, 'thumbnail_uri'),
             self::asBool($data, 'active'),
             self::AsArray($data, 'social'),
+            self::asIntOrNull($data, 'supply_adjustment')
         );
     }
 }

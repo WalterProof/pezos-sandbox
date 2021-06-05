@@ -30,6 +30,7 @@ final class Token implements Aggregate, SpecifiesSchema
     private ?string $homepage;
     private ?array $social;
     private bool $active = true;
+    private ?int $supplyAdjustment;
 
     public function address(): Address
     {
@@ -119,6 +120,7 @@ final class Token implements Aggregate, SpecifiesSchema
         string $addressQuipuswap,
         string $kind,
         int $decimals,
+        ?int $supplyAdjustment,
         string $symbol,
         string $name,
         ?string $description = null,
@@ -132,6 +134,7 @@ final class Token implements Aggregate, SpecifiesSchema
         $this->decimals         = $decimals;
         $this->symbol           = $symbol;
         $this->name             = $name;
+        $this->supplyAdjustment = $supplyAdjustment;
         $this->description      = $description;
         $this->homepage         = $homepage;
         $this->social           = $social;
@@ -156,6 +159,7 @@ final class Token implements Aggregate, SpecifiesSchema
             'decimals'          => $this->decimals,
             'thumbnail_uri'     => $this->thumbnailUri,
             'active'            => (int) $this->active,
+            'supply_adjustment' => $this->supplyAdjustment,
         ];
     }
 
@@ -204,5 +208,6 @@ final class Token implements Aggregate, SpecifiesSchema
             ->addColumn('active', 'boolean')
             ->setNotnull(true)
             ->setDefault(true);
+        $table->addColumn('supply_adjustment', 'bigint')->setNotnull(false);
     }
 }

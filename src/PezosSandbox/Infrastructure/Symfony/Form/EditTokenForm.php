@@ -20,7 +20,7 @@ final class EditTokenForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('address_quipuswap', TextType::class, [
+            ->add('addressQuipuswap', TextType::class, [
                 'constraints' => [new NotBlank()],
             ])
             ->add('symbol', TextType::class, [
@@ -32,6 +32,7 @@ final class EditTokenForm extends AbstractType
             ->add('decimals', IntegerType::class, [
                 'constraints' => [new NotBlank()],
             ])
+            ->add('supplyAdjustment', IntegerType::class)
             ->add('kind', ChoiceType::class, ['choices'=>['FA1.2' => 'FA1.2', 'FA2' => 'FA2']])
             ->add('homepage', TextType::class)
             ->add('description', TextareaType::class)

@@ -61,9 +61,10 @@ final class TokenController extends AbstractController
             try {
                 $addToken = new AddToken(
                     $formData['address'],
-                    $token['address_quipuswap'],
+                    $token['addressQuipuswap'],
                     $token['kind'],
                     \intval($token['decimals']),
+                    $token['supplyAdjustment'],
                     $token['symbol'],
                     $token['name'],
                     $token['description'],
@@ -94,7 +95,7 @@ final class TokenController extends AbstractController
         $token     = $this->application->getOneTokenByAddress($address);
         $tokenForm = $this->createForm(EditTokenForm::class, [
             'address'           => $token->address(),
-            'address_quipuswap' => $token->addressQuipuswap(),
+            'addressQuipuswap'  => $token->addressQuipuswap(),
             'symbol'            => $token->symbol(),
             'kind'              => $token->kind(),
             'name'              => $token->name(),
@@ -103,6 +104,7 @@ final class TokenController extends AbstractController
             'homepage'          => $token->homepage(),
             'thumbnailUri'      => $token->thumbnailUri(),
             'decimals'          => $token->decimals(),
+            'supplyAdjustment'  => $token->supplyAdjustment(),
             'active'            => $token->active(),
         ]);
         $tokenForm->handleRequest($request);
@@ -113,9 +115,10 @@ final class TokenController extends AbstractController
             try {
                 $updateToken = new UpdateToken(
                     $address,
-                    $formData['address_quipuswap'],
+                    $formData['addressQuipuswap'],
                     $formData['kind'],
                     \intval($formData['decimals']),
+                    $formData['supplyAdjustment'],
                     $formData['symbol'],
                     $formData['name'],
                     $formData['description'],
@@ -137,5 +140,15 @@ final class TokenController extends AbstractController
             'tokenForm' => $tokenForm->createView(),
             'address'   => $address,
         ]);
+    }
+
+    /**
+     * @Route("/tokens/toggle/{address}", name="app_token_toggle", methods={"POST"})
+     */
+    public function toggleActive(Request $request): Response
+    {
+        $address   = $request->attributes->get('address');
+        $token     = $this->application->getOneTokenByAddress($address);
+        $this->application->toggleToken();
     }
 }

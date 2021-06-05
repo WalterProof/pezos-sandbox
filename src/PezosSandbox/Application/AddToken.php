@@ -12,6 +12,7 @@ final class AddToken
     private string $addressQuipuswap;
     private string $kind;
     private int $decimals;
+    private ?int $supplyAdjustment;
     private string $symbol;
     private string $name;
     private ?string $description;
@@ -25,6 +26,7 @@ final class AddToken
         string $addressQuipuswap,
         string $kind,
         int $decimals,
+        ?int $supplyAdjustment,
         string $symbol,
         string $name,
         ?string $description = null,
@@ -37,6 +39,7 @@ final class AddToken
         $this->addressQuipuswap = $addressQuipuswap;
         $this->kind             = $kind;
         $this->decimals         = $decimals;
+        $this->supplyAdjustment = $supplyAdjustment;
         $this->symbol           = $symbol;
         $this->name             = $name;
         $this->description      = $description;
@@ -99,5 +102,10 @@ final class AddToken
     public function active(): bool
     {
         return $this->active;
+    }
+
+    public function supplyAdjustment(): ?int
+    {
+        return $this->supplyAdjustment;
     }
 }

@@ -125,6 +125,11 @@ final class IndexController extends AbstractController
                     ? $totalSupply / 10 ** $token->decimals()
                     : null,
             ];
+
+            if (null !== $token->supplyAdjustment()) {
+                $data['total_supply'] += $token->supplyAdjustment();
+            }
+
             $cached
                 ->set($data)
                 ->expiresAfter(

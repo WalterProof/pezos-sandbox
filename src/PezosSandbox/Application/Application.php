@@ -89,6 +89,7 @@ class Application implements ApplicationInterface
                 $command->addressQuipuswap(),
                 $command->kind(),
                 $command->decimals(),
+                $command->supplyAdjustment(),
                 $command->symbol(),
                 $command->name(),
                 $command->description(),
