@@ -93,6 +93,7 @@ class Application implements ApplicationInterface
                 $command->name(),
                 $command->description(),
                 $command->homepage(),
+                $command->social(),
                 $command->thumbnailUri(),
                 $command->active()
         );

@@ -119,8 +119,8 @@ final class TokenController extends AbstractController
                     $formData['symbol'],
                     $formData['name'],
                     $formData['description'],
-                    $formData['social'],
                     $formData['homepage'],
+                    json_decode($formData['social'], true),
                     $formData['thumbnailUri'],
                     $formData['active'],
                 );

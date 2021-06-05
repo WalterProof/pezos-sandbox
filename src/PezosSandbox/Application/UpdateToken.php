@@ -28,6 +28,7 @@ final class UpdateToken
         string $name,
         ?string $description = null,
         ?string $homepage = null,
+        ?array $social = null,
         ?string $thumbnailUri = null,
         bool $active = true
     ) {
@@ -39,6 +40,7 @@ final class UpdateToken
         $this->name             = $name;
         $this->description      = $description;
         $this->homepage         = $homepage;
+        $this->social           = $social;
         $this->thumbnailUri     = $thumbnailUri;
         $this->active           = $active;
     }
@@ -91,5 +93,10 @@ final class UpdateToken
     public function active(): bool
     {
         return $this->active;
+    }
+
+    public function social(): ?array
+    {
+        return $this->social;
     }
 }

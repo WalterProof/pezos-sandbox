@@ -123,6 +123,7 @@ final class Token implements Aggregate, SpecifiesSchema
         string $name,
         ?string $description = null,
         ?string $homepage = null,
+        ?array $social = null,
         ?string $thumbnailUri = null,
         bool $active
     ) {
@@ -133,6 +134,7 @@ final class Token implements Aggregate, SpecifiesSchema
         $this->name             = $name;
         $this->description      = $description;
         $this->homepage         = $homepage;
+        $this->social           = $social;
         $this->thumbnailUri     = $thumbnailUri;
         $this->active           = $active;
     }
