@@ -73,31 +73,49 @@
 
                 <br /><br />
 
-                <div class="flex flex-row justify-evenly">
+                <div class="flex flex-row items-center justify-evenly">
+                    <a href="{{ selectedToken.homepage }}" class="underline">
+                        {{ selectedToken.homepage }}
+                    </a>
+
                     {% if selectedToken.social.twitter is defined %}
-                        <a href="{{ selectedToken.social.twitter }}">
+                        <a href="{{ selectedToken.social.twitter }}"
+                            class="ml-3">
                             {% include './svg/Twitter_Bird.svg' %}
                         </a>
                     {% endif %}
 
                     {% if selectedToken.social.telegram is defined %}
-                        <a href="{{ selectedToken.social.telegram }}">
+                        <a href="{{ selectedToken.social.telegram }}"
+                            class="ml-3">
                             {% include './svg/Telegram_2019_Logo.svg' %}
                         </a>
                     {% endif %}
 
                     {% if selectedToken.social.discord is defined %}
-                        <a href="{{ selectedToken.social.discord }}">
+                        <a href="{{ selectedToken.social.discord }}"
+                            class="ml-3">
                             {% include './svg/Discord_logo.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if selectedToken.social.instagram is defined %}
+                        <a href="{{ selectedToken.social.instagram }}"
+                            class="ml-3">
+                            {% include './svg/Instagram_logo_2016.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if selectedToken.social.github is defined %}
+                        <a href="{{ selectedToken.social.github }}"
+                            class="ml-3">
+                            {% include './svg/Octicons-mark-github.svg' %}
                         </a>
                     {% endif %}
                 </div>
 
                 <br />
-
-                <a href="{{ selectedToken.homepage }}" class="underline">
-                    {{ selectedToken.homepage }}
-                </a>
+                <br />
                 <ul>
                     {% if infos.total_supply is not null %}
                         <li>

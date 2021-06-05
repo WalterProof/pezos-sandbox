@@ -28,6 +28,7 @@ final class Token implements Aggregate, SpecifiesSchema
     private ?string $thumbnailUri;
     private ?string $description;
     private ?string $homepage;
+    private ?array $social;
     private bool $active = true;
 
     public function address(): Address
@@ -78,6 +79,7 @@ final class Token implements Aggregate, SpecifiesSchema
         );
         $instance->description = self::asString($aggregateState, 'description');
         $instance->homepage    = self::asString($aggregateState, 'homepage');
+        $instance->social      = self::asArray($aggregateState, 'social');
         $instance->active      = self::asBool($aggregateState, 'active');
 
         return $instance;
@@ -92,6 +94,7 @@ final class Token implements Aggregate, SpecifiesSchema
         string $name,
         ?string $description = null,
         ?string $homepage = null,
+        ?array $social = null,
         ?string $thumbnailUri = null,
         bool $active = true
     ): self {
@@ -105,6 +108,7 @@ final class Token implements Aggregate, SpecifiesSchema
         $token->name             = $name;
         $token->description      = $description;
         $token->homepage         = $homepage;
+        $token->social           = $social;
         $token->thumbnailUri     = $thumbnailUri;
         $token->active           = $active;
 
@@ -146,6 +150,7 @@ final class Token implements Aggregate, SpecifiesSchema
             'name'              => $this->name,
             'description'       => $this->description,
             'homepage'          => $this->homepage,
+            'social'            => json_encode($this->social),
             'decimals'          => $this->decimals,
             'thumbnail_uri'     => $this->thumbnailUri,
             'active'            => (int) $this->active,

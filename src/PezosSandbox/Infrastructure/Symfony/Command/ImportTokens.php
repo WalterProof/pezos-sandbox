@@ -45,7 +45,15 @@ final class ImportTokens extends Command
                     continue;
                 }
 
-                $data = array_combine($this->headers, $data);
+                $data   = array_combine($this->headers, $data);
+                $social = [
+                    'twitter'   => $data['twitter'],
+                    'telegram'  => $data['telegram'],
+                    'discord'   => $data['discord'],
+                    'github'    => $data['github'],
+                    'instagram' => $data['instagram'],
+                ];
+                $social = array_filter($social, fn (string $url) => !empty($url));
 
                 $addToken = new AddToken(
                     $data['address'],
@@ -56,6 +64,7 @@ final class ImportTokens extends Command
                     $data['name'],
                     $data['description'],
                     $data['homepage'],
+                    $social,
                     $data['thumbnail_uri'],
                     't' === $data['active'] ? true : false
                 );

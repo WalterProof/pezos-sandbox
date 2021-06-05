@@ -16,6 +16,7 @@ final class AddToken
     private string $name;
     private ?string $description;
     private ?string $homepage;
+    private ?array $social;
     private ?string $thumbnailUri;
     private bool $active;
 
@@ -28,6 +29,7 @@ final class AddToken
         string $name,
         ?string $description = null,
         ?string $homepage = null,
+        ?array $social = null,
         ?string $thumbnailUri = null,
         bool $active = true
     ) {
@@ -39,6 +41,7 @@ final class AddToken
         $this->name             = $name;
         $this->description      = $description;
         $this->homepage         = $homepage;
+        $this->social           = $social;
         $this->thumbnailUri     = $thumbnailUri;
         $this->active           = $active;
     }
@@ -81,6 +84,11 @@ final class AddToken
     public function homepage(): ?string
     {
         return $this->homepage;
+    }
+
+    public function social(): ?array
+    {
+        return $this->social;
     }
 
     public function thumbnailUri(): ?string
