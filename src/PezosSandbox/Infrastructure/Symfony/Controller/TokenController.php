@@ -9,8 +9,8 @@ use PezosSandbox\Application\AddToken;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\UpdateToken;
 use PezosSandbox\Domain\Model\Token\Token;
+use PezosSandbox\Infrastructure\Symfony\Form\AddTokenForm;
 use PezosSandbox\Infrastructure\Symfony\Form\EditTokenForm;
-use PezosSandbox\Infrastructure\Symfony\Form\TokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,38 +51,25 @@ final class TokenController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        $tokenForm = $this->createForm(TokenForm::class);
+        $tokenForm = $this->createForm(AddTokenForm::class);
         $tokenForm->handleRequest($request);
 
         if ($tokenForm->isSubmitted() && $tokenForm->isValid()) {
             $formData = $tokenForm->getData();
+            $token    = $formData['token'];
 
             try {
-                $dex = json_decode(
-                    $this->contractsApi
-                        ->contractsGetStorage($formData['address_quipuswap'])
-                        ->current(),
-                );
-
-                $kind = isset($dex->storage->token_id)
-                    ? Token::KIND_FA2
-                    : Token::KIND_FA1_2;
-                $address =
-                    Token::KIND_FA1_2 === $kind
-                        ? $dex->storage->token_address
-                        : sprintf(
-                            '%s_%s',
-                            $dex->storage->token_address,
-                            $dex->storage->token_id,
-                        );
-
                 $addToken = new AddToken(
-                    $address,
-                    $kind,
-                    $formData['symbol'],
-                    $formData['name'],
-                    \intval($formData['decimals']),
-                    $formData['address_quipuswap'],
+                    $formData['address'],
+                    $token['address_quipuswap'],
+                    $token['kind'],
+                    \intval($token['decimals']),
+                    $token['symbol'],
+                    $token['name'],
+                    $token['description'],
+                    $token['homepage'],
+                    $token['thumbnailUri'],
+                    $token['active'],
                 );
 
                 $this->application->addToken($addToken);
@@ -106,11 +93,15 @@ final class TokenController extends AbstractController
         $address   = $request->attributes->get('address');
         $token     = $this->application->getOneTokenByAddress($address);
         $tokenForm = $this->createForm(EditTokenForm::class, [
-            'symbol'       => $token->symbol(),
-            'name'         => $token->name(),
-            'thumbnailUri' => $token->thumbnailUri(),
-            'decimals'     => $token->decimals(),
-            'active'       => $token->active(),
+            'address'           => $token->address(),
+            'address_quipuswap' => $token->addressQuipuswap(),
+            'symbol'            => $token->symbol(),
+            'name'              => $token->name(),
+            'description'       => $token->description(),
+            'homepage'          => $token->homepage(),
+            'thumbnailUri'      => $token->thumbnailUri(),
+            'decimals'          => $token->decimals(),
+            'active'            => $token->active(),
         ]);
         $tokenForm->handleRequest($request);
 
@@ -120,11 +111,15 @@ final class TokenController extends AbstractController
             try {
                 $updateToken = new UpdateToken(
                     $address,
+                    $formData['address_quipuswap'],
+                    $formData['kind'],
+                    \intval($formData['decimals']),
                     $formData['symbol'],
                     $formData['name'],
+                    $formData['description'],
+                    $formData['homepage'],
                     $formData['thumbnailUri'],
-                    \intval($formData['decimals']),
-                    \boolval($formData['active']),
+                    $formData['active'],
                 );
 
                 $this->application->updateToken($updateToken);
@@ -137,6 +132,7 @@ final class TokenController extends AbstractController
 
         return $this->render('tokens/edit.html.twig', [
             'tokenForm' => $tokenForm->createView(),
+            'address'   => $address,
         ]);
     }
 }

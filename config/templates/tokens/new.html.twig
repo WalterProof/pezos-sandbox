@@ -1,17 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-  Membership
+    Token Form
 {% endblock %}
 
 {% block body %}
-  {{ include('_account.html.twig') }}
-
-  <hr />
-
-  <h2>
-    New Token
-  </h2>
-
-  {{ form(tokenForm) }}
+    {{ form(tokenForm) }}
 {% endblock %}

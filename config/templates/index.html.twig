@@ -45,28 +45,29 @@
         <div class="i-Token divide-x divide-gray-200">
             <div>
                 <img src="{{ selectedToken.thumbnailUri }}" class="w-32" />
-                <div class="mt-6">
+                <div class="flex flex-row mt-6 justify-evenly">
                     <a href="https://quipuswap.com/swap?from=tez&to={{
                         selectedToken.address
                         }}"
                         target="new"
-                        class="ml-3 btn-small btn-buy">
+                        class="btn-small btn-buy">
                         BUY
                     </a>
                     <a href="https://quipuswap.com/swap?from={{
                         selectedToken.address
                         }}&to=tez"
                         target="new"
-                        class="ml-3 btn-small btn-sell">
+                        class="btn-small btn-sell">
                         SELL
                     </a>
                 </div>
             </div>
             <div class="pl-6 mx-6">
                 {{ selectedToken.name }}<br />
-                {{ selectedToken.description }}
-            </div>
-            <div class="pl-6 mx-6">
+                {{ selectedToken.description }}<br />
+                <a href="{{ selectedToken.homepage }}" class="underline">
+                    {{ selectedToken.homepage }}
+                </a>
                 <ul>
                     {% if infos.total_supply is not null %}
                         <li>
@@ -100,6 +101,7 @@
                                 selectedToken.decimals
                             )
                         }}
+                        {{ selectedToken.symbol }}
                     </li>
                     <li>
                         Candles Chart: <a href="https://tzkt.io/{{ selectedToken.addressQuipuswap }}/dex" target="new" class="underline">tzkt</a>

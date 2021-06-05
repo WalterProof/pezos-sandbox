@@ -20,11 +20,11 @@ final class Token implements Aggregate, SpecifiesSchema
     const KIND_FA2   = 'FA2';
 
     private Address $address;
+    private string $addressQuipuswap;
     private string $kind;
     private string $symbol;
     private string $name;
     private int $decimals;
-    private ?string $addressQuipuswap;
     private ?string $thumbnailUri;
     private ?string $description;
     private ?string $homepage;
@@ -64,32 +64,34 @@ final class Token implements Aggregate, SpecifiesSchema
         $instance->address = Address::fromString(
             self::asString($aggregateState, 'address'),
         );
-        $instance->kind             = self::asString($aggregateState, 'kind');
-        $instance->symbol           = self::asString($aggregateState, 'symbol');
-        $instance->name             = self::asString($aggregateState, 'name');
-        $instance->decimals         = self::asInt($aggregateState, 'decimals');
         $instance->addressQuipuswap = self::asString(
             $aggregateState,
             'address_quipuswap',
         );
-        $instance->thumbnailUri = self::asString(
+        $instance->kind             = self::asString($aggregateState, 'kind');
+        $instance->symbol           = self::asString($aggregateState, 'symbol');
+        $instance->name             = self::asString($aggregateState, 'name');
+        $instance->decimals         = self::asInt($aggregateState, 'decimals');
+        $instance->thumbnailUri     = self::asString(
             $aggregateState,
             'thumbnail_uri',
         );
-        $instance->active = self::asBool($aggregateState, 'active');
+        $instance->description = self::asString($aggregateState, 'description');
+        $instance->homepage    = self::asString($aggregateState, 'homepage');
+        $instance->active      = self::asBool($aggregateState, 'active');
 
         return $instance;
     }
 
     public static function createToken(
         Address $address,
-        ?string $addressQuipuswap,
+        string $addressQuipuswap,
         string $kind,
         int $decimals,
         string $symbol,
         string $name,
-        string $description,
-        string $homepage,
+        ?string $description = null,
+        ?string $homepage = null,
         ?string $thumbnailUri = null,
         bool $active = true
     ): self {
@@ -110,17 +112,25 @@ final class Token implements Aggregate, SpecifiesSchema
     }
 
     public function update(
+        string $addressQuipuswap,
+        string $kind,
+        int $decimals,
         string $symbol,
         string $name,
-        string $thumbnailUri,
-        int $decimals,
+        ?string $description = null,
+        ?string $homepage = null,
+        ?string $thumbnailUri = null,
         bool $active
     ) {
-        $this->symbol       = $symbol;
-        $this->name         = $name;
-        $this->thumbnailUri = $thumbnailUri;
-        $this->decimals     = $decimals;
-        $this->active       = $active;
+        $this->addressQuipuswap = $addressQuipuswap;
+        $this->kind             = $kind;
+        $this->decimals         = $decimals;
+        $this->symbol           = $symbol;
+        $this->name             = $name;
+        $this->description      = $description;
+        $this->homepage         = $homepage;
+        $this->thumbnailUri     = $thumbnailUri;
+        $this->active           = $active;
     }
 
     /**
@@ -130,11 +140,13 @@ final class Token implements Aggregate, SpecifiesSchema
     {
         return [
             'address'           => $this->address->asString(),
+            'address_quipuswap' => $this->addressQuipuswap,
             'kind'              => $this->kind,
             'symbol'            => $this->symbol,
             'name'              => $this->name,
+            'description'       => $this->description,
+            'homepage'          => $this->homepage,
             'decimals'          => $this->decimals,
-            'address_quipuswap' => $this->addressQuipuswap,
             'thumbnail_uri'     => $this->thumbnailUri,
             'active'            => (int) $this->active,
         ];
@@ -178,6 +190,9 @@ final class Token implements Aggregate, SpecifiesSchema
         $table->addColumn('decimals', 'integer')->setNotnull(true);
         $table->addColumn('address_quipuswap', 'string')->setNotnull(false);
         $table->addColumn('thumbnail_uri', 'string')->setNotNull(false);
+        $table->addColumn('homepage', 'string')->setNotNull(false);
+        $table->addColumn('description', 'text')->setNotNull(false);
+        $table->addColumn('social', 'json')->setNotNull(false);
         $table
             ->addColumn('active', 'boolean')
             ->setNotnull(true)

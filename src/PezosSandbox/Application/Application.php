@@ -85,11 +85,15 @@ class Application implements ApplicationInterface
     {
         $token = $this->tokenRepository->getByAddress($command->address());
         $token->update(
-            $command->symbol(),
-            $command->name(),
-            $command->thumbnailUri(),
-            $command->decimals(),
-            $command->active(),
+                $command->addressQuipuswap(),
+                $command->kind(),
+                $command->decimals(),
+                $command->symbol(),
+                $command->name(),
+                $command->description(),
+                $command->homepage(),
+                $command->thumbnailUri(),
+                $command->active()
         );
         $this->tokenRepository->save($token);
     }

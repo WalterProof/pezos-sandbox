@@ -14,9 +14,9 @@ final class AddToken
     private int $decimals;
     private string $symbol;
     private string $name;
-    private string $description;
-    private string $homepage;
-    private string $thumbnailUri;
+    private ?string $description;
+    private ?string $homepage;
+    private ?string $thumbnailUri;
     private bool $active;
 
     public function __construct(
@@ -26,10 +26,10 @@ final class AddToken
         int $decimals,
         string $symbol,
         string $name,
-        string $description,
-        string $homepage,
-        string $thumbnailUri,
-        bool $active
+        ?string $description = null,
+        ?string $homepage = null,
+        ?string $thumbnailUri = null,
+        bool $active = true
     ) {
         $this->address          = $address;
         $this->addressQuipuswap = $addressQuipuswap;
@@ -73,17 +73,17 @@ final class AddToken
         return $this->addressQuipuswap;
     }
 
-    public function description(): string
+    public function description(): ?string
     {
         return $this->description;
     }
 
-    public function homepage(): string
+    public function homepage(): ?string
     {
         return $this->homepage;
     }
 
-    public function thumbnailUri(): string
+    public function thumbnailUri(): ?string
     {
         return $this->thumbnailUri;
     }
