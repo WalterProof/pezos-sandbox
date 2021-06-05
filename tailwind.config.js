@@ -1,5 +1,8 @@
 module.exports = {
-    purge: [],
+    purge: {
+        layers: ['components', 'utilities'],
+        content: ['./config/templates/**/*.html.twig'],
+    },
     darkMode: false, // or 'media' or 'class'
     theme: {
         container: {

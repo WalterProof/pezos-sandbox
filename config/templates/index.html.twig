@@ -69,7 +69,32 @@
             </div>
             <div class="pl-6 mx-6">
                 {{ selectedToken.name }}<br />
-                {{ selectedToken.description }}<br />
+                {{ selectedToken.description }}
+
+                <br /><br />
+
+                <div class="flex flex-row justify-evenly">
+                    {% if selectedToken.social.twitter is defined %}
+                        <a href="{{ selectedToken.social.twitter }}">
+                            {% include './svg/Twitter_Bird.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if selectedToken.social.telegram is defined %}
+                        <a href="{{ selectedToken.social.telegram }}">
+                            {% include './svg/Telegram_2019_Logo.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if selectedToken.social.discord is defined %}
+                        <a href="{{ selectedToken.social.discord }}">
+                            {% include './svg/Discord_logo.svg' %}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <br />
+
                 <a href="{{ selectedToken.homepage }}" class="underline">
                     {{ selectedToken.homepage }}
                 </a>

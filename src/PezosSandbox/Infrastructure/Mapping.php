@@ -35,6 +35,15 @@ trait Mapping
         return (string) $data[$key];
     }
 
+    private static function asArray(array $data, string $key): array
+    {
+        if (!isset($data[$key]) || null === $data[$key]) {
+            return [];
+        }
+
+        return json_decode($data[$key], true);
+    }
+
     /**
      * @param array<string,mixed|null> $data
      */

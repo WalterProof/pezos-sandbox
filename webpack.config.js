@@ -84,6 +84,7 @@ if (Encore.isProduction()) {
             paths: glob.sync([
                 path.join(__dirname, 'config/templates/**/*.html.twig'),
             ]),
+            content: ['**/*.twig'],
             defaultExtractor: (content) => {
                 return content.match(/[\w-/:]+(?<!:)/g) || [];
             },

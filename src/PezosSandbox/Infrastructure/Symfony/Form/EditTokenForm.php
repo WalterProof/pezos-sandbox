@@ -35,6 +35,7 @@ final class EditTokenForm extends AbstractType
             ->add('kind', ChoiceType::class, ['choices'=>['FA1.2' => 'FA1.2', 'FA2' => 'FA2']])
             ->add('homepage', TextType::class)
             ->add('description', TextareaType::class)
+            ->add('social', TextareaType::class)
             ->add('thumbnailUri', TextType::class)
             ->add('active', CheckboxType::class)
             ->add('submit', SubmitType::class, [
