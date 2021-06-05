@@ -29,13 +29,9 @@ footer {
 
 .g-Footer {
     @apply flex p-4;
-
-    ul a {
-        @apply underline;
-    }
 }
-.g-Footer a {
-    @apply float-right ml-auto;
+.g-Footer .socializing {
+    @apply flex flex-row items-center float-right ml-auto space-x-4;
 }
 
 .g-ErrorMessage {
