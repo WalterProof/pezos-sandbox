@@ -132,7 +132,7 @@
                         Dex Contract: <a href="https://better-call.dev/mainnet/{{ selectedToken.addressQuipuswap }}" class="underline">bcd</a>
                     </li>
                     <li>
-                        XTZ/token pool: {{
+                        Liquidity Pool: {{
                             infos.tez_pool|number_format(6)
                         }}&nbsp;ꜩ / {{
                             infos.token_pool|number_format(
@@ -142,7 +142,7 @@
                         {{ selectedToken.symbol }}
                     </li>
                     <li>
-                        token/XTZ pool: 1&nbsp;{{ selectedToken.symbol }} = {{
+                        Price/Ratio: 1&nbsp;{{ selectedToken.symbol }} = {{
                             (infos.tez_pool / infos.token_pool)|number_format(6)
                         }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
                             (infos.token_pool / infos.tez_pool)|number_format(

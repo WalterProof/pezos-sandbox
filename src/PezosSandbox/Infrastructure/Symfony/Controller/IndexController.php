@@ -148,19 +148,19 @@ final class IndexController extends AbstractController
         );
 
         if (isset($storage->totalSupply)) {
-            return $storage->totalSupply;
+            return (string) $storage->totalSupply;
         }
 
         if (isset($storage->total_supply)) {
-            return $storage->total_supply;
+            return (string) $storage->total_supply;
         }
 
         if (isset($storage->token) && isset($storage->token->totalSupply)) {
-            return $storage->token->totalSupply;
+            return (string) $storage->token->totalSupply;
         }
 
         if (isset($storage->assets) && isset($storage->assets->total_supply)) {
-            return $storage->assets->total_supply;
+            return (string) $storage->assets->total_supply;
         }
 
         return null;
