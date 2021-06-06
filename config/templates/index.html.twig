@@ -158,8 +158,27 @@
             </div>
         </div>
 
-        <div class="i-Chart">
-            {{ render_chart(chart) }}
+        <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+            <div class="flex items-center justify-center">
+                <ul class="flex items-center justify-center my-4">
+                    <li data-target="tabs.tab"
+                        class="px-4 py-2 text-gray-500 border-b-8 cursor-pointer">
+                        <a data-action="tabs#change">Prices Dynamics</a>
+                    </li>
+                    <li data-target="tabs.tab"
+                        class="px-4 py-2 text-gray-500 border-b-8 cursor-pointe">
+                        <a data-action="tabs#change">Pool Dynamics</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="" data-target="tabs.tabPanel">
+                    {{ render_chart(chart) }}
+                </div>
+                <div class="hidden" data-target="tabs.tabPanel">
+                    {{ render_chart(poolChart) }}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

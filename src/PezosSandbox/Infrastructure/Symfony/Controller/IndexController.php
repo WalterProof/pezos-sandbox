@@ -64,14 +64,17 @@ final class IndexController extends AbstractController
         $data  = $this->getPoolData($selectedToken);
         $infos = $this->getSelectedTokenInfos($selectedToken);
 
-        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $chart  = $chartBuilder->createChart(Chart::TYPE_LINE);
+
+        // Prices
+        $ratios = array_values(array_map(fn (array $d) => $d['ratio'], $data));
         $chart->setData([
             'labels'   => array_keys($data),
             'datasets' => [
                 [
                     'borderColor' => 'rgb(51, 51, 51)',
                     'borderWidth' => 1,
-                    'data'        => array_values($data),
+                    'data'        => $ratios,
                     'pointRadius' => 0,
                 ],
             ],
@@ -79,15 +82,54 @@ final class IndexController extends AbstractController
 
         $chart->setOptions([
             'scales' => [
-                'yAxes' => [['ticks' => ['min' => 0, 'max' => max($data)]]],
+                'yAxes' => [['ticks' => ['min' => 0, 'max' => max($ratios)]]],
             ],
             'legend' => ['display' => false],
+        ]);
+
+        // Pool
+        $poolChart  = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $tezPool    = array_values(array_map(fn (array $d) => $d['tez_pool'], $data));
+        $tokenPool  = array_values(array_map(fn (array $d) => $d['token_pool'], $data));
+
+        $poolChart->setData([
+            'labels'   => array_keys($data),
+            'datasets' => [
+                [
+                    'label'       => 'tez',
+                    'fill'        => false,
+                    'borderColor' => 'rgb(0, 151, 0)',
+                    'borderWidth' => 1,
+                    'data'        => $tezPool,
+                    'pointRadius' => 0,
+                    'yAxisID'     => 'tez',
+                ],
+                [
+                    'label'       => $selectedToken->symbol(),
+                    'fill'        => false,
+                    'borderColor' => 'rgb(51, 51, 51)',
+                    'borderWidth' => 1,
+                    'data'        => $tokenPool,
+                    'pointRadius' => 0,
+                    'yAxisID'     => 'token',
+                ],
+            ],
+        ]);
+
+        $poolChart->setOptions([
+            'scales' => [
+                'yAxes' => [
+                    ['id' => 'tez', 'position' => 'left', 'ticks' => ['min' => min($tezPool), 'max' => max($tezPool)]],
+                    ['id' => 'token', 'position' => 'right', 'ticks' => ['min' => min($tokenPool), 'max' => max($tokenPool)]],
+                ],
+            ],
         ]);
 
         return $this->render('index.html.twig', [
             'loginForm'     => $loginForm->createView(),
             'tokensByKind'  => $tokensByKind,
             'chart'         => $chart,
+            'poolChart'     => $poolChart,
             'tokens'        => $tokens,
             'selectedToken' => $selectedToken,
             'infos'         => $infos,
@@ -201,7 +243,11 @@ final class IndexController extends AbstractController
                             return [
                                 $record
                                     ->getTimestamp()
-                                    ->format('Y-m-d H:i:s') => $tezPool / $tokenPool,
+                                    ->format('Y-m-d H:i:s') => [
+                                        'ratio'      => $tezPool / $tokenPool,
+                                        'tez_pool'   => $tezPool,
+                                        'token_pool' => $tokenPool,
+                                    ],
                             ];
                         },
                         $storage),
