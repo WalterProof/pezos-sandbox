@@ -157,8 +157,14 @@
                 </ul>
             </div>
         </div>
-
-        <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+        <div>
+            <p class="text-right">
+                last update: {{ lastUpdate }} (UTC)
+            </p>
+        </div>
+        <div {{ stimulus_controller('tabs') }}
+            data-tabs-index="0"
+            class="clear-both">
             <div class="flex items-center justify-center">
                 <ul class="flex items-center justify-center my-4">
                     <li data-target="tabs.tab"

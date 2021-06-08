@@ -62,6 +62,7 @@ final class IndexController extends AbstractController
             $selectedAddress,
         );
         $data  = $this->getPoolData($selectedToken);
+
         $infos = $this->getSelectedTokenInfos($selectedToken);
 
         $chart  = $chartBuilder->createChart(Chart::TYPE_LINE);
@@ -91,9 +92,10 @@ final class IndexController extends AbstractController
         $poolChart  = $chartBuilder->createChart(Chart::TYPE_LINE);
         $tezPool    = array_values(array_map(fn (array $d) => $d['tez_pool'], $data));
         $tokenPool  = array_values(array_map(fn (array $d) => $d['token_pool'], $data));
+        $labels     = array_keys($data);
 
         $poolChart->setData([
-            'labels'   => array_keys($data),
+            'labels'   => $labels,
             'datasets' => [
                 [
                     'label'       => 'tez',
@@ -133,6 +135,7 @@ final class IndexController extends AbstractController
             'tokens'        => $tokens,
             'selectedToken' => $selectedToken,
             'infos'         => $infos,
+            'lastUpdate'    => end($labels),
         ]);
     }
 
@@ -210,73 +213,85 @@ final class IndexController extends AbstractController
 
     private function getPoolData(Token $token)
     {
-        $cached       = $this->cache->getItem(sprintf('price_dynamics_%s', $token->symbol()));
-        $cachedbackup = $this->cache->getItem(sprintf('price_dynamics_backup_%s', $token->symbol()));
-        $cachedLastId = $this->cache->getItem(sprintf('last_id_%s', $token->symbol()));
-        $lastId       = $cachedLastId->isHit() ? $cachedLastId->get() : 0;
+        // TODO: refacto and extract object
+        $cached = $this->cache->getItem(sprintf('price_dynamics_%s', $token->symbol()));
 
         if (!$cached->isHit()) {
-            $limit  = 1000;
+            $cachedBackup  = $this->cache->getItem(sprintf('price_dynamics_backup_%s', $token->symbol()));
+            $data          = $cachedBackup->isHit() ? $cachedBackup->get() : [];
 
-            $data = $cachedbackup->isHit() ? array_reverse($cachedbackup->get()) : [];
+            if (empty($data)) {
+                $lastId = 0;
+                $limit  = 1000;
 
-            do {
-                $storage = $this->apiInstance->contractsGetStorageHistory(
-                    $token->addressQuipuswap(),
-                    $lastId,
-                    $limit,
-                );
+                do {
+                    $storage = $this->apiInstance->contractsGetStorageHistory(
+                        $token->addressQuipuswap(),
+                        $lastId,
+                        $limit,
+                    );
 
-                $data = array_merge(
-                    $data,
-                    array_reduce(
-                        array_map(function (StorageRecord $record) use (
-                            $token
-                        ) {
-                            $tezPool =
-                                $record->getValue()['storage']->tez_pool /
-                                1_000_000;
-                            $tokenPool =
-                                $record->getValue()['storage']->token_pool /
-                                10 ** $token->decimals();
+                    $c = \count($storage);
 
-                            return [
-                                $record
-                                    ->getTimestamp()
-                                    ->format('Y-m-d H:i:s') => [
-                                        'ratio'      => $tezPool / $tokenPool,
-                                        'tez_pool'   => $tezPool,
-                                        'token_pool' => $tokenPool,
-                                    ],
-                            ];
-                        },
-                        $storage),
-                        fn (array $record, array $acc) => array_merge(
-                            $record,
-                            $acc,
-                        ),
-                        [],
-                    ),
-                );
+                    $storage = $this->formatStorage($storage, $token);
+                    $data    = array_merge($data, $storage);
 
-                $lastId = \count($storage) > 0 ? end($storage)->getId() : $lastId;
-            } while (\count($storage) === $limit);
+                    $lastId = $c > 0 ? end($storage)['id'] : $lastId;
+                } while ($c === $limit);
 
-            $data = array_reverse($data);
+                $data = array_reverse($data);
+            } else {
+                $lastFetchedId = end($data)['id'];
+                $storage       = $this->apiInstance->contractsGetStorageHistory($token->addressQuipuswap());
+                $storage       = $this->formatStorage($storage, $token);
+                $storage       = array_filter($storage, fn (array $record) => $record['id'] > $lastFetchedId);
+                $data          = array_merge($data, array_reverse($storage));
+            }
 
             $cached
                 ->set($data)
                 ->expiresAfter(
                     \DateInterval::createFromDateString('60 seconds'),
                 );
-            $cachedbackup->set($data);
-            $cachedLastId->set($lastId);
+            $cachedBackup->set($data);
 
             $this->cache->save($cached);
-            $this->cache->save($cachedLastId);
-            $this->cache->save($cachedbackup);
+            $this->cache->save($cachedBackup);
         }
 
         return $cached->get();
+    }
+
+    private function formatStorage(array $storage, Token $token): array
+    {
+        return array_reduce(
+            array_map(
+                function (StorageRecord $record) use ($token) {
+                    $tezPool =
+                    $record->getValue()['storage']->tez_pool /
+                    1_000_000;
+                    $tokenPool =
+                    $record->getValue()['storage']->token_pool /
+                    10 ** $token->decimals();
+
+                    return [
+                        $record
+                            ->getTimestamp()
+                            ->format('Y-m-d H:i:s') => [
+                                'ratio'      => $tezPool / $tokenPool,
+                                'tez_pool'   => $tezPool,
+                                'token_pool' => $tokenPool,
+                                'id'         => $record->getId(),
+                            ],
+                    ];
+                },
+                $storage
+            ),
+            fn (array $record, array $acc) => array_merge(
+                $record,
+                $acc,
+            ),
+            [],
+        );
     }
 }
