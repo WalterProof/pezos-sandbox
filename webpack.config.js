@@ -93,10 +93,6 @@ if (Encore.isProduction()) {
                 'type',
                 'textarea',
                 'select',
-                '.form-input',
-                '.form-textarea',
-                '.form-select',
-                '.form-multiselect',
             ],
         })
     );

@@ -1,8 +1,17 @@
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
 
-body {
-    @apply font-mono text-sm;
+@layer base {
+    body {
+        @apply text-sm;
+    }
+    a {
+        @apply font-bold text-blue-800 underline;
+    }
+    a:hover {
+        @apply text-blue-600;
+    }
 }
 
 /* Sticky footer */
@@ -39,7 +48,7 @@ footer {
 }
 
 h1 {
-    @apply flex-grow font-extrabold;
+    @apply flex-grow text-4xl italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-300;
 }
 
 h3 {
@@ -60,16 +69,16 @@ h3 {
     @apply bg-gray-300;
 }
 .btn-buy {
-    @apply text-white bg-green-400;
+    @apply text-white no-underline bg-green-400;
 }
 .btn-buy:hover {
-    @apply bg-green-300;
+    @apply text-white bg-green-300;
 }
 .btn-sell {
-    @apply text-white bg-red-400;
+    @apply text-white no-underline bg-red-400;
 }
 .btn-sell:hover {
-    @apply bg-red-300;
+    @apply text-white bg-red-300;
 }
 
 /* Index */
@@ -94,8 +103,44 @@ h3 {
 .i-Token {
     @apply flex flex-row my-8;
 }
-.i-Chart {
-    @apply my-8;
+
+.token-name {
+    @apply text-xl font-semibold;
+}
+
+.token-desc {
+    @apply italic;
+}
+
+.c-Chart {
+    @apply py-8 bg-gray-50;
+}
+
+/* Nav */
+.c-Nav {
+    @apply flex;
+    @apply border-b;
+}
+
+/* Menu */
+.c-Menu {
+    @apply flex;
+    @apply items-end;
+}
+.c-Menu li {
+    @apply mr-1;
+}
+.c-Menu .is-active {
+    @apply z-10 -mb-px bg-gray-50;
+}
+.c-Menu a {
+    @apply inline-block px-4 py-2 font-semibold text-blue-500 no-underline bg-gray-100 cursor-pointer;
+}
+.c-Menu a:hover {
+    @apply text-blue-800;
+}
+.c-Menu .is-active a {
+    @apply text-blue-700 bg-white border-t border-l border-r rounded-t;
 }
 
 /* CHECKBOX TOGGLE SWITCH */
@@ -109,5 +154,3 @@ h3 {
     @apply: bg-green-400;
     background-color: #68d391;
 }
-
-@tailwind utilities;

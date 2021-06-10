@@ -68,8 +68,8 @@
                 </div>
             </div>
             <div class="pl-6 mx-6">
-                {{ selectedToken.name }}<br />
-                {{ selectedToken.description }}
+                <span class="token-name">{{ selectedToken.name }}</span><br />
+                <span class="token-desc">{{ selectedToken.description }}</span>
 
                 <br /><br />
 
@@ -162,22 +162,18 @@
                 last update: {{ lastUpdate }} (UTC)
             </p>
         </div>
-        <div {{ stimulus_controller('tabs') }}
-            data-tabs-index="0"
-            class="clear-both">
-            <div class="flex items-center justify-center">
-                <ul class="flex items-center justify-center my-4">
-                    <li data-target="tabs.tab"
-                        class="px-4 py-2 text-gray-500 border-b-8 cursor-pointer">
+        <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+            <div class="c-Nav">
+                <ul class="c-Menu">
+                    <li data-target="tabs.tab" class="">
                         <a data-action="tabs#change">Prices Dynamics</a>
                     </li>
-                    <li data-target="tabs.tab"
-                        class="px-4 py-2 text-gray-500 border-b-8 cursor-pointe">
+                    <li data-target="tabs.tab" class="">
                         <a data-action="tabs#change">Pool Dynamics</a>
                     </li>
                 </ul>
             </div>
-            <div>
+            <div class="c-Chart">
                 <div class="" data-target="tabs.tabPanel">
                     {{ render_chart(chart) }}
                 </div>
