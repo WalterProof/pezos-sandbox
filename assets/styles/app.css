@@ -63,10 +63,10 @@ h3 {
 }
 
 .btn-primary {
-    @apply text-white bg-gray-400;
+    @apply py-2 font-semibold text-white bg-blue-500 shadow-md;
 }
 .btn-primary:hover {
-    @apply bg-gray-300;
+    @apply bg-blue-400;
 }
 .btn-buy {
     @apply text-white no-underline bg-green-400;
