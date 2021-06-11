@@ -93,6 +93,7 @@ if (Encore.isProduction()) {
                 'type',
                 'textarea',
                 'select',
+                'is-active',
             ],
         })
     );
