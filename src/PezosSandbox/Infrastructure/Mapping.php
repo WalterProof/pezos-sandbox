@@ -117,10 +117,10 @@ trait Mapping
         $formatWithUndeclaredFieldsAs0 = '!'.self::$dateTimeFormat;
         $dateTimeImmutable             = DateTimeImmutable::createFromFormat(
             $formatWithUndeclaredFieldsAs0,
-            $dateTime,
+            $dateTime
         );
         Assert::that($dateTimeImmutable)->isInstanceOf(
-            DateTimeImmutable::class,
+            DateTimeImmutable::class
         );
 
         return $dateTimeImmutable;
@@ -136,7 +136,7 @@ trait Mapping
         DateTimeImmutable $dateTimeImmutable
     ): DateTimeImmutable {
         return self::dateTimeImmutableFromDateTimeString(
-            self::dateTimeImmutableAsDateTimeString($dateTimeImmutable),
+            self::dateTimeImmutableAsDateTimeString($dateTimeImmutable)
         );
     }
 }

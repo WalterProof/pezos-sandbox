@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PezosSandbox\Infrastructure\Symfony\Validation;
 
-use Bzzhh\Pezos\Validator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -13,26 +14,23 @@ class PubKeyConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof PubKeyConstraint) {
-            throw new UnexpectedTypeException(
-                $constraint,
-                LeanpubInvoiceIdConstraint::class,
-            );
+            throw new UnexpectedTypeException($constraint, PubKeyConstraint::class);
         }
 
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return;
         }
 
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             throw new UnexpectedValueException($value, 'string');
         }
 
-        $validator = new Validator();
-        if (!$validator->validatePubKey($value)) {
+        try {
+        } catch (\InvalidArgumentException $exception) {
             $this->context
                 ->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
-                ->setCode(PubKeyConstraint::INVALID_FORMAT_ERROR)
+                ->setCode(TokenMetadataConstraint::INVALID_FORMAT_ERROR)
                 ->addViolation();
         }
     }

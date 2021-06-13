@@ -1,0 +1,23 @@
+<div>
+    <p class="text-right">
+        last update: {{ lastUpdates['QuipuSwap'] }} (UTC)
+    </p>
+</div>
+<div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+    <div class="c-Nav">
+        <ul class="c-Menu">
+            {% for title in charts.QuipuSwap|keys %}
+                <li data-tabs-target="tab" class="">
+                    <a data-action="tabs#change">{{ title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="c-Chart">
+        {% for chart in charts.QuipuSwap %}
+            <div data-tabs-target="tabPanel">
+                {{ render_chart(chart) }}
+            </div>
+        {% endfor %}
+    </div>
+</div>

@@ -4,106 +4,76 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Application\Tokens;
 
+use PezosSandbox\Domain\Model\Token\Address;
+use PezosSandbox\Domain\Model\Token\TokenId;
+
 final class Token
 {
+    private string $tokenId;
     private string $address;
-    private string $addressQuipuswap;
-    private string $kind;
-    private int $decimals;
-    private string $symbol;
-    private string $name;
-    private string $description;
-    private string $homepage;
-    private string $thumbnailUri;
-    private bool $active;
-    private array $social;
-    private ?int $supplyAdjustment;
+    private array $metadata;
+    private $active;
+
+    private ?array $exchanges = null;
+    private ?array $tags      = null;
 
     public function __construct(
-        string $address,
-        string $addressQuipuswap,
-        string $kind,
-        int $decimals,
-        string $symbol,
-        string $name,
-        string $description,
-        string $homepage,
-        string $thumbnailUri,
-        bool $active,
-        array $social,
-        ?int $supplyAdjustment
+        TokenId $tokenId,
+        Address $address,
+        array $metadata,
+        bool $active
     ) {
-        $this->address          = $address;
-        $this->addressQuipuswap = $addressQuipuswap;
-        $this->kind             = $kind;
-        $this->decimals         = $decimals;
-        $this->symbol           = $symbol;
-        $this->name             = $name;
-        $this->description      = $description;
-        $this->homepage         = $homepage;
-        $this->thumbnailUri     = $thumbnailUri;
-        $this->active           = $active;
-        $this->social           = $social;
-        $this->supplyAdjustment = $supplyAdjustment;
+        $this->tokenId  = $tokenId->asString();
+        $this->address  = $address->asString();
+        $this->metadata = $metadata;
+        $this->active   = $active;
     }
 
-    public function address(): string
+    public function tokenId(): TokenId
     {
-        return $this->address;
+        return TokenId::fromString($this->tokenId);
     }
 
-    public function kind(): string
+    public function address(): Address
     {
-        return $this->kind;
+        return Address::fromString($this->address);
     }
 
-    public function symbol(): string
+    public function metadata(): array
     {
-        return $this->symbol;
+        return $this->metadata;
     }
 
-    public function name(): string
+    public function withExchanges(array $exchanges): self
     {
-        return $this->name;
+        $copy = clone $this;
+
+        $copy->exchanges = $exchanges;
+
+        return $copy;
     }
 
-    public function decimals(): int
+    public function exchanges(): ?array
     {
-        return $this->decimals;
+        return $this->exchanges;
     }
 
-    public function addressQuipuswap(): string
+    public function withTags(array $tags): self
     {
-        return $this->addressQuipuswap;
+        $copy = clone $this;
+
+        $copy->tags = $tags;
+
+        return $copy;
     }
 
-    public function thumbnailUri(): string
+    public function tags(): ?array
     {
-        return $this->thumbnailUri;
+        return $this->tags;
     }
 
-    public function active(): bool
+    public function isActive(): bool
     {
         return $this->active;
-    }
-
-    public function description(): string
-    {
-        return $this->description;
-    }
-
-    public function homepage(): string
-    {
-        return $this->homepage;
-    }
-
-    public function social(): array
-    {
-        return $this->social;
-    }
-
-    public function supplyAdjustment(): ?int
-    {
-        return $this->supplyAdjustment;
     }
 }

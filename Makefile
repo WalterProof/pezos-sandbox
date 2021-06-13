@@ -66,3 +66,7 @@ deploy:
 
 .PHONY: release
 release: build-prod push-prod deploy
+
+.PHONY: staticcheck
+staticcheck:
+	${RUN_PHP} ./vendor/bin/phpstan analyse src

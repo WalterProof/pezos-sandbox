@@ -1,24 +1,11 @@
-{% set fa2 = constant('PezosSandbox\\Domain\\Model\\Token\\Token::KIND_FA2') %}
-{% set fa1_2 =
-    constant('PezosSandbox\\Domain\\Model\\Token\\Token::KIND_FA1_2')
-%}
-
 {% extends 'base.html.twig' %}
 
-{% block meta %}
-    <meta http-equiv="refresh"
-        content="60;URL=/?address={{ selectedToken.address }}" />
-{% endblock %}
-
 {% block body %}
-    <div class="i-Banner">
-        <div>
-            {{ tokensByKind[fa2]|length }} {{ fa2 }} tokens
-        </div>
-        <div>
-            {{ tokensByKind[fa1_2]|length }} {{ fa1_2 }} tokens
-        </div>
-        <div>
+    <div class="flex | tags">
+        {% for standard, count in counters %}
+            <span>{{ count }} {{ standard }} tokens</span>
+        {% endfor %}
+        <div class="self-center">
             <a href="https://tzkt.io/buy-tezos"
                 target="new"
                 class="font-bold underline">
@@ -32,15 +19,15 @@
             <div>
                 <select onchange="window.location.replace('?address=' + this.value)"
                     class="w-full">
-                    {% for token in tokens %}
-                        {% set selected = token.symbol == selectedToken.symbol
+                    {% for t in tokens %}
+                        {% set selected = t.address == token.address
                             ? 'selected'
                             : ''
                         %}
-                        <option value="{{ token.address }}"
+                        <option value="{{ t.address }}"
                             {{ selected }}
                             class="w-full">
-                            {{ token.symbol }}
+                            {{ t.metadata.symbol }}
                         </option>
                     {% endfor %}
                 </select>
@@ -49,17 +36,21 @@
 
         <div class="i-Token divide-x divide-gray-200">
             <div>
-                <img src="{{ selectedToken.thumbnailUri }}" class="w-32" />
+                {% if token.metadata.thumbnail_uri ?? null %}
+                <img src="{{ token.metadata.thumbnail_uri }}" class="w-32" />
+                {% else %}
+                {% include './svg/noun_explosion_563988.svg' %}
+                {% endif %}
                 <div class="flex flex-row mt-6 justify-evenly">
                     <a href="https://quipuswap.com/swap?from=tez&to={{
-                        selectedToken.address
+                        token.address
                         }}"
                         target="new"
                         class="btn-small btn-buy">
                         BUY
                     </a>
                     <a href="https://quipuswap.com/swap?from={{
-                        selectedToken.address
+                        token.address
                         }}&to=tez"
                         target="new"
                         class="btn-small btn-sell">
@@ -69,119 +60,107 @@
             </div>
             <div class="flex-grow pl-6 mx-6">
                 <div class="flex flex-row items-center justify-around w-full">
+                    {% if token.metadata.name ?? null %}
                     <span class="flex-grow token-name">
-                        {{ selectedToken.name }}
+                        {{ token.metadata.name }}
                     </span><br />
+                    {% endif %}
+                    {% if token.metadata.homepage is defined %}
+                        <a href="{{ token.metadata.homepage }}">
+                            {{ token.metadata.homepage }}
+                        </a>
+                    {% endif %}
 
-                    <a href="{{ selectedToken.homepage }}">
-                        {{ selectedToken.homepage }}
-                    </a>
-
-                    {% if selectedToken.social.twitter is defined %}
-                        <a href="{{ selectedToken.social.twitter }}"
-                            class="ml-3">
+                    {% if token.metadata.twitter is defined %}
+                        <a href="{{ token.metadata.twitter }}" class="ml-3">
                             {% include './svg/Twitter_Bird.svg' %}
                         </a>
                     {% endif %}
 
-                    {% if selectedToken.social.telegram is defined %}
-                        <a href="{{ selectedToken.social.telegram }}"
-                            class="ml-3">
+                    {% if token.metadata.telegram is defined %}
+                        <a href="{{ token.metadata.telegram }}" class="ml-3">
                             {% include './svg/Telegram_2019_Logo.svg' %}
                         </a>
                     {% endif %}
 
-                    {% if selectedToken.social.discord is defined %}
-                        <a href="{{ selectedToken.social.discord }}"
-                            class="ml-3">
+                    {% if token.metadata.discord is defined %}
+                        <a href="{{ token.metadata.discord }}" class="ml-3">
                             {% include './svg/Discord_logo.svg' %}
                         </a>
                     {% endif %}
 
-                    {% if selectedToken.social.instagram is defined %}
-                        <a href="{{ selectedToken.social.instagram }}"
-                            class="ml-3">
+                    {% if token.metadata.reddit is defined %}
+                        <a href="{{ token.metadata.reddit }}" class="ml-3">
+                            {% include './svg/Reddit_logo.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if token.metadata.facebook is defined %}
+                        <a href="{{ token.metadata.facebook }}" class="ml-3">
+                            {% include './svg/Facebook_logo.svg' %}
+                        </a>
+                    {% endif %}
+
+                    {% if token.metadata.instagram is defined %}
+                        <a href="{{ token.metadata.instagram }}" class="ml-3">
                             {% include './svg/Instagram_logo_2016.svg' %}
                         </a>
                     {% endif %}
 
-                    {% if selectedToken.social.github is defined %}
-                        <a href="{{ selectedToken.social.github }}"
-                            class="ml-3">
+                    {% if token.metadata.github is defined %}
+                        <a href="{{ token.metadata.github }}" class="ml-3">
                             {% include './svg/Octicons-mark-github.svg' %}
                         </a>
                     {% endif %}
                 </div>
 
-                <div class="my-3 token-desc">
-                    {{ selectedToken.description }}
-                </div>
-
+                {% if token.metadata.description is defined %}
+                    <div class="my-3 token-desc">
+                        {{ token.metadata.description }}
+                    </div>
+                {% endif %}
+                <div> 
                 <ul>
-                    {% if infos.total_supply is not null %}
-                        <li>
-                            Supply:
-                            {{ infos.total_supply|number_format }} <br />
-                        </li>
-                    {% endif %}
-                    <li>Standard: {{ selectedToken.kind }}</li>
-                    <li>Decimals: {{ selectedToken.decimals }}</li>
+                    <li>Supply: {{ supply|number_format }}</li>
+                    <li>Standard: {{ token.address.id is not null ? 'FA2' : 'FA1.2' }}</li>
+                    <li>Decimals: {{ token.metadata.decimals }}</li>
                     <li>
-                        Contract: <a href="https://better-call.dev/mainnet/{{ infos.token_address }}/tokens" class="underline">bcd</a>
+                        Contract: <a href="https://better-call.dev/mainnet/{{ token.address.contract }}/tokens" class="underline">bcd</a> | <a href="https://tzkt.io/{{ token.address.contract }}/dex" target="new" class="underline">tzkt</a>
                     </li>
+                    {% for exchange in token.exchanges %}
                     <li>
-                        Dex Contract: <a href="https://better-call.dev/mainnet/{{ selectedToken.addressQuipuswap }}" class="underline">bcd</a>
+                        {{ exchange.name }}: <a href="https://better-call.dev/mainnet/{{ exchange.contract }}" class="underline">bcd</a> | <a href="https://tzkt.io/{{ exchange.contract }}/dex" target="new" class="underline">tzkt</a>
                     </li>
+                    {% endfor %}
                     <li>
                         Liquidity Pool: {{
-                            infos.tez_pool|number_format(6)
+                            tokenLastUpdate.tez_pool|number_format(6)
                         }}&nbsp;ꜩ / {{
-                            infos.token_pool|number_format(
-                                selectedToken.decimals
+                            tokenLastUpdate.token_pool|number_format(
+                                token.metadata.decimals
                             )
                         }}
-                        {{ selectedToken.symbol }}
+                        {{ token.metadata.symbol }}
                     </li>
                     <li>
-                        Price/Ratio: 1&nbsp;{{ selectedToken.symbol }} = {{
-                            (infos.tez_pool / infos.token_pool)|number_format(6)
+                        Price/Ratio: 1&nbsp;{{ token.metadata.symbol }} = {{
+                            (tokenLastUpdate.tez_pool / tokenLastUpdate.token_pool)|number_format(6)
                         }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
-                            (infos.token_pool / infos.tez_pool)|number_format(
-                                selectedToken.decimals
+                            (tokenLastUpdate.token_pool / tokenLastUpdate.tez_pool)|number_format(
+                                token.metadata.decimals
                             )
                         }}
-                        {{ selectedToken.symbol }}
-                    </li>
-                    <li>
-                        Candles Chart: <a href="https://tzkt.io/{{ selectedToken.addressQuipuswap }}/dex" target="new" class="underline">tzkt</a>
+                        {{ token.metadata.symbol }}
                     </li>
                 </ul>
-            </div>
-        </div>
-        <div>
-            <p class="text-right">
-                last update: {{ lastUpdate }} (UTC)
-            </p>
-        </div>
-        <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
-            <div class="c-Nav">
-                <ul class="c-Menu">
-                    <li data-target="tabs.tab" class="">
-                        <a data-action="tabs#change">Prices Dynamics</a>
-                    </li>
-                    <li data-target="tabs.tab" class="">
-                        <a data-action="tabs#change">Pool Dynamics</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="c-Chart">
-                <div class="" data-target="tabs.tabPanel">
-                    {{ render_chart(chart) }}
-                </div>
-                <div class="hidden" data-target="tabs.tabPanel">
-                    {{ render_chart(poolChart) }}
+                    </div>
+
                 </div>
             </div>
+        </div>
+
+        <div {{ stimulus_controller('refresh-content', { url: path('_app_charts', { address: token.address }), interval: refresh_interval_ms}) }} data-refresh-content-target="content">
+            {% include './_charts.html.twig' %}
         </div>
     </div>
 {% endblock %}

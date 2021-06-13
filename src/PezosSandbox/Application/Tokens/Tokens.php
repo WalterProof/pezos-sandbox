@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PezosSandbox\Application\Tokens;
 
 use PezosSandbox\Domain\Model\Token\Address;
+use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 
 interface Tokens
 {

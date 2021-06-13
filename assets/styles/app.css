@@ -14,6 +14,10 @@
     }
 }
 
+.tags span {
+    @apply self-center p-3 mr-3 flex-grow bg-gray-50;
+}
+
 /* Sticky footer */
 .g-Page {
     @apply flex flex-col h-screen bg-gray-100;
@@ -82,17 +86,6 @@ h3 {
 }
 
 /* Index */
-.i-Banner {
-    @apply flex;
-}
-.i-Banner div {
-    @apply self-center p-3 mr-3;
-}
-.i-Banner div:nth-child(1),
-.i-Banner div:nth-child(2) {
-    @apply flex-grow bg-gray-50;
-}
-
 .i-Dashboard {
     @apply flex flex-col my-8;
 }

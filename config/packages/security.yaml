@@ -18,5 +18,5 @@ security:
 
     access_control:
         - { path: ^/$, roles: PUBLIC_ACCESS }
-        - { path: ^/tokens, roles: ROLE_MEMBER }
+        - { path: ^/member-area, roles: ROLE_MEMBER }
         - { path: ^/login$, roles: PUBLIC_ACCESS }
