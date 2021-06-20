@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PezosSandbox\Domain\Model\Token;
 
 use Doctrine\DBAL\Schema\Schema;
+use PezosSandbox\Domain\Model\Exchange\ExchangeId;
 use PezosSandbox\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
@@ -16,25 +17,20 @@ final class Token implements Aggregate, SpecifiesSchema
     use AggregateBehavior;
     use Mapping;
 
-    const KIND_FA1_2 = 'FA1.2';
-    const KIND_FA2   = 'FA2';
-
+    private TokenId $tokenId;
     private Address $address;
-    private string $addressQuipuswap;
-    private string $kind;
-    private string $symbol;
-    private string $name;
-    private int $decimals;
-    private ?string $thumbnailUri;
-    private ?string $description;
-    private ?string $homepage;
-    private ?array $social;
-    private bool $active           = true;
-    private ?int $supplyAdjustment = null;
+    private array $metadata;
+    private bool $active     = true;
+    private array $tags      = [];
+    private array $exchanges = [];
 
-    public function address(): Address
+    public function addExchange(ExchangeId $exchangeId, string $contract)
     {
-        return $this->address;
+        $this->exchanges[] = TokenExchange::create(
+            $this->tokenId,
+            $exchangeId,
+            $contract
+        );
     }
 
     /**
@@ -42,7 +38,7 @@ final class Token implements Aggregate, SpecifiesSchema
      */
     public static function childEntityTypes(): array
     {
-        return [];
+        return [TokenTag::class, TokenExchange::class];
     }
 
     /**
@@ -50,7 +46,10 @@ final class Token implements Aggregate, SpecifiesSchema
      */
     public function childEntitiesByType(): array
     {
-        return [];
+        return [
+            TokenTag::class      => $this->tags,
+            TokenExchange::class => $this->exchanges,
+        ];
     }
 
     /**
@@ -63,88 +62,51 @@ final class Token implements Aggregate, SpecifiesSchema
     ): self {
         $instance = new self();
 
-        $instance->address = Address::fromString(
-            self::asString($aggregateState, 'address'),
+        $instance->tokenId = TokenId::fromString(
+            self::asString($aggregateState, 'token_id')
         );
-        $instance->addressQuipuswap = self::asString(
-            $aggregateState,
-            'address_quipuswap',
+        $instance->address = Address::fromState(
+            self::asString($aggregateState, 'contract'),
+            self::asIntOrNull($aggregateState, 'id')
         );
-        $instance->kind             = self::asString($aggregateState, 'kind');
-        $instance->symbol           = self::asString($aggregateState, 'symbol');
-        $instance->name             = self::asString($aggregateState, 'name');
-        $instance->decimals         = self::asInt($aggregateState, 'decimals');
-        $instance->thumbnailUri     = self::asString(
-            $aggregateState,
-            'thumbnail_uri',
-        );
-        $instance->description = self::asString($aggregateState, 'description');
-        $instance->homepage    = self::asString($aggregateState, 'homepage');
-        $instance->social      = self::asArray($aggregateState, 'social');
-        $instance->active      = self::asBool($aggregateState, 'active');
+        $instance->metadata = self::asArray($aggregateState, 'metadata');
+        $instance->active   = self::asBool($aggregateState, 'active');
+        $instance->tags     = $childEntitiesByType[TokenTag::class];
 
         return $instance;
     }
 
     public static function createToken(
+        TokenId $tokenId,
         Address $address,
-        string $addressQuipuswap,
-        string $kind,
-        int $decimals,
-        string $symbol,
-        string $name,
-        ?string $description = null,
-        ?string $homepage = null,
-        ?array $social = null,
-        ?string $thumbnailUri = null,
-        bool $active = true
+        array $metadata
     ): self {
         $token = new self();
 
-        $token->address          = $address;
-        $token->addressQuipuswap = $addressQuipuswap;
-        $token->kind             = $kind;
-        $token->decimals         = $decimals;
-        $token->symbol           = $symbol;
-        $token->name             = $name;
-        $token->description      = $description;
-        $token->homepage         = $homepage;
-        $token->social           = $social;
-        $token->thumbnailUri     = $thumbnailUri;
-        $token->active           = $active;
+        $token->tokenId  = $tokenId;
+        $token->address  = $address;
+        $token->metadata = $metadata;
 
         return $token;
     }
 
-    public function toggleActive(): void
+    public function toggle(): void
     {
         $this->active = !$this->active;
     }
 
-    public function update(
-        string $addressQuipuswap,
-        string $kind,
-        int $decimals,
-        ?int $supplyAdjustment,
-        string $symbol,
-        string $name,
-        ?string $description = null,
-        ?string $homepage = null,
-        ?array $social = null,
-        ?string $thumbnailUri = null,
-        bool $active
-    ) {
-        $this->addressQuipuswap = $addressQuipuswap;
-        $this->kind             = $kind;
-        $this->decimals         = $decimals;
-        $this->symbol           = $symbol;
-        $this->name             = $name;
-        $this->supplyAdjustment = $supplyAdjustment;
-        $this->description      = $description;
-        $this->homepage         = $homepage;
-        $this->social           = $social;
-        $this->thumbnailUri     = $thumbnailUri;
-        $this->active           = $active;
+    public function update(Address $address, array $metadata, bool $active)
+    {
+        $this->address  = $address;
+        $this->metadata = $metadata;
+        $this->active   = $active;
+
+        $this->events[] = new TokenWasUpdated(
+            $this->tokenId,
+            $address,
+            $metadata,
+            $active
+        );
     }
 
     /**
@@ -153,18 +115,11 @@ final class Token implements Aggregate, SpecifiesSchema
     public function state(): array
     {
         return [
-            'address'           => $this->address->asString(),
-            'address_quipuswap' => $this->addressQuipuswap,
-            'kind'              => $this->kind,
-            'symbol'            => $this->symbol,
-            'name'              => $this->name,
-            'description'       => $this->description,
-            'homepage'          => $this->homepage,
-            'social'            => json_encode($this->social),
-            'decimals'          => $this->decimals,
-            'thumbnail_uri'     => $this->thumbnailUri,
-            'active'            => (int) $this->active,
-            'supply_adjustment' => $this->supplyAdjustment,
+            'token_id' => $this->tokenId->asString(),
+            'contract' => $this->address->contract(),
+            'id'       => $this->address->id(),
+            'metadata' => json_encode($this->metadata),
+            'active'   => (int) $this->active,
         ];
     }
 
@@ -174,22 +129,22 @@ final class Token implements Aggregate, SpecifiesSchema
     }
 
     /**
-     * @return array<string,string|int|float|bool|null>
+     * @return array<string,mixed>
      */
     public function identifier(): array
     {
         return [
-            'address' => $this->address,
+            'token_id' => $this->tokenId->asString(),
         ];
     }
 
     /**
-     * @return array<string,string|int|float|bool|null>
+     * @return array<string,mixed>
      */
     public static function identifierForQuery(AggregateId $aggregateId): array
     {
         return [
-            'address' => (string) $aggregateId,
+            'token_id' => (string) $aggregateId,
         ];
     }
 
@@ -197,22 +152,17 @@ final class Token implements Aggregate, SpecifiesSchema
     {
         $table = $schema->createTable(self::tableName());
 
-        $table->addColumn('address', 'string')->setNotnull(true);
-        $table->setPrimaryKey(['address']);
+        $table->addColumn('token_id', 'string')->setNotnull(true);
+        $table->setPrimaryKey(['token_id']);
 
-        $table->addColumn('kind', 'string')->setNotnull(true);
-        $table->addColumn('symbol', 'string')->setNotnull(true);
-        $table->addColumn('name', 'string')->setNotnull(false);
-        $table->addColumn('decimals', 'integer')->setNotnull(true);
-        $table->addColumn('address_quipuswap', 'string')->setNotnull(false);
-        $table->addColumn('thumbnail_uri', 'string')->setNotNull(false);
-        $table->addColumn('homepage', 'string')->setNotNull(false);
-        $table->addColumn('description', 'text')->setNotNull(false);
-        $table->addColumn('social', 'json')->setNotNull(false);
+        $table->addColumn('contract', 'string')->setNotnull(true);
+        $table->addColumn('id', 'integer')->setNotnull(false);
+        $table->addUniqueIndex(['contract', 'id']);
+
+        $table->addColumn('metadata', 'text')->setNotNull(true);
         $table
             ->addColumn('active', 'boolean')
             ->setNotnull(true)
             ->setDefault(true);
-        $table->addColumn('supply_adjustment', 'bigint')->setNotnull(false);
     }
 }

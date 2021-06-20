@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use PezosSandbox\Application\Tokens\Token;
+use PezosSandbox\Application\Tokens\TokenExchange;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Token\Address;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
+use PezosSandbox\Domain\Model\Token\TokenId;
 use PezosSandbox\Infrastructure\Doctrine\Connection;
 use PezosSandbox\Infrastructure\Doctrine\NoResult;
 use PezosSandbox\Infrastructure\Mapping;
@@ -26,78 +28,59 @@ final class TokensUsingDoctrineDbal implements Tokens
     public function getOneByAddress(Address $address): Token
     {
         try {
-            $data = $this->connection->selectOne(
-                $this->connection
-                    ->createQueryBuilder()
-                    ->select('*')
-                    ->from('tokens')
-                    ->andWhere('address = :address')
-                    ->setParameter('address', $address->asString()),
-            );
+            $qb = $this->connection
+                ->createQueryBuilder()
+                ->select('*')
+                ->from('tokens')
+                ->andWhere('contract = :contract')
+                ->setParameter('contract', $address->contract());
 
-            return $this->createToken($data);
+            if (null === $address->id()) {
+                $qb->andWhere('id IS NULL');
+            } else {
+                $qb->andWhere('id = :id')->setParameter('id', $address->id());
+            }
+
+            $data = $this->connection->selectOne($qb);
+
+            $token = $this->createToken($data);
+
+            return $this->withExchanges($token);
         } catch (NoResult $exception) {
             throw CouldNotFindToken::withAddress($address);
         }
     }
 
-    public function listTokens(): array
+    public function listTokens(bool $onlyActive = true): array
     {
-        $records = $this->connection->selectAll(
-            $this->connection
-                ->createQueryBuilder()
-                ->select('*')
-                ->from('tokens')
-                ->where('active = true')
-                ->orderBy('symbol', 'asc'),
-        );
+        $qb = $this->connection
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('tokens');
+
+        if ($onlyActive) {
+            $qb->where('active = true');
+        }
+
+        $records = $this->connection->selectAll($qb);
 
         return array_map(
             fn (array $record): Token => new Token(
-                self::asString($record, 'address'),
-                self::asString($record, 'address_quipuswap'),
-                self::asString($record, 'kind'),
-                self::asInt($record, 'decimals'),
-                self::asString($record, 'symbol'),
-                self::asString($record, 'name'),
-                self::asString($record, 'description'),
-                self::asString($record, 'homepage'),
-                self::asString($record, 'thumbnail_uri'),
-                self::asBool($record, 'active'),
-                self::AsArray($record, 'social'),
-                self::asIntOrNull($record, 'supply_adjustment')
+                TokenId::fromString(self::asString($record, 'token_id')),
+                Address::fromState(
+                    self::asString($record, 'contract'),
+                    self::asIntOrNull($record, 'id')
+                ),
+                self::asArray($record, 'metadata'),
+                self::asBool($record, 'active')
             ),
-            $records,
+            $records
         );
     }
 
     public function listTokensForAdmin(): array
     {
-        $records = $this->connection->selectAll(
-            $this->connection
-                ->createQueryBuilder()
-                ->select('*')
-                ->from('tokens')
-                ->orderBy('symbol', 'asc'),
-        );
-
-        return array_map(
-            fn (array $record): Token => new Token(
-                self::asString($record, 'address'),
-                self::asString($record, 'address_quipuswap'),
-                self::asString($record, 'kind'),
-                self::asInt($record, 'decimals'),
-                self::asString($record, 'symbol'),
-                self::asString($record, 'name'),
-                self::asString($record, 'description'),
-                self::asString($record, 'homepage'),
-                self::asString($record, 'thumbnail_uri'),
-                self::asBool($record, 'active'),
-                self::AsArray($record, 'social'),
-                self::asIntOrNull($record, 'supply_adjustment')
-            ),
-            $records,
-        );
+        return $this->listTokens(false);
     }
 
     /**
@@ -106,18 +89,35 @@ final class TokensUsingDoctrineDbal implements Tokens
     private function createToken($data): Token
     {
         return new Token(
-            self::asString($data, 'address'),
-            self::asString($data, 'address_quipuswap'),
-            self::asString($data, 'kind'),
-            self::asInt($data, 'decimals'),
-            self::asString($data, 'symbol'),
-            self::asString($data, 'name'),
-            self::asString($data, 'description'),
-            self::asString($data, 'homepage'),
-            self::asString($data, 'thumbnail_uri'),
-            self::asBool($data, 'active'),
-            self::AsArray($data, 'social'),
-            self::asIntOrNull($data, 'supply_adjustment')
+            TokenId::fromString($data['token_id']),
+            Address::fromState(
+                self::asString($data, 'contract'),
+                self::asIntOrNull($data, 'id')
+            ),
+            self::asArray($data, 'metadata'),
+            self::asBool($data, 'active')
         );
+    }
+
+    private function withExchanges(Token $token): Token
+    {
+        $qb = $this->connection
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('token_exchanges', 'te')
+            ->leftJoin('te', 'exchanges', 'e', 'e.exchange_id = te.exchange_id')
+            ->andWhere('token_id = :tokenId')
+            ->setParameter('tokenId', $token->tokenId()->asString());
+
+        $records   = $this->connection->selectAll($qb);
+        $exchanges = array_map(
+            fn (array $record): TokenExchange => new TokenExchange(
+                self::asString($record, 'name'),
+                self::asString($record, 'contract')
+            ),
+            $records
+        );
+
+        return $token->withExchanges($exchanges);
     }
 }

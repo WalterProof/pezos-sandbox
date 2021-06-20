@@ -1,6 +1,7 @@
 {
     "devDependencies": {
         "@airgap/beacon-sdk": "^2.2.3",
+        "@prettier/plugin-php": "^0.16.3",
         "@symfony/stimulus-bridge": "^2.0.0",
         "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/Resources/assets",
         "@symfony/webpack-encore": "^1.1.2",
@@ -16,7 +17,7 @@
         "postcss": "^8.3.0",
         "postcss-import": "^14.0.2",
         "postcss-loader": "^5.0.0",
-        "prettier": "^2.3.0",
+        "prettier": "^2.3.1",
         "prettier-plugin-twig-melody": "^0.4.6",
         "purgecss-webpack-plugin": "^4.0.3",
         "regenerator-runtime": "^0.13.2",

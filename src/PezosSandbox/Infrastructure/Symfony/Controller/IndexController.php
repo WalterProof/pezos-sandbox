@@ -4,294 +4,102 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\Symfony\Controller;
 
-use Bzzhh\Tzkt\Api\ContractsApi;
-use Bzzhh\Tzkt\Model\StorageRecord;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\Tokens\Token;
-use PezosSandbox\Domain\Model\Token\Token as TokenToken;
 use PezosSandbox\Infrastructure\Symfony\Form\LoginForm;
+use PezosSandbox\Infrastructure\Tezos\Contract;
+use PezosSandbox\Infrastructure\Tezos\Decimals;
+use PezosSandbox\Infrastructure\Tezos\Storage\GetStorage;
+use PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistory;
+use PezosSandbox\Infrastructure\UX\TokenChart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
-use Symfony\UX\Chartjs\Model\Chart;
 
 final class IndexController extends AbstractController
 {
     private ApplicationInterface $application;
-    private AdapterInterface $cache;
-    private ContractsApi $apiInstance;
+    private GetStorageHistory $getStorageHistory;
+    private $getStorage;
+    private TokenChart $tokenChart;
 
     public function __construct(
         ApplicationInterface $application,
-        AdapterInterface $cache,
-        ContractsApi $apiInstance
+        GetStorageHistory $getStorageHistory,
+        GetStorage $getStorage,
+        TokenChart $tokenChart
     ) {
-        $this->application = $application;
-        $this->cache       = $cache;
-        $this->apiInstance = $apiInstance;
+        $this->application       = $application;
+        $this->getStorageHistory = $getStorageHistory;
+        $this->getStorage        = $getStorage;
+        $this->tokenChart        = $tokenChart;
     }
 
     /**
      * @Route("/", name="index", methods={"GET"})
      */
-    public function index(
-        ChartBuilderInterface $chartBuilder,
-        Request $request
-    ): Response {
-        $loginForm  = $this->createForm(LoginForm::class);
+    public function index(Request $request): Response
+    {
+        $loginForm = $this->createForm(LoginForm::class);
+        $tokens    = $this->application->listTokens();
 
-        $tokens       = $this->application->listTokens();
-        $tokensByKind = array_reduce(
-            $tokens,
-            function (array $acc, Token $token) {
-                $acc[$token->kind()][] = $token;
-
-                return $acc;
-            },
-            [],
-        );
-
-        $selectedAddress = $request->query->get(
+        $address = $request->query->get(
             'address',
-            $tokens[0]->address(),
+            $tokens[0]->address()->asString()
         );
-        $selectedToken = $this->application->getOneTokenByAddress(
-            $selectedAddress,
-        );
-        $data  = $this->getPoolData($selectedToken);
-
-        $infos = $this->getSelectedTokenInfos($selectedToken);
-
-        $chart  = $chartBuilder->createChart(Chart::TYPE_LINE);
-
-        // Prices
-        $ratios = array_values(array_map(fn (array $d) => $d['ratio'], $data));
-        $chart->setData([
-            'labels'   => array_keys($data),
-            'datasets' => [
-                [
-                    'borderColor' => 'rgb(51, 51, 51)',
-                    'borderWidth' => 1,
-                    'data'        => $ratios,
-                    'pointRadius' => 0,
-                ],
-            ],
-        ]);
-
-        $chart->setOptions([
-            'scales' => [
-                'yAxes' => [['ticks' => ['min' => 0, 'max' => max($ratios)]]],
-            ],
-            'legend' => ['display' => false],
-        ]);
-
-        // Pool
-        $poolChart  = $chartBuilder->createChart(Chart::TYPE_LINE);
-        $tezPool    = array_values(array_map(fn (array $d) => $d['tez_pool'], $data));
-        $tokenPool  = array_values(array_map(fn (array $d) => $d['token_pool'], $data));
-        $labels     = array_keys($data);
-
-        $poolChart->setData([
-            'labels'   => $labels,
-            'datasets' => [
-                [
-                    'label'       => 'tez',
-                    'fill'        => false,
-                    'borderColor' => 'rgb(0, 151, 0)',
-                    'borderWidth' => 1,
-                    'data'        => $tezPool,
-                    'pointRadius' => 0,
-                    'yAxisID'     => 'tez',
-                ],
-                [
-                    'label'       => $selectedToken->symbol(),
-                    'fill'        => false,
-                    'borderColor' => 'rgb(51, 51, 51)',
-                    'borderWidth' => 1,
-                    'data'        => $tokenPool,
-                    'pointRadius' => 0,
-                    'yAxisID'     => 'token',
-                ],
-            ],
-        ]);
-
-        $poolChart->setOptions([
-            'scales' => [
-                'yAxes' => [
-                    ['id' => 'tez', 'position' => 'left', 'ticks' => ['min' => min($tezPool), 'max' => max($tezPool)]],
-                    ['id' => 'token', 'position' => 'right', 'ticks' => ['min' => min($tokenPool), 'max' => max($tokenPool)]],
-                ],
-            ],
-        ]);
+        $token       = $this->application->getOneTokenByAddress($address);
+        $charts      = $this->tokenChart->createCharts($token);
+        $lastUpdates = $this->tokenChart->lastUpdates();
+        $supply      = isset($token->metadata()['supply'])
+            ? $token->metadata()['supply']
+            : $this->getStorage
+                ->getStorage(
+                    Contract::fromString($token->address()->contract())
+                )
+                ->totalSupply();
 
         return $this->render('index.html.twig', [
-            'loginForm'     => $loginForm->createView(),
-            'tokensByKind'  => $tokensByKind,
-            'chart'         => $chart,
-            'poolChart'     => $poolChart,
-            'tokens'        => $tokens,
-            'selectedToken' => $selectedToken,
-            'infos'         => $infos,
-            'lastUpdate'    => end($labels),
+            'charts'          => $charts,
+            'counters'        => $this->getCounters($tokens),
+            'lastUpdates'     => $lastUpdates,
+            'loginForm'       => $loginForm->createView(),
+            'tokens'          => $tokens,
+            'token'           => $token,
+            'tokenLastUpdate' => $this->getTokenLastUpdate($token),
+            'supply'          => $supply,
         ]);
     }
 
-    private function getSelectedTokenInfos(Token $token)
+    private function getTokenLastUpdate(Token $token): array
     {
-        $key    = sprintf('token_infos_%s', $token->symbol());
-        $cached = $this->cache->getItem($key);
+        $history = $this->getStorageHistory
+            ->getStorageHistory(
+                Contract::fromString($token->exchanges()[0]->contract()),
+                Decimals::fromInt($token->metadata()['decimals'])
+            )
+            ->history();
 
-        if (!$cached->isHit()) {
-            $dex = json_decode(
-                $this->apiInstance
-                    ->contractsGetStorage($token->addressQuipuswap())
-                    ->current(),
-            );
-
-            $tokenAddress =
-                TokenToken::KIND_FA1_2 === $token->kind()
-                    ? $token->address()
-                    : substr(
-                        $token->address(),
-                        0,
-                        strpos($token->address(), '_'),
-                    );
-
-            $totalSupply = $this->guessTotalSupply($tokenAddress);
-
-            $data = [
-                'tez_pool'      => $dex->storage->tez_pool / 1_000_000,
-                'token_pool'    => $dex->storage->token_pool / 10 ** $token->decimals(),
-                'token_address' => $tokenAddress,
-                'total_supply'  => $totalSupply
-                    ? $totalSupply / 10 ** $token->decimals()
-                    : null,
-            ];
-
-            if (null !== $token->supplyAdjustment()) {
-                $data['total_supply'] += $token->supplyAdjustment();
-            }
-
-            $cached
-                ->set($data)
-                ->expiresAfter(
-                    \DateInterval::createFromDateString('60 seconds'),
-                );
-            $this->cache->save($cached);
-        }
-
-        return $cached->get();
+        return end($history);
     }
 
-    private function guessTotalSupply(string $address): ?string
+    private function getCounters(array $tokens): array
     {
-        $storage = json_decode(
-            $this->apiInstance->contractsGetStorage($address)->current(),
-        );
-
-        if (isset($storage->totalSupply)) {
-            return (string) $storage->totalSupply;
-        }
-
-        if (isset($storage->total_supply)) {
-            return (string) $storage->total_supply;
-        }
-
-        if (isset($storage->token) && isset($storage->token->totalSupply)) {
-            return (string) $storage->token->totalSupply;
-        }
-
-        if (isset($storage->assets) && isset($storage->assets->total_supply)) {
-            return (string) $storage->assets->total_supply;
-        }
-
-        return null;
-    }
-
-    private function getPoolData(Token $token)
-    {
-        // TODO: refacto and extract object
-        $cached = $this->cache->getItem(sprintf('price_dynamics_%s', $token->symbol()));
-
-        if (!$cached->isHit()) {
-            $cachedBackup  = $this->cache->getItem(sprintf('price_dynamics_backup_%s', $token->symbol()));
-            $data          = $cachedBackup->isHit() ? $cachedBackup->get() : [];
-
-            if (empty($data)) {
-                $lastId = 0;
-                $limit  = 1000;
-
-                do {
-                    $storage = $this->apiInstance->contractsGetStorageHistory(
-                        $token->addressQuipuswap(),
-                        $lastId,
-                        $limit,
-                    );
-
-                    $c = \count($storage);
-
-                    $storage = $this->formatStorage($storage, $token);
-                    $data    = array_merge($data, $storage);
-
-                    $lastId = $c > 0 ? end($storage)['id'] : $lastId;
-                } while ($c === $limit);
-
-                $data = array_reverse($data);
-            } else {
-                $lastFetchedId = end($data)['id'];
-                $storage       = $this->apiInstance->contractsGetStorageHistory($token->addressQuipuswap());
-                $storage       = $this->formatStorage($storage, $token);
-                $storage       = array_filter($storage, fn (array $record) => $record['id'] > $lastFetchedId);
-                $data          = array_merge($data, array_reverse($storage));
-            }
-
-            $cached
-                ->set($data)
-                ->expiresAfter(
-                    \DateInterval::createFromDateString('60 seconds'),
-                );
-            $cachedBackup->set($data);
-
-            $this->cache->save($cached);
-            $this->cache->save($cachedBackup);
-        }
-
-        return $cached->get();
-    }
-
-    private function formatStorage(array $storage, Token $token): array
-    {
-        return array_reduce(
-            array_map(
-                function (StorageRecord $record) use ($token) {
-                    $tezPool =
-                    $record->getValue()['storage']->tez_pool /
-                    1_000_000;
-                    $tokenPool =
-                    $record->getValue()['storage']->token_pool /
-                    10 ** $token->decimals();
-
-                    return [
-                        $record
-                            ->getTimestamp()
-                            ->format('Y-m-d H:i:s') => [
-                                'ratio'      => $tezPool / $tokenPool,
-                                'tez_pool'   => $tezPool,
-                                'token_pool' => $tokenPool,
-                                'id'         => $record->getId(),
-                            ],
-                    ];
-                },
-                $storage
+        return [
+            'FA1.2' => array_reduce(
+                $tokens,
+                fn (int $count, Token $token): int => !$token->address()->id()
+                    ? $count + 1
+                    : $count,
+                0
             ),
-            fn (array $record, array $acc) => array_merge(
-                $record,
-                $acc,
+            'FA2' => array_reduce(
+                $tokens,
+                fn (int $count, Token $token): int => $token->address()->id()
+                    ? $count + 1
+                    : $count,
+                0
             ),
-            [],
-        );
+        ];
     }
 }

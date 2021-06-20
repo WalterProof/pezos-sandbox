@@ -11,7 +11,9 @@ interface TokenRepository
     /**
      * @throws CouldNotFindToken
      */
-    public function getByAddress(Address $address): Token;
+    public function getById(TokenId $tokenId): Token;
 
-    public function exists(Address $address): bool;
+    public function exists(TokenId $tokenId): bool;
+
+    public function nextIdentity(): TokenId;
 }

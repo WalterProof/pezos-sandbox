@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Token Form
+{% endblock %}
+
+{% block body %}
+    <div {{ stimulus_controller('token_form') }}>
+        {{ form(tokenForm) }}
+    </div>
+{% endblock %}

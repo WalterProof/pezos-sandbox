@@ -15,8 +15,8 @@ final class PubKeyField extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'label' => 'form.pub_key.label',
-            'help' => 'form.pub_key.help',
+            'label'       => 'form.pub_key.label',
+            'help'        => 'form.pub_key.help',
             'constraints' => [new NotBlank(), new PubKeyConstraint()],
         ]);
     }

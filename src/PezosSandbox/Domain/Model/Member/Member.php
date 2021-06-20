@@ -33,16 +33,7 @@ final class Member implements Aggregate, SpecifiesSchema
         return $member;
     }
 
-    public function grantAccess(): void
-    {
-        if ($this->wasGrantedAccess) {
-            return;
-        }
-
-        $this->wasGrantedAccess = true;
-    }
-
-    public function memberPubKey(): PubKey
+    public function pubKey(): PubKey
     {
         return $this->pubKey;
     }
@@ -77,8 +68,7 @@ final class Member implements Aggregate, SpecifiesSchema
             self::asString($aggregateState, 'pub_key'),
         );
 
-        $instance->wasGrantedAccess = self::asBool($aggregateState, 'was_granted_access');
-        $instance->registeredAt     = self::dateTimeAsDateTimeImmutable(
+        $instance->registeredAt = self::dateTimeAsDateTimeImmutable(
             $aggregateState,
             'registered_at',
         );
@@ -92,9 +82,8 @@ final class Member implements Aggregate, SpecifiesSchema
     public function state(): array
     {
         return [
-            'pub_key'            => $this->pubKey->asString(),
-            'was_granted_access' => \intval($this->wasGrantedAccess),
-            'registered_at'      => self::dateTimeImmutableAsDateTimeString(
+            'pub_key'       => $this->pubKey->asString(),
+            'registered_at' => self::dateTimeImmutableAsDateTimeString(
                 $this->registeredAt,
             ),
         ];
@@ -130,8 +119,8 @@ final class Member implements Aggregate, SpecifiesSchema
         $table = $schema->createTable(self::tableName());
 
         $table->addColumn('pub_key', 'string')->setNotnull(true);
-        $table->setPrimaryKey(['pub_key']);
-        $table->addColumn('was_granted_access', 'boolean')->setNotnull(true)->setDefault(false);
         $table->addColumn('registered_at', 'datetime')->setNotnull(true);
+
+        $table->setPrimaryKey(['pub_key']);
     }
 }

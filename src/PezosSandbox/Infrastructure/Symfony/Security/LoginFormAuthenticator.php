@@ -9,7 +9,7 @@ use Bzzhh\Pezos\Keys\PubKey;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
 use PezosSandbox\Application\RequestAccess\RequestAccess;
-use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
+use PezosSandbox\Domain\Model\Member\CouldNotFindmember;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -85,10 +85,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         }
 
         try {
-            $user = $this->application->getOneMemberByPubKey($credentials['pubKey']);
-        } catch (CouldNotFindMember $exception) {
-            $this->application->requestAccess(new RequestAccess($credentials['pubKey']));
-            $user = $this->application->getOneMemberByPubKey($credentials['pubKey']);
+            $user = $this->application->getOneMemberByPubKey(
+                $credentials['pubKey']
+            );
+        } catch (CouldNotFindmember $exception) {
+            $this->application->requestAccess(
+                new RequestAccess($credentials['pubKey'])
+            );
+            $user = $this->application->getOneMemberByPubKey(
+                $credentials['pubKey']
+            );
         }
 
         return $user;
@@ -98,7 +104,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $pubKey = PubKey::fromBase58($credentials['pubKey'], new Ed25519());
 
-        return $pubKey->verifySignedHex($credentials['sig'], bin2hex($credentials['msg']));
+        return $pubKey->verifySignedHex(
+            $credentials['sig'],
+            bin2hex($credentials['msg'])
+        );
     }
 
     public function onAuthenticationFailure(
@@ -111,8 +120,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
                 ->add(
                     FlashType::WARNING,
                     $this->translator->trans(
-                        'authentication_failed.flash_message',
-                    ),
+                        'authentication_failed.flash_message'
+                    )
                 );
         }
 
@@ -127,7 +136,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if (
             $targetPath = $this->getTargetPath(
                 $request->getSession(),
-                $providerKey,
+                $providerKey
             )
         ) {
             return new RedirectResponse($targetPath);

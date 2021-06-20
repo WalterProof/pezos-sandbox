@@ -8,11 +8,13 @@ use TalisOrm\AggregateId;
 
 final class Address implements AggregateId
 {
-    private string $address;
+    private string $contract;
+    private ?int $id;
 
-    private function __construct(string $address)
+    private function __construct(string $contract, ?int $id = null)
     {
-        $this->address = $address;
+        $this->contract = $contract;
+        $this->id = $id;
     }
 
     public function __toString(): string
@@ -20,13 +22,33 @@ final class Address implements AggregateId
         return $this->asString();
     }
 
+    public function contract(): string
+    {
+        return $this->contract;
+    }
+
+    public function id(): ?int
+    {
+        return $this->id;
+    }
+
     public static function fromString(string $string): self
     {
-        return new self($string);
+        preg_match('/^(KT1\w{33})_?(\d+)?/', $string, $matches);
+
+        return new self(
+            $matches[1],
+            isset($matches[2]) ? \intval($matches[2]) : null
+        );
+    }
+
+    public static function fromState(string $contract, ?int $id = null)
+    {
+        return new self($contract, $id);
     }
 
     public function asString(): string
     {
-        return $this->address;
+        return $this->contract . (!\is_null($this->id) ? '_' . $this->id : '');
     }
 }

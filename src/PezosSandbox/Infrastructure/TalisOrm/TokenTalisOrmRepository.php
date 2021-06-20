@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use Assert\Assert;
-use PezosSandbox\Domain\Model\Token\Address;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Domain\Model\Token\Token;
+use PezosSandbox\Domain\Model\Token\TokenId;
 use PezosSandbox\Domain\Model\Token\TokenRepository;
+use Ramsey\Uuid\Uuid;
 use TalisOrm\AggregateNotFoundException;
 use TalisOrm\AggregateRepository;
 
@@ -26,30 +27,35 @@ final class TokenTalisOrmRepository implements TokenRepository
         $this->aggregateRepository->save($token);
     }
 
-    public function getByAddress(Address $address): Token
+    public function getById(TokenId $tokenId): Token
     {
         try {
             $token = $this->aggregateRepository->getById(
                 Token::class,
-                $address,
+                $tokenId
             );
             Assert::that($token)->isInstanceOf(Token::class);
             /* @var Token $token */
 
             return $token;
         } catch (AggregateNotFoundException $exception) {
-            throw CouldNotFindToken::withAddress($address);
+            throw CouldNotFindToken::withId($tokenId);
         }
     }
 
-    public function exists(Address $address): bool
+    public function exists(TokenId $tokenId): bool
     {
         try {
-            $this->getByAddress($address);
+            $this->getById($tokenId);
 
             return true;
         } catch (CouldNotFindToken $exception) {
             return false;
         }
+    }
+
+    public function nextIdentity(): TokenId
+    {
+        return TokenId::fromString(Uuid::uuid4()->toString());
     }
 }

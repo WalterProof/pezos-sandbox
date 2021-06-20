@@ -11,18 +11,21 @@ use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\Clock;
 use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
+use PezosSandbox\Application\Exchanges\Exchanges;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Application\Tokens\Tokens;
+use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
+use PezosSandbox\Domain\Model\Tag\TagRepository;
 use PezosSandbox\Domain\Model\Token\TokenRepository;
 use Test\Acceptance\FakeClock;
 
 abstract class ServiceContainer
 {
-    protected ?EventDispatcher $eventDispatcher   = null;
-    protected ?ApplicationInterface $application  = null;
-    protected ?MemberRepository $memberRepository = null;
-    private ?Clock $clock                         = null;
+    protected ?ApplicationInterface $application = null;
+    protected ?EventDispatcher $eventDispatcher  = null;
+
+    private ?Clock $clock = null;
 
     public function eventDispatcher(): EventDispatcher
     {
@@ -33,7 +36,7 @@ abstract class ServiceContainer
         }
 
         Assert::that($this->eventDispatcher)->isInstanceOf(
-            EventDispatcher::class,
+            EventDispatcher::class
         );
 
         return $this->eventDispatcher;
@@ -43,12 +46,14 @@ abstract class ServiceContainer
     {
         if (null === $this->application) {
             $this->application = new Application(
+                $this->exchangeRepository(),
                 $this->memberRepository(),
                 $this->tokenRepository(),
                 $this->eventDispatcher(),
+                $this->exchanges(),
                 $this->members(),
                 $this->tokens(),
-                $this->clock(),
+                $this->clock()
             );
         }
 
@@ -73,16 +78,17 @@ abstract class ServiceContainer
         /* ]); */
     }
 
+    abstract protected function exchangeRepository(): ExchangeRepository;
+
     abstract protected function memberRepository(): MemberRepository;
 
+    abstract protected function tagRepository(): TagRepository;
+
     abstract protected function tokenRepository(): TokenRepository;
+
+    abstract protected function exchanges(): Exchanges;
 
     abstract protected function members(): Members;
 
     abstract protected function tokens(): Tokens;
-
-    private function accessPolicy(): AccessPolicy
-    {
-        return new AccessPolicy($this->application());
-    }
 }

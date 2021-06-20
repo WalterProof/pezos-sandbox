@@ -4,48 +4,59 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Application;
 
+use PezosSandbox\Application\Exchanges\Exchange as ExchangeReadModel;
+use PezosSandbox\Application\Exchanges\Exchanges;
 use PezosSandbox\Application\Members\Member as MemberReadModel;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Application\RequestAccess\RequestAccess;
 use PezosSandbox\Application\Tokens\Token as TokenReadModel;
 use PezosSandbox\Application\Tokens\Tokens;
-use PezosSandbox\Application\Tokens\TokenWasAlreadyAdded;
+use PezosSandbox\Domain\Model\Exchange\Exchange;
+use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
 use PezosSandbox\Domain\Model\Member\PubKey;
 use PezosSandbox\Domain\Model\Token\Address as TokenAddress;
-use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Domain\Model\Token\Token;
 use PezosSandbox\Domain\Model\Token\TokenRepository;
 
 class Application implements ApplicationInterface
 {
+    private ExchangeRepository $exchangeRepository;
     private MemberRepository $memberRepository;
     private TokenRepository $tokenRepository;
     private EventDispatcher $eventDispatcher;
+    private Exchanges $exchanges;
     private Members $members;
     private Tokens $tokens;
     private Clock $clock;
 
     public function __construct(
+        ExchangeRepository $exchangeRepository,
         MemberRepository $memberRepository,
         TokenRepository $tokenRepository,
         EventDispatcher $eventDispatcher,
+        Exchanges $exchanges,
         Members $members,
         Tokens $tokens,
         Clock $clock
     ) {
-        $this->memberRepository = $memberRepository;
-        $this->tokenRepository  = $tokenRepository;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->members          = $members;
-        $this->tokens           = $tokens;
-        $this->clock            = $clock;
+        $this->exchangeRepository = $exchangeRepository;
+        $this->memberRepository   = $memberRepository;
+        $this->tokenRepository    = $tokenRepository;
+        $this->eventDispatcher    = $eventDispatcher;
+        $this->exchanges          = $exchanges;
+        $this->members            = $members;
+        $this->tokens             = $tokens;
+        $this->clock              = $clock;
     }
 
     public function requestAccess(RequestAccess $command): void
     {
-        $member = Member::requestAccess($command->pubKey(), $this->clock->currentTime());
+        $member = Member::requestAccess(
+            $command->pubKey(),
+            $this->clock->currentTime()
+        );
 
         $this->memberRepository->save($member);
     }
@@ -57,69 +68,68 @@ class Application implements ApplicationInterface
         $this->memberRepository->save($member);
     }
 
-    public function addToken(AddToken $command): void
+    public function addExchange(AddExchange $addExchange): void
     {
-        try {
-            $this->tokenRepository->getByAddress($command->address());
+        $exchangeId = $this->exchangeRepository->nextIdentity();
+        $exchange   = Exchange::createExchange(
+            $exchangeId->asString(),
+            $addExchange->name(),
+            $addExchange->homepage()
+        );
 
-            throw new TokenWasAlreadyAdded($command->address());
-        } catch (CouldNotFindToken $exception) {
-            $token = Token::createToken(
-                $command->address(),
-                $command->addressQuipuswap(),
-                $command->kind(),
-                $command->decimals(),
-                $command->symbol(),
-                $command->name(),
-                $command->description(),
-                $command->homepage(),
-                $command->social(),
-                $command->thumbnailUri(),
-                $command->active()
-            );
-
-            $this->tokenRepository->save($token);
-        }
+        $this->exchangeRepository->save($exchange);
     }
 
-    public function toggleToken(string $address): void
+    public function updateExchange(UpdateExchange $updateExchange): void
     {
-        $token = $this->tokenRepository->getByAddress(TokenAddress::fromString($address));
-        $token->toggleActive();
+        $exchange = $this->exchangeRepository->getById(
+            $updateExchange->exchangeId()
+        );
+        $this->exchangeRepository->save($exchange);
+    }
+
+    public function addToken(AddToken $command): void
+    {
+        $tokenId = $this->tokenRepository->nextIdentity();
+        $token   = Token::createToken($tokenId, $command->address(), []);
+
         $this->tokenRepository->save($token);
+        $this->eventDispatcher->dispatchAll($token->releaseEvents());
     }
 
     public function updateToken(UpdateToken $command): void
     {
-        $token = $this->tokenRepository->getByAddress($command->address());
+        $token = $this->tokenRepository->getById($command->tokenId());
         $token->update(
-                $command->addressQuipuswap(),
-                $command->kind(),
-                $command->decimals(),
-                $command->supplyAdjustment(),
-                $command->symbol(),
-                $command->name(),
-                $command->description(),
-                $command->homepage(),
-                $command->social(),
-                $command->thumbnailUri(),
-                $command->active()
+            $command->address(),
+            $command->metadata(),
+            $command->active()
         );
         $this->tokenRepository->save($token);
     }
 
-    public function getOneMemberByPubKey(string $pubKey): MemberReadModel
+    public function getOneExchangeByName(string $name): ExchangeReadModel
     {
-        return $this->members->getOneByPubKey(
-            PubKey::fromString($pubKey),
-        );
+        return $this->exchanges->getOneByName($name);
     }
 
-    public function getOneTokenByAddress(string $address): TokenReadModel
+    public function getOneMemberByPubKey(string $pubKey): MemberReadModel
     {
-        return $this->tokens->getOneByAddress(
-            TokenAddress::fromString($address),
-        );
+        return $this->members->getOneByPubKey(PubKey::fromString($pubKey));
+    }
+
+    public function getOneTokenByAddress(string $tokenAddress): TokenReadModel
+    {
+        $address = TokenAddress::fromString($tokenAddress);
+
+        return $this->tokens->getOneByAddress($address);
+    }
+
+    public function addTokenExchange(AddTokenExchange $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->addExchange($command->exchangeId(), $command->contract());
+        $this->tokenRepository->save($token);
     }
 
     public function listMembersForAdministrator(): array
