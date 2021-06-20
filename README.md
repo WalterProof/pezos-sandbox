@@ -10,6 +10,8 @@ Run `make debug` to launch containers.
 
 Run `yarn run dev-server` for the frontend.
 
+Run `docker-compose exec php ./bin/console import` to import data.
+
 You should see something at http://pezos-sandbox.localdev/
 
 The project architecture will try to follow domain driven design, it is directly inspired from https://leanpub.com/web-application-architecture (great book).
@@ -20,9 +22,14 @@ The price dynamics have been in(a)spired from https://github.com/ztepler/quipusw
 
 Roadmap:
 
--   add pool dynamics
--   add token story/economics/infos
--   add admin logs
--   use https://github.com/dipdup-net
--   improve UI
--   count which token is most viewed
+-   [x] add pool dynamics
+-   [ ] add token story/economics/infos
+-   [ ] add admin logs
+-   [ ] use https://github.com/dipdup-net
+-   [ ] improve UI (mobile version)
+-   [ ] count which token is most viewed
+-   [ ] tokens ordering (by liquidity pool..) 
+-   [ ] use rollbar for error logs
+-   [ ] have web server stats
+-   [ ] explanation of signature login
+-   [ ] links to other ecosystem tools (comet, teztools, tzflow..)
