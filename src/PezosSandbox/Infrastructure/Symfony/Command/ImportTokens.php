@@ -10,6 +10,9 @@ use PezosSandbox\Application\AddTokenExchange;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\UpdateToken;
 use PezosSandbox\Infrastructure\Mapping;
+use PezosSandbox\Infrastructure\Tezos\Contract;
+use PezosSandbox\Infrastructure\Tezos\Decimals;
+use PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistory;
 use function Safe\json_decode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,13 +23,18 @@ final class ImportTokens extends Command
     use Mapping;
 
     private ApplicationInterface $application;
-    private array $headers = [];
+    private GetStorageHistory $getStorageHistory;
+    private array $headers  = [];
+    private array $tezPools = [];
 
-    public function __construct(ApplicationInterface $application)
-    {
+    public function __construct(
+        ApplicationInterface $application,
+        GetStorageHistory $getStorageHistory
+    ) {
         parent::__construct();
 
-        $this->application = $application;
+        $this->application       = $application;
+        $this->getStorageHistory = $getStorageHistory;
     }
 
     protected function configure()
@@ -116,9 +124,39 @@ final class ImportTokens extends Command
                 );
 
                 $this->application->addTokenExchange($addTokenExchange);
+
+                // quick and dirty position adding
+                if ('t' === $data['active']) {
+                    $history = $this->getStorageHistory
+                        ->getStorageHistory(
+                            Contract::fromString($data['address_quipuswap']),
+                            Decimals::fromInt($metadata['decimals'])
+                        )
+                        ->history();
+                    $history                          = end($history);
+                    $this->tezPools[$data['address']] = self::asInt(
+                        $history,
+                        'tez_pool'
+                    );
+                }
             }
 
             fclose($handle);
+
+            arsort($this->tezPools);
+            $this->tezPools = array_flip($this->tezPools);
+            $position       = 0;
+            foreach ($this->tezPools as $address) {
+                $token       = $this->application->getOneTokenByAddress($address);
+                $updateToken = new UpdateToken(
+                    $token->tokenId()->asString(),
+                    $token->address()->asString(),
+                    $token->metadata(),
+                    $token->isActive(),
+                    ++$position
+                );
+                $this->application->updateToken($updateToken);
+            }
         }
 
         return static::SUCCESS;

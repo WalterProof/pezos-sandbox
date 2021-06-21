@@ -67,7 +67,7 @@ final class IndexController extends AbstractController
             'tokens'          => $tokens,
             'token'           => $token,
             'tokenLastUpdate' => $this->getTokenLastUpdate($token),
-            'supply'          => $supply,
+            'supply'          => $supply / 10 ** $token->metadata()['decimals'],
         ]);
     }
 

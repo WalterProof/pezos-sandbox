@@ -13,17 +13,20 @@ final class UpdateToken
     private string $address;
     private array $metadata;
     private bool $active;
+    private ?int $position;
 
     public function __construct(
         string $tokenId,
         string $address,
         array $metadata,
-        bool $active
+        bool $active,
+        ?int $position = null
     ) {
         $this->tokenId  = $tokenId;
         $this->address  = $address;
         $this->metadata = $metadata;
         $this->active   = $active;
+        $this->position = $position;
     }
 
     public function tokenId(): TokenId
@@ -39,6 +42,11 @@ final class UpdateToken
     public function metadata(): array
     {
         return $this->metadata;
+    }
+
+    public function position(): ?int
+    {
+        return $this->position;
     }
 
     public function active(): bool

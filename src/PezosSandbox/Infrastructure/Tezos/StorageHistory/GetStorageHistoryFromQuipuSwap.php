@@ -69,7 +69,7 @@ final class GetStorageHistoryFromQuipuSwap implements GetStorageHistory
 
                 return [
                     $record->getTimestamp()->format('Y-m-d H:i:s') => [
-                        'ratio'      => $tezPool / $tokenPool,
+                        'ratio'      => $tokenPool > 0 ? $tezPool / $tokenPool : 0,
                         'tez_pool'   => $tezPool,
                         'token_pool' => $tokenPool,
                         'id'         => $record->getId(),

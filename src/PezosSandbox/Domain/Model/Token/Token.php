@@ -21,6 +21,7 @@ final class Token implements Aggregate, SpecifiesSchema
     private Address $address;
     private array $metadata;
     private bool $active     = true;
+    private ?int $position   = null;
     private array $tags      = [];
     private array $exchanges = [];
 
@@ -71,6 +72,7 @@ final class Token implements Aggregate, SpecifiesSchema
         );
         $instance->metadata = self::asArray($aggregateState, 'metadata');
         $instance->active   = self::asBool($aggregateState, 'active');
+        $instance->position = self::asIntOrNull($aggregateState, 'position');
         $instance->tags     = $childEntitiesByType[TokenTag::class];
 
         return $instance;
@@ -95,17 +97,23 @@ final class Token implements Aggregate, SpecifiesSchema
         $this->active = !$this->active;
     }
 
-    public function update(Address $address, array $metadata, bool $active)
-    {
+    public function update(
+        Address $address,
+        array $metadata,
+        bool $active,
+        ?int $position = null
+    ) {
         $this->address  = $address;
         $this->metadata = $metadata;
         $this->active   = $active;
+        $this->position = $position;
 
         $this->events[] = new TokenWasUpdated(
             $this->tokenId,
             $address,
             $metadata,
-            $active
+            $active,
+            $position
         );
     }
 
@@ -120,6 +128,7 @@ final class Token implements Aggregate, SpecifiesSchema
             'id'       => $this->address->id(),
             'metadata' => json_encode($this->metadata),
             'active'   => (int) $this->active,
+            'position' => $this->position,
         ];
     }
 
@@ -160,6 +169,7 @@ final class Token implements Aggregate, SpecifiesSchema
         $table->addUniqueIndex(['contract', 'id']);
 
         $table->addColumn('metadata', 'text')->setNotNull(true);
+        $table->addColumn('position', 'integer')->setNotNull(false);
         $table
             ->addColumn('active', 'boolean')
             ->setNotnull(true)

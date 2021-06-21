@@ -103,7 +103,8 @@ class Application implements ApplicationInterface
         $token->update(
             $command->address(),
             $command->metadata(),
-            $command->active()
+            $command->active(),
+            $command->position()
         );
         $this->tokenRepository->save($token);
     }

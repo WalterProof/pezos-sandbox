@@ -12,7 +12,8 @@ final class Token
     private string $tokenId;
     private string $address;
     private array $metadata;
-    private $active;
+    private bool $active;
+    private ?int $position;
 
     private ?array $exchanges = null;
     private ?array $tags      = null;
@@ -44,6 +45,16 @@ final class Token
         return $this->metadata;
     }
 
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function position(): ?int
+    {
+        return $this->position;
+    }
+
     public function withExchanges(array $exchanges): self
     {
         $copy = clone $this;
@@ -70,10 +81,5 @@ final class Token
     public function tags(): ?array
     {
         return $this->tags;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->active;
     }
 }

@@ -56,7 +56,8 @@ final class TokensUsingDoctrineDbal implements Tokens
         $qb = $this->connection
             ->createQueryBuilder()
             ->select('*')
-            ->from('tokens');
+            ->from('tokens')
+            ->orderBy('position');
 
         if ($onlyActive) {
             $qb->where('active = true');
