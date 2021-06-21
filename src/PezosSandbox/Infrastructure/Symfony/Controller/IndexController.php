@@ -88,14 +88,16 @@ final class IndexController extends AbstractController
         return [
             'FA1.2' => array_reduce(
                 $tokens,
-                fn (int $count, Token $token): int => !$token->address()->id()
+                fn (int $count, Token $token): int => null ===
+                $token->address()->id()
                     ? $count + 1
                     : $count,
                 0
             ),
             'FA2' => array_reduce(
                 $tokens,
-                fn (int $count, Token $token): int => $token->address()->id()
+                fn (int $count, Token $token): int => null !==
+                $token->address()->id()
                     ? $count + 1
                     : $count,
                 0
