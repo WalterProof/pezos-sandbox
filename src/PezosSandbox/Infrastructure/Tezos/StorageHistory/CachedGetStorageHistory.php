@@ -55,7 +55,13 @@ final class CachedGetStorageHistory implements GetStorageHistory
 
             if ($history->lastId() > $snapshot->lastId()) {
                 $this->storageHistoryCache->delete($snapshotKey);
-                $this->storageHistoryCache->get($snapshotKey, fn () => $history);
+                $this->storageHistoryCache->get($snapshotKey, function (
+                    ItemInterface $item
+                ) use ($history) {
+                    $item->expiresAfter(null);
+
+                    return $history;
+                });
             }
 
             return $history;
