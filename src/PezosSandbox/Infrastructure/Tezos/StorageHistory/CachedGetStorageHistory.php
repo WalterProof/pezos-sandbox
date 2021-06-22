@@ -6,18 +6,17 @@ namespace PezosSandbox\Infrastructure\Tezos\StorageHistory;
 
 use PezosSandbox\Infrastructure\Tezos\Contract;
 use PezosSandbox\Infrastructure\Tezos\Decimals;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 final class CachedGetStorageHistory implements GetStorageHistory
 {
     private GetStorageHistory $getStorageHistory;
-    private CacheInterface $storageHistoryCache;
+    private CacheItemPoolInterface $storageHistoryCache;
     private ?string $refreshInterval = null;
 
     public function __construct(
         GetStorageHistory $getStorageHistory,
-        CacheInterface $storageHistoryCache
+        CacheItemPoolInterface $storageHistoryCache
     ) {
         $this->getStorageHistory   = $getStorageHistory;
         $this->storageHistoryCache = $storageHistoryCache;
@@ -28,44 +27,30 @@ final class CachedGetStorageHistory implements GetStorageHistory
         Decimals $decimals,
         ?StorageHistory $snapshot = null
     ): StorageHistory {
-        return $this->storageHistoryCache->get($contract->asString(), function (
-            ItemInterface $item
-        ) use ($contract, $decimals, $snapshot) {
-            $item->expiresAfter(
-                \DateInterval::createFromDateString($this->refreshInterval)
+        $cached = $this->storageHistoryCache->getItem($contract->asString());
+
+        if (!$cached->isHit()) {
+            $cachedSnapshot = $this->storageHistoryCache->getItem(
+                sprintf('%s_backup', $contract->asString())
             );
-
-            $snapshotKey = sprintf('%s_backup', $contract->asString());
-            $snapshot = $this->storageHistoryCache->get($snapshotKey, function (
-                ItemInterface $item
-            ) use ($contract, $decimals) {
-                $item->expiresAfter(null);
-
-                return $this->getStorageHistory->getStorageHistory(
-                    $contract,
-                    $decimals
-                );
-            });
-
+            $snapshot = $cachedSnapshot->isHit()
+                ? $cachedSnapshot->get()
+                : null;
             $history = $this->getStorageHistory->getStorageHistory(
                 $contract,
                 $decimals,
                 $snapshot
             );
 
-            if ($history->lastId() > $snapshot->lastId()) {
-                $this->storageHistoryCache->delete($snapshotKey);
-                $this->storageHistoryCache->get($snapshotKey, function (
-                    ItemInterface $item
-                ) use ($history) {
-                    $item->expiresAfter(null);
+            $cached
+                ->set($history)
+                ->expiresAfter(
+                    \DateInterval::createFromDateString($this->refreshInterval)
+                );
+            $cachedSnapshot->set($history);
+        }
 
-                    return $history;
-                });
-            }
-
-            return $history;
-        });
+        return $cached->get();
     }
 
     public function setRefreshInterval(?string $refreshInterval): void
