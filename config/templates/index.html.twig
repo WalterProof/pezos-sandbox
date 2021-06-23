@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="i-Dashboard">
+    <div class="dashboard">
         <form>
             <div>
                 <select onchange="window.location.replace('?address=' + this.value)"
@@ -34,12 +34,13 @@
             </div>
         </form>
 
-        <div class="i-Token divide-x divide-gray-200">
+        <div class="divide-x divide-gray-200 | token">
             <div>
                 {% if token.metadata.thumbnail_uri ?? null %}
-                <img src="{{ token.metadata.thumbnail_uri }}" class="w-32" />
+                    <img src="{{ token.metadata.thumbnail_uri }}"
+                        class="w-32" />
                 {% else %}
-                {% include './svg/noun_explosion_563988.svg' %}
+                    {% include './svg/noun_explosion_563988.svg' %}
                 {% endif %}
                 <div class="flex flex-row mt-6 justify-evenly">
                     <a href="https://quipuswap.com/swap?from=tez&to={{
@@ -61,9 +62,9 @@
             <div class="flex-grow pl-6 mx-6">
                 <div class="flex flex-row items-center justify-around w-full">
                     {% if token.metadata.name ?? null %}
-                    <span class="flex-grow token-name">
-                        {{ token.metadata.name }}
-                    </span><br />
+                        <span class="flex-grow | name">
+                            {{ token.metadata.name }}
+                        </span><br />
                     {% endif %}
                     {% if token.metadata.homepage is defined %}
                         <a href="{{ token.metadata.homepage }}">
@@ -115,52 +116,81 @@
                 </div>
 
                 {% if token.metadata.description is defined %}
-                    <div class="my-3 token-desc">
+                    <div class="my-3 | description">
                         {{ token.metadata.description }}
                     </div>
                 {% endif %}
-                <div> 
-                <ul>
-                    <li>Supply: {{ supply|number_format }}</li>
-                    <li>Standard: {{ token.address.id is not null ? 'FA2' : 'FA1.2' }}</li>
-                    <li>Decimals: {{ token.metadata.decimals }}</li>
-                    <li>
-                        Contract: <a href="https://better-call.dev/mainnet/{{ token.address.contract }}/tokens" class="underline">bcd</a> | <a href="https://tzkt.io/{{ token.address.contract }}/dex" target="new" class="underline">tzkt</a>
-                    </li>
-                    {% for exchange in token.exchanges %}
-                    <li>
-                        {{ exchange.name }}: <a href="https://better-call.dev/mainnet/{{ exchange.contract }}" class="underline">bcd</a> | <a href="https://tzkt.io/{{ exchange.contract }}/dex" target="new" class="underline">tzkt</a>
-                    </li>
-                    {% endfor %}
-                    <li>
-                        Liquidity Pool: {{
-                            tokenLastUpdate.tez_pool|number_format(6)
-                        }}&nbsp;ꜩ / {{
-                            tokenLastUpdate.token_pool|number_format(
-                                token.metadata.decimals
-                            )
+                <div>
+                    <ul>
+                        <li>Supply: {{ supply|number_format }}</li>
+                        <li>
+                            Standard: {{ token.address.id is not null ? 'FA2' : 'FA1.2' }}
+                        </li>
+                        <li>Decimals: {{ token.metadata.decimals }}</li>
+                        <li>
+                            Contract: <a href="https://better-call.dev/mainnet/{{
+                                token.address.contract
+                                }}/tokens"
+                                class="underline">
+                                bcd
+                            </a> | <a href="https://tzkt.io/{{ token.address.contract }}/dex" target="new" class="underline">tzkt</a>
+                        </li>
+                        {% for exchange in token.exchanges %}
+                            <li>
+                                {{ exchange.name }}: <a href="https://better-call.dev/mainnet/{{
+                                    exchange.contract
+                                    }}"
+                                    class="underline">
+                                    bcd
+                                </a> | <a href="https://tzkt.io/{{
+                                    exchange.contract
+                                    }}/dex"
+                                    target="new"
+                                    class="underline">
+                                    tzkt
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-2"
+                        {{
+                        stimulus_controller(
+                            'refresh-content',
+                            {
+                                url: path(
+                                    '_app_token_last_update',
+                                    {
+                                        address: token.address
+                                    }
+                                ),
+                                interval: refresh_interval_ms,
+                                useEffect: true
+                            }
+                        )
                         }}
-                        {{ token.metadata.symbol }}
-                    </li>
-                    <li>
-                        Price/Ratio: 1&nbsp;{{ token.metadata.symbol }} = {{
-                            (tokenLastUpdate.tez_pool / tokenLastUpdate.token_pool)|number_format(6)
-                        }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
-                            (tokenLastUpdate.token_pool / tokenLastUpdate.tez_pool)|number_format(
-                                token.metadata.decimals
-                            )
-                        }}
-                        {{ token.metadata.symbol }}
-                    </li>
-                </ul>
+                        data-refresh-content-target="content">
+                        {% include './_token_last_update.html.twig' %}
                     </div>
-
                 </div>
             </div>
         </div>
+    </div>
 
-        <div {{ stimulus_controller('refresh-content', { url: path('_app_charts', { address: token.address }), interval: refresh_interval_ms}) }} data-refresh-content-target="content">
-            {% include './_charts.html.twig' %}
-        </div>
+    <div {{
+        stimulus_controller(
+            'refresh-content',
+            {
+                url: path(
+                    '_app_token_charts',
+                    {
+                        address: token.address
+                    }
+                ),
+                interval: refresh_interval_ms
+            }
+        )
+        }}
+        data-refresh-content-target="content">
+        {% include './_token_charts.html.twig' %}
     </div>
 {% endblock %}

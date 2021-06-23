@@ -19,15 +19,15 @@
         {% endblock %}
     </head>
     <body>
-        <div class="g-Page">
-            <div class="g-MainContent">
-                <div class="g-Header">
+        <div class="page">
+            <div class="main">
+                <div class="header">
                     <h1 class="comic-neue-angular-bold-italic">
                         <span>Pezos Sandbox</span>
                     </h1>
                     {{ include('_account.html.twig') }}
                 </div>
-                <div class="">
+                <div>
                     {% for key, messages in app.flashes() %}
                         {% for message in messages %}
                             <div class="">
@@ -42,7 +42,7 @@
             </div>
             <footer>
                 <div class="container">
-                    <div class="g-Footer">
+                    <div>
                         <p>
                             Page auto-refresh every minute
                         </p>
