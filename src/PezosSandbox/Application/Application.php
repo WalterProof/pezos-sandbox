@@ -153,4 +153,9 @@ class Application implements ApplicationInterface
     {
         return $this->tokens->listTokensForAdmin();
     }
+
+    public function getCurrentTime(): \DateTimeImmutable
+    {
+        return $this->clock->currentTime();
+    }
 }

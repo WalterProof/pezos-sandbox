@@ -176,6 +176,10 @@
         </div>
     </div>
 
+    <div {{ stimulus_controller('time_interval_form') }}>
+        {{ form(timeIntervalForm) }}
+    </div>
+
     <div {{
         stimulus_controller(
             'refresh-content',

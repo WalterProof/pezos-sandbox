@@ -14,7 +14,8 @@ final class LoginForm extends AbstractType
 {
     private UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator) {
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -30,12 +31,12 @@ final class LoginForm extends AbstractType
     {
         $resolver->setDefaults([
             'action' => $this->urlGenerator->generate('app_login'),
-            'attr' => [
-                'novalidate' => 'novalidate',
+            'attr'   => [
+                'novalidate'         => 'novalidate',
                 'data-wallet-target' => 'loginForm',
             ],
             'csrf_field_name' => '_csrf_token',
-            'csrf_token_id' => 'authenticate',
+            'csrf_token_id'   => 'authenticate',
         ]);
     }
 
