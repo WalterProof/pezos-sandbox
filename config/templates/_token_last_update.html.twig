@@ -1,0 +1,20 @@
+<ul>
+    <li>
+        Liquidity Pool: {{ tokenLastUpdate.tez_pool|number_format(6) }}&nbsp;ꜩ / {{
+            tokenLastUpdate.token_pool|number_format(token.metadata.decimals)
+        }}
+        {{ token.metadata.symbol }}
+    </li>
+    <li>
+        Price/Ratio: 1&nbsp;{{ token.metadata.symbol }} = {{
+            (tokenLastUpdate.tez_pool
+                / tokenLastUpdate.token_pool)|number_format(6)
+        }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
+            (tokenLastUpdate.token_pool
+                / tokenLastUpdate.tez_pool)|number_format(
+                token.metadata.decimals
+            )
+        }}
+        {{ token.metadata.symbol }}
+    </li>
+</ul>

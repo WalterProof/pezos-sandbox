@@ -4,8 +4,8 @@
     </p>
 </div>
 <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
-    <div class="c-Nav">
-        <ul class="c-Menu">
+    <div class="tabs">
+        <ul>
             {% for title in charts.QuipuSwap|keys %}
                 <li data-tabs-target="tab" class="">
                     <a data-action="tabs#change">{{ title }}</a>
@@ -13,7 +13,7 @@
             {% endfor %}
         </ul>
     </div>
-    <div class="c-Chart">
+    <div class="charts">
         {% for chart in charts.QuipuSwap %}
             <div data-tabs-target="tabPanel">
                 {{ render_chart(chart) }}

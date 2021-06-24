@@ -6,144 +6,170 @@
     body {
         @apply text-sm;
     }
+
+    h1 {
+        @apply flex-grow text-4xl italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-300;
+    }
+
+    h3 {
+        @apply font-bold;
+    }
+
     a {
         @apply font-bold text-blue-800 underline;
     }
-    a:hover {
-        @apply text-blue-600;
+
+    footer {
+        @apply bg-gray-200;
+    }
+
+    @variants hover {
+        a {
+            @apply text-blue-600;
+        }
     }
 }
 
-.tags span {
-    @apply self-center p-3 mr-3 flex-grow bg-gray-50;
+@layer components {
+    /* Sticky footer */
+    .page {
+        @apply flex flex-col h-screen bg-gray-100;
+    }
+
+    .main {
+        @apply container flex-grow;
+    }
+
+    .header {
+        @apply flex flex-row my-8;
+    }
+
+    .header > div {
+        @apply flex flex-col justify-center;
+    }
+
+    /* Footer */
+
+    footer nth-child(2) {
+        @apply flex p-4;
+    }
+
+    .socializing {
+        @apply flex flex-row items-center float-right ml-auto space-x-4;
+    }
+
+    .toggle-checkbox:checked {
+        @apply: right-0 border-green-400;
+        right: 0;
+        border-color: #68d391;
+    }
+
+    .toggle-checkbox:checked + .toggle-label {
+        @apply: bg-green-400;
+        background-color: #68d391;
+    }
+
+    .dashboard {
+        @apply flex flex-col my-8;
+    }
+    .dashboard form div {
+        @apply flex-grow;
+    }
+
+    .token {
+        @apply flex flex-row my-8;
+    }
+
+    .token .name {
+        @apply text-xl font-semibold;
+    }
+
+    .token .description {
+        @apply italic;
+    }
+
+    .tags span {
+        @apply self-center flex-grow p-3 mr-3 bg-gray-50;
+    }
+
+    .tabs {
+        @apply flex;
+        @apply border-b;
+    }
+
+    .tabs ul {
+        @apply flex items-end;
+    }
+    .tabs li {
+        @apply mr-1;
+    }
+    .tabs .is-active {
+        @apply z-10 -mb-px bg-gray-50;
+    }
+    .tabs a {
+        @apply inline-block px-4 py-2 font-semibold text-blue-500 no-underline bg-gray-100 cursor-pointer;
+    }
+    .tabs a:hover {
+        @apply text-blue-800;
+    }
+    .tabs .is-active a {
+        @apply text-blue-700 bg-white border-t border-l border-r rounded-t;
+    }
+
+    .charts {
+        @apply py-8 bg-gray-50;
+    }
 }
 
-/* Sticky footer */
-.g-Page {
-    @apply flex flex-col h-screen bg-gray-100;
-}
+@layer utilities {
+    .bg-primary {
+        background: #ff00ff;
+    }
 
-.g-MainContent {
-    @apply container flex-grow;
-}
+    .bg-secondary {
+        background: #ffbf81;
+    }
+    .btn {
+        @apply px-4 py-2 font-bold rounded;
+    }
+    .btn-small {
+        @apply px-1 py-1 font-bold rounded;
+    }
 
-.g-Header {
-    @apply flex flex-row my-8;
-}
+    .btn-primary {
+        @apply py-2 font-semibold text-white bg-blue-500 shadow-md;
+    }
+    .btn-primary:hover {
+        @apply bg-blue-400;
+    }
+    .btn-buy {
+        @apply text-white no-underline bg-green-400;
+    }
+    .btn-buy:hover {
+        @apply text-white bg-green-300;
+    }
+    .btn-sell {
+        @apply text-white no-underline bg-red-400;
+    }
+    .btn-sell:hover {
+        @apply text-white bg-red-300;
+    }
 
-.g-Header > div {
-    @apply flex flex-col justify-center;
-}
+    .color-primary {
+        color: #ff00ff;
+    }
 
-/* Footer */
-footer {
-    @apply bg-gray-200;
-}
+    .color-secondary {
+        color: #ffbf81;
+    }
 
-.g-Footer {
-    @apply flex p-4;
-}
-.g-Footer .socializing {
-    @apply flex flex-row items-center float-right ml-auto space-x-4;
-}
+    .blink {
+        animation: blinker 1s linear infinite;
+    }
 
-.g-ErrorMessage {
-    @apply font-bold text-red-500;
-}
-
-h1 {
-    @apply flex-grow text-4xl italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-300;
-}
-
-h3 {
-    @apply font-bold;
-}
-
-.btn {
-    @apply px-4 py-2 font-bold rounded;
-}
-.btn-small {
-    @apply px-1 py-1 font-bold rounded;
-}
-
-.btn-primary {
-    @apply py-2 font-semibold text-white bg-blue-500 shadow-md;
-}
-.btn-primary:hover {
-    @apply bg-blue-400;
-}
-.btn-buy {
-    @apply text-white no-underline bg-green-400;
-}
-.btn-buy:hover {
-    @apply text-white bg-green-300;
-}
-.btn-sell {
-    @apply text-white no-underline bg-red-400;
-}
-.btn-sell:hover {
-    @apply text-white bg-red-300;
-}
-
-/* Index */
-.i-Dashboard {
-    @apply flex flex-col my-8;
-}
-.i-Dashboard form div {
-    @apply flex-grow;
-}
-
-.i-Token {
-    @apply flex flex-row my-8;
-}
-
-.token-name {
-    @apply text-xl font-semibold;
-}
-
-.token-desc {
-    @apply italic;
-}
-
-.c-Chart {
-    @apply py-8 bg-gray-50;
-}
-
-/* Nav */
-.c-Nav {
-    @apply flex;
-    @apply border-b;
-}
-
-/* Menu */
-.c-Menu {
-    @apply flex;
-    @apply items-end;
-}
-.c-Menu li {
-    @apply mr-1;
-}
-.c-Menu .is-active {
-    @apply z-10 -mb-px bg-gray-50;
-}
-.c-Menu a {
-    @apply inline-block px-4 py-2 font-semibold text-blue-500 no-underline bg-gray-100 cursor-pointer;
-}
-.c-Menu a:hover {
-    @apply text-blue-800;
-}
-.c-Menu .is-active a {
-    @apply text-blue-700 bg-white border-t border-l border-r rounded-t;
-}
-
-/* CHECKBOX TOGGLE SWITCH */
-/* @apply rules for documentation, these do not work as inline style */
-.toggle-checkbox:checked {
-    @apply: right-0 border-green-400;
-    right: 0;
-    border-color: #68d391;
-}
-.toggle-checkbox:checked + .toggle-label {
-    @apply: bg-green-400;
-    background-color: #68d391;
+    @keyframes blinker {
+        50% {
+            opacity: 0;
+        }
+    }
 }

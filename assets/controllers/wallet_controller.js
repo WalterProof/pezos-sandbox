@@ -1,6 +1,5 @@
 import { Controller } from 'stimulus';
-import { DAppClient, PermissionScope } from '@airgap/beacon-sdk';
-import axios from 'axios';
+import { DAppClient, PermissionScope, SigningType } from '@airgap/beacon-sdk';
 import $ from 'jquery';
 
 export default class extends Controller {
@@ -8,11 +7,9 @@ export default class extends Controller {
 
     activeAccount = null;
     dAppClient = null;
-    apiClient = null;
 
     async initialize() {
         this.dAppClient = new DAppClient({ name: 'Pezos Sandbox' });
-        this.apiClient = axios.create();
     }
 
     async login() {
@@ -60,6 +57,7 @@ export default class extends Controller {
         try {
             signedMsg = (
                 await this.dAppClient.requestSignPayload({
+                    SigningType: SigningType.MICHELINE,
                     payload: msg,
                     sourceAddress: address,
                 })
