@@ -49,4 +49,6 @@ interface ApplicationInterface
     public function addToken(AddToken $command): void;
 
     public function updateToken(UpdateToken $command): void;
+
+    public function getCurrentTime(): \DateTimeImmutable;
 }
