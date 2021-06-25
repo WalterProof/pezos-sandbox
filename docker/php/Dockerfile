@@ -133,7 +133,7 @@ RUN set -eux; \
 	mkdir -p var/cache var/log; \
 	composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev; \
     composer dump-autoload --classmap-authoritative --no-dev; sync; \
-    apk add --no-cache --virtual .build-deps nodejs nodejs-npm; \
+    apk add --no-cache --virtual .build-deps nodejs npm; \
     npm install -g yarn; \
     yarn install && yarn run build; \
     apk del .build-deps
