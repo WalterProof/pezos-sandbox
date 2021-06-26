@@ -70,7 +70,7 @@
     }
 
     .dashboard {
-        @apply flex flex-col my-8;
+        @apply flex flex-col mt-8;
     }
     .dashboard form div {
         @apply flex-grow;
