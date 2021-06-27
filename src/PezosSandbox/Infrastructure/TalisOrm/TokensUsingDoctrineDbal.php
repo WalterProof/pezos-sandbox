@@ -73,7 +73,8 @@ final class TokensUsingDoctrineDbal implements Tokens
                     self::asIntOrNull($record, 'id')
                 ),
                 self::asArray($record, 'metadata'),
-                self::asBool($record, 'active')
+                self::asBool($record, 'active'),
+                self::asIntOrNull($record, 'position')
             ),
             $records
         );
@@ -96,7 +97,8 @@ final class TokensUsingDoctrineDbal implements Tokens
                 self::asIntOrNull($data, 'id')
             ),
             self::asArray($data, 'metadata'),
-            self::asBool($data, 'active')
+            self::asBool($data, 'active'),
+            self::asIntOrNull($data, 'position')
         );
     }
 

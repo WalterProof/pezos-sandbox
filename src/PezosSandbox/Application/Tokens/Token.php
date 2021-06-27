@@ -22,12 +22,14 @@ final class Token
         TokenId $tokenId,
         Address $address,
         array $metadata,
-        bool $active
+        bool $active,
+        ?int $position
     ) {
         $this->tokenId  = $tokenId->asString();
         $this->address  = $address->asString();
         $this->metadata = $metadata;
         $this->active   = $active;
+        $this->position = $position;
     }
 
     public function tokenId(): TokenId

@@ -33,8 +33,9 @@ final class TimeIntervalForm extends AbstractType
                 'Last week'     => '-1 week',
                 'Last 24 hours' => '-24 hours',
             ],
-            'data' => $this->session->get('time_interval'),
-            'attr' => [
+            'label' => false,
+            'data'  => $this->session->get('time_interval'),
+            'attr'  => [
                 'data-time-interval-form-target' => 'interval',
             ],
         ]);

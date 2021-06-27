@@ -117,7 +117,8 @@ final class TokenController extends AbstractController
                     $formData['contract'].
                         ($formData['id'] ? '_'.$formData['id'] : ''),
                     $formData['metadata'],
-                    $formData['active']
+                    $formData['active'],
+                    $token->position()
                 );
 
                 $this->application->updateToken($updateToken);
@@ -144,7 +145,8 @@ final class TokenController extends AbstractController
             $token->tokenId()->asString(),
             $token->address()->asString(),
             $token->metadata(),
-            !$token->isActive()
+            !$token->isActive(),
+            $token->position()
         );
 
         $this->application->updateToken($updateToken);

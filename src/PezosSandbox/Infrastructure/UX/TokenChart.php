@@ -40,6 +40,7 @@ final class TokenChart
         ?string $interval
     ) {
         $charts   = [];
+        $unit     = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
         $decimals = Decimals::fromInt($token->metadata()['decimals']);
 
         foreach ($token->exchanges() as $exchange) {
@@ -57,8 +58,8 @@ final class TokenChart
             }
 
             $charts[$exchange->name()] = [
-                'Prices Dynamics' => $this->createPriceChart($data),
-                'Pool Dynamics'   => $this->createPoolChart($token, $data),
+                'Prices Dynamics' => $this->createPriceChart($data, $unit),
+                'Pool Dynamics'   => $this->createPoolChart($token, $data, $unit),
             ];
             $dates                                = array_keys($data);
             $this->lastUpdates[$exchange->name()] = end($dates);
@@ -67,7 +68,7 @@ final class TokenChart
         return $charts;
     }
 
-    private function createPriceChart(array $data): Chart
+    private function createPriceChart(array $data, string $unit): Chart
     {
         $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
 
@@ -77,26 +78,44 @@ final class TokenChart
             'labels'   => array_keys($data),
             'datasets' => [
                 [
-                    'borderColor' => 'rgb(51, 51, 51)',
-                    'borderWidth' => 1,
-                    'data'        => $ratios,
-                    'pointRadius' => 0,
+                    'borderColor'     => 'rgb(59,130,246)',
+                    'backgroundColor' => 'rgb(59,130,246)',
+                    'borderWidth'     => 2,
+                    'data'            => $ratios,
+                    'radius'          => 0,
+                    'fill'            => false,
+                    'tension'         => 0,
                 ],
             ],
         ]);
 
         $chart->setOptions([
-            'scales' => [
-                'yAxes' => [['ticks' => ['min' => 0, 'max' => max($ratios)]]],
+            'animation' => false,
+            'scales'    => [
+                'yAxes' => [
+                    ['ticks' => ['min' => min($ratios), 'max' => max($ratios)]],
+                ],
+                'xAxes' => [
+                    [
+                        'type' => 'time',
+                        'time' => [
+                            'unit' => $unit,
+                        ],
+                    ],
+                ],
             ],
-            'legend' => ['display' => false],
+            'legend'   => ['display' => false],
+            'tooltips' => ['intersect' => false],
         ]);
 
         return $chart;
     }
 
-    private function createPoolChart(Token $token, array $data): Chart
-    {
+    private function createPoolChart(
+        Token $token,
+        array $data,
+        string $unit
+    ): Chart {
         $chart   = $this->chartBuilder->createChart(Chart::TYPE_LINE);
         $tezPool = array_values(
             array_map(fn (array $d) => $d['tez_pool'], $data)
@@ -110,28 +129,34 @@ final class TokenChart
             'labels'   => $labels,
             'datasets' => [
                 [
-                    'label'       => 'tez',
-                    'fill'        => false,
-                    'borderColor' => 'rgb(0, 151, 0)',
-                    'borderWidth' => 1,
-                    'data'        => $tezPool,
-                    'pointRadius' => 0,
-                    'yAxisID'     => 'tez',
+                    'label'           => 'tez',
+                    'fill'            => false,
+                    'borderColor'     => 'rgb(59,130,246)',
+                    'backgroundColor' => 'rgb(59,130,246)',
+                    'borderWidth'     => 2,
+                    'data'            => $tezPool,
+                    'radius'          => 0,
+                    'yAxisID'         => 'tez',
+                    'tension'         => 0,
                 ],
                 [
-                    'label'       => $token->metadata()['symbol'],
-                    'fill'        => false,
-                    'borderColor' => 'rgb(51, 51, 51)',
-                    'borderWidth' => 1,
-                    'data'        => $tokenPool,
-                    'pointRadius' => 0,
-                    'yAxisID'     => 'token',
+                    'label'           => $token->metadata()['symbol'],
+                    'fill'            => false,
+                    'borderColor'     => 'rgb(245,158,11)',
+                    'backgroundColor' => 'rgb(245,158,11)',
+                    'borderWidth'     => 2,
+                    'data'            => $tokenPool,
+                    'radius'          => 0,
+                    'yAxisID'         => 'token',
+                    'tension'         => 0,
                 ],
             ],
         ]);
 
         $chart->setOptions([
-            'scales' => [
+            'animation' => false,
+            'tooltips'  => ['intersect' => false, 'mode' => 'index'],
+            'scales'    => [
                 'yAxes' => [
                     [
                         'id'       => 'tez',
@@ -147,6 +172,14 @@ final class TokenChart
                         'ticks'    => [
                             'min' => min($tokenPool),
                             'max' => max($tokenPool),
+                        ],
+                    ],
+                ],
+                'xAxes' => [
+                    [
+                        'type' => 'time',
+                        'time' => [
+                            'unit' => $unit,
                         ],
                     ],
                 ],
