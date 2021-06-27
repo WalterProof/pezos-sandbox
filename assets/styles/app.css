@@ -119,6 +119,10 @@
     .charts {
         @apply py-8 bg-gray-50;
     }
+
+    .charts canvas {
+        image-rendering: pixelated;
+    }
 }
 
 @layer utilities {

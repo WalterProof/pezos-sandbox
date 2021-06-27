@@ -80,7 +80,7 @@ final class TokenChart
                 [
                     'borderColor'     => 'rgb(59,130,246)',
                     'backgroundColor' => 'rgb(59,130,246)',
-                    'borderWidth'     => 2,
+                    'borderWidth'     => 1.5,
                     'data'            => $ratios,
                     'radius'          => 0,
                     'fill'            => false,
@@ -101,6 +101,7 @@ final class TokenChart
                         'time' => [
                             'unit' => $unit,
                         ],
+                        'gridLines' => ['display' => false],
                     ],
                 ],
             ],
@@ -133,7 +134,7 @@ final class TokenChart
                     'fill'            => false,
                     'borderColor'     => 'rgb(59,130,246)',
                     'backgroundColor' => 'rgb(59,130,246)',
-                    'borderWidth'     => 2,
+                    'borderWidth'     => 1.5,
                     'data'            => $tezPool,
                     'radius'          => 0,
                     'yAxisID'         => 'tez',
@@ -144,7 +145,7 @@ final class TokenChart
                     'fill'            => false,
                     'borderColor'     => 'rgb(245,158,11)',
                     'backgroundColor' => 'rgb(245,158,11)',
-                    'borderWidth'     => 2,
+                    'borderWidth'     => 1.5,
                     'data'            => $tokenPool,
                     'radius'          => 0,
                     'yAxisID'         => 'token',
@@ -181,6 +182,7 @@ final class TokenChart
                         'time' => [
                             'unit' => $unit,
                         ],
+                        'gridLines' => ['display' => false],
                     ],
                 ],
             ],
