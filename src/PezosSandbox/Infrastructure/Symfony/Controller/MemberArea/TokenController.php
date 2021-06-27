@@ -115,7 +115,7 @@ final class TokenController extends AbstractController
                 $updateToken = new UpdateToken(
                     $token->tokenId()->asString(),
                     $formData['contract'].
-                        ($formData['id'] ? '_'.$formData['id'] : ''),
+                        (null !== $formData['id'] ? '_'.$formData['id'] : ''),
                     $formData['metadata'],
                     $formData['active'],
                     $token->position()
