@@ -63,11 +63,10 @@ final class IndexController extends AbstractController
         $lastUpdates = $this->tokenChart->lastUpdates();
         $supply      = isset($token->metadata()['supply'])
             ? $token->metadata()['supply']
-            : $this->getStorage
-                ->getStorage(
-                    Contract::fromString($token->address()->contract())
-                )
-                ->totalSupply();
+            : $this->getTokenSupplyFromStorage(
+                $token->address()->contract(),
+                $token->metadata()['decimals']
+            );
 
         return $this->render('index.html.twig', [
             'charts'           => $charts,
@@ -78,8 +77,17 @@ final class IndexController extends AbstractController
             'tokens'           => $tokens,
             'token'            => $token,
             'tokenLastUpdate'  => $this->getTokenLastUpdate($token),
-            'supply'           => $supply / 10 ** $token->metadata()['decimals'],
+            'supply'           => $supply,
         ]);
+    }
+
+    private function getTokenSupplyFromStorage(string $contract, int $decimals)
+    {
+        $supply = $this->getStorage
+            ->getStorage(Contract::fromString($contract))
+            ->totalSupply();
+
+        return $supply / 10 ** $decimals;
     }
 
     private function getTokenLastUpdate(Token $token): array
