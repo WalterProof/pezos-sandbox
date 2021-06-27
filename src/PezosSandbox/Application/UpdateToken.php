@@ -20,7 +20,7 @@ final class UpdateToken
         string $address,
         array $metadata,
         bool $active,
-        ?int $position = null
+        ?int $position
     ) {
         $this->tokenId  = $tokenId;
         $this->address  = $address;

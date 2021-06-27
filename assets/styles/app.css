@@ -123,6 +123,14 @@
     .charts canvas {
         image-rendering: pixelated;
     }
+
+    /* form[name='token_form'] .exchanges { */
+    /*     @apply mb-4; */
+    /* } */
+
+    #token_form_submit {
+        @apply float-right my-2;
+    }
 }
 
 @layer utilities {
@@ -157,6 +165,10 @@
     }
     .btn-sell:hover {
         @apply text-white bg-red-300;
+    }
+
+    .btn-danger {
+        @apply text-white no-underline bg-red-400;
     }
 
     .color-primary {

@@ -1,23 +1,25 @@
-<div>
-    <p class="text-right">
-        last update: {{ lastUpdates['QuipuSwap'] }} (UTC)
-    </p>
-</div>
-<div {{ stimulus_controller('tabs') }} data-tabs-index="0">
-    <div class="tabs">
-        <ul>
-            {% for title in charts.QuipuSwap|keys %}
-                <li data-tabs-target="tab" class="">
-                    <a data-action="tabs#change">{{ title }}</a>
-                </li>
+{% if charts is not empty %}
+    <div>
+        <p class="text-right">
+            last update: {{ lastUpdates['QuipuSwap'] }} (UTC)
+        </p>
+    </div>
+    <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+        <div class="tabs">
+            <ul>
+                {% for title in charts.QuipuSwap|keys %}
+                    <li data-tabs-target="tab" class="">
+                        <a data-action="tabs#change">{{ title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="charts">
+            {% for chart in charts.QuipuSwap %}
+                <div data-tabs-target="tabPanel">
+                    {{ render_chart(chart) }}
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
-    <div class="charts">
-        {% for chart in charts.QuipuSwap %}
-            <div data-tabs-target="tabPanel">
-                {{ render_chart(chart) }}
-            </div>
-        {% endfor %}
-    </div>
-</div>
+{% endif %}

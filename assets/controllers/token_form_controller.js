@@ -1,4 +1,5 @@
 import { Controller } from 'stimulus';
+import $ from 'jquery';
 
 export default class extends Controller {
     static targets = ['metadata'];
@@ -11,8 +12,40 @@ export default class extends Controller {
     }
 
     prettyPrint() {
-        var obj = JSON.parse(this.metadataTarget.value);
-        var pretty = JSON.stringify(obj, undefined, 4);
+        const obj = JSON.parse(this.metadataTarget.value);
+        const pretty = JSON.stringify(obj, undefined, 4);
         this.metadataTarget.value = pretty;
+    }
+
+    addCollectionItem(e) {
+        const $collectionHolderClass = $(e.currentTarget).data(
+            'collectionHolderClass'
+        );
+        this.addFormToCollection($collectionHolderClass);
+    }
+
+    addFormToCollection($collectionHolderClass) {
+        const $collectionHolder = $('.' + $collectionHolderClass);
+        const prototype = $collectionHolder.data('prototype');
+        const index = $collectionHolder.data('index');
+
+        let newForm = prototype;
+        newForm = newForm.replace(/__name__/g, index);
+        $collectionHolder.data('index', index + 1);
+        const $newFormBlock = $('<div></div>').append(newForm);
+        $collectionHolder.append($newFormBlock);
+    }
+
+    addFormDeleteLink($formBlock) {
+        const $removeFormButton = $('<button type="button">Delete</button>');
+        $formBlock.append($removeFormButton);
+
+        $removeFormButton.on('click', function () {
+            $formBlock.remove();
+        });
+    }
+
+    deleteCollectionItem(e) {
+        $(e.currentTarget).parent('div').remove();
     }
 }

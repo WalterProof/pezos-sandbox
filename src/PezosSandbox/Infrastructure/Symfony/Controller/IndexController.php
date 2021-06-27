@@ -92,9 +92,16 @@ final class IndexController extends AbstractController
 
     private function getTokenLastUpdate(Token $token): array
     {
+        $exchange = isset($token->exchanges()[0])
+            ? $token->exchanges()[0]
+            : null;
+
+        if (!$exchange) {
+            return [];
+        }
         $history = $this->getStorageHistory
             ->getStorageHistory(
-                Contract::fromString($token->exchanges()[0]->contract()),
+                Contract::fromString($exchange->contract()),
                 Decimals::fromInt($token->metadata()['decimals'])
             )
             ->history($this->application->getCurrentTime());

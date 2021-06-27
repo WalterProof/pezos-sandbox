@@ -6,18 +6,28 @@ namespace PezosSandbox\Application\Tokens;
 
 final class TokenExchange
 {
-    private string $name;
+    private string $exchangeId;
+    private string $exchangeName;
     private string $contract;
 
-    public function __construct(string $name, string $contract)
-    {
-        $this->name     = $name;
-        $this->contract = $contract;
+    public function __construct(
+        string $exchangeId,
+        string $exchangeName,
+        string $contract
+    ) {
+        $this->exchangeId   = $exchangeId;
+        $this->exchangeName = $exchangeName;
+        $this->contract     = $contract;
     }
 
-    public function name(): string
+    public function exchangeId(): string
     {
-        return $this->name;
+        return $this->exchangeId;
+    }
+
+    public function exchangeName(): string
+    {
+        return $this->exchangeName;
     }
 
     public function contract(): string

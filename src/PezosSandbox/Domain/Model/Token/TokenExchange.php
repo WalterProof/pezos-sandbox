@@ -25,6 +25,11 @@ final class TokenExchange implements ChildEntity, SpecifiesSchema
     {
     }
 
+    public function exchangeId(): ExchangeId
+    {
+        return $this->exchangeId;
+    }
+
     public static function create(
         TokenId $tokenId,
         ExchangeId $exchangeId,
@@ -54,7 +59,14 @@ final class TokenExchange implements ChildEntity, SpecifiesSchema
             self::asString($state, 'exchange_id')
         );
 
+        $instance->contract = self::asString($state, 'contract');
+
         return $instance;
+    }
+
+    public function update(string $contract)
+    {
+        $this->contract = $contract;
     }
 
     /**

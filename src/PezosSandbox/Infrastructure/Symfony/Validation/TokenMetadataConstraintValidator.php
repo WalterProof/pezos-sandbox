@@ -17,10 +17,6 @@ class TokenMetadataConstraintValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, TokenMetadataConstraint::class);
         }
 
-        if (null === $value || '' === $value) {
-            return;
-        }
-
         if (!\is_array($value)) {
             throw new UnexpectedValueException($value, 'array');
         }
@@ -35,10 +31,17 @@ class TokenMetadataConstraintValidator extends ConstraintValidator
             ) {
                 throw new \InvalidArgumentException('some keys are missing');
             }
+            if (
+                null === $value['decimals'] ||
+                '' === $value['decimals'] ||
+                empty($value['symbol'] || empty($value['name']))
+            ) {
+                throw new \InvalidArgumentException('some values are missing');
+            }
         } catch (\InvalidArgumentException $exception) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $this->formatValue($value))
+                ->setParameter('{{ message }}', $exception->getMessage())
                 ->setCode(TokenMetadataConstraint::INVALID_FORMAT_ERROR)
                 ->addViolation();
         }

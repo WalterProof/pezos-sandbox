@@ -12,6 +12,7 @@ use PezosSandbox\Application\RequestAccess\RequestAccess;
 use PezosSandbox\Application\Tokens\Token as TokenReadModel;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Exchange\Exchange;
+use PezosSandbox\Domain\Model\Exchange\ExchangeId;
 use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
@@ -91,7 +92,16 @@ class Application implements ApplicationInterface
     public function addToken(AddToken $command): void
     {
         $tokenId = $this->tokenRepository->nextIdentity();
-        $token   = Token::createToken($tokenId, $command->address(), []);
+        $token   = Token::createToken(
+            $tokenId,
+            $command->address(),
+            $command->metadata(),
+            $command->active()
+        );
+
+        foreach ($command->exchanges() as $exchangeId => $contract) {
+            $token->addExchange(ExchangeId::fromString($exchangeId), $contract);
+        }
 
         $this->tokenRepository->save($token);
         $this->eventDispatcher->dispatchAll($token->releaseEvents());
@@ -106,6 +116,28 @@ class Application implements ApplicationInterface
             $command->active(),
             $command->position()
         );
+
+        $this->tokenRepository->save($token);
+    }
+
+    public function updateTokenExchange(UpdateTokenExchange $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->updateExchange($command->exchangeId(), $command->contract());
+        $this->tokenRepository->save($token);
+    }
+
+    public function addTokenExchange(AddTokenExchange $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->addExchange($command->exchangeId(), $command->contract());
+        $this->tokenRepository->save($token);
+    }
+
+    public function removeTokenExchange(RemoveTokenExchange $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->removeExchange($command->exchangeId());
         $this->tokenRepository->save($token);
     }
 
@@ -124,13 +156,6 @@ class Application implements ApplicationInterface
         $address = TokenAddress::fromString($tokenAddress);
 
         return $this->tokens->getOneByAddress($address);
-    }
-
-    public function addTokenExchange(AddTokenExchange $command): void
-    {
-        $token = $this->tokenRepository->getById($command->tokenId());
-        $token->addExchange($command->exchangeId(), $command->contract());
-        $this->tokenRepository->save($token);
     }
 
     public function listMembersForAdministrator(): array
@@ -152,6 +177,14 @@ class Application implements ApplicationInterface
     public function listTokensForAdmin(): array
     {
         return $this->tokens->listTokensForAdmin();
+    }
+
+    /**
+     * @return array<ExchangeReadModel>
+     */
+    public function listExchanges(): array
+    {
+        return $this->exchanges->listExchanges();
     }
 
     public function getCurrentTime(): \DateTimeImmutable
