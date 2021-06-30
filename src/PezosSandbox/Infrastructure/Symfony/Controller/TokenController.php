@@ -11,6 +11,7 @@ use PezosSandbox\Infrastructure\Tezos\Decimals;
 use PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistory;
 use PezosSandbox\Infrastructure\UX\TokenChart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -61,20 +62,46 @@ final class TokenController extends AbstractController
      */
     public function lastUpdate(Request $request): Response
     {
-        $address = $request->get('address');
-        $token   = $this->application->getOneTokenByAddress($address);
+        $address  = $request->get('address');
+        $token    = $this->application->getOneTokenByAddress($address);
+        $exchange = isset($token->exchanges()[0])
+            ? $token->exchanges()[0]
+            : null;
 
         $history = $this->getStorageHistory
             ->getStorageHistory(
-                Contract::fromString($token->exchanges()[0]->contract()),
+                Contract::fromString($exchange->contract()),
                 Decimals::fromInt($token->metadata()['decimals'])
             )
             ->history($this->application->getCurrentTime());
 
+        $last = \array_slice($history, -1, 1, true);
+
         return $this->render('_token_last_update.html.twig', [
             'token'           => $token,
-            'tokenLastUpdate' => end($history),
+            'tokenLastUpdate' => array_merge(
+                ['datetime' => current(array_keys($last))],
+                current($last)
+            ),
         ]);
+    }
+
+    /**
+     * @Route("/token/diff/{address}", name="_app_token_diff", methods={"GET"})
+     */
+    public function diff(Request $request): Response
+    {
+        $address = $request->get('address');
+        $token   = $this->application->getOneTokenByAddress($address);
+
+        $diff = $this->getStorageHistory
+            ->getStorageHistory(
+                Contract::fromString($token->exchanges()[0]->contract()),
+                Decimals::fromInt($token->metadata()['decimals'])
+            )
+            ->diff();
+
+        return new JsonResponse($diff);
     }
 
     /**
@@ -91,5 +118,9 @@ final class TokenController extends AbstractController
         }
 
         return $this->redirect($request->server->get('HTTP_REFERER'));
+    }
+
+    public function chartDiff()
+    {
     }
 }

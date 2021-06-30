@@ -17,7 +17,6 @@ final class TokenChart
     private SessionInterface $session;
     private GetStorageHistory $getStorageHistory;
     private ChartBuilderInterface $chartBuilder;
-    private array $lastUpdates = [];
 
     public function __construct(
         SessionInterface $session,
@@ -27,11 +26,6 @@ final class TokenChart
         $this->session           = $session;
         $this->getStorageHistory = $getStorageHistory;
         $this->chartBuilder      = $chartBuilder;
-    }
-
-    public function lastUpdates(): array
-    {
-        return $this->lastUpdates;
     }
 
     public function createCharts(
@@ -61,8 +55,7 @@ final class TokenChart
                 'Prices Dynamics' => $this->createPriceChart($data, $unit),
                 'Pool Dynamics'   => $this->createPoolChart($token, $data, $unit),
             ];
-            $dates                                        = array_keys($data);
-            $this->lastUpdates[$exchange->exchangeName()] = end($dates);
+            $dates = array_keys($data);
         }
 
         return $charts;

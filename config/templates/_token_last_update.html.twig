@@ -1,26 +1,28 @@
 {% if tokenLastUpdate is not empty %}
-    <ul>
+    <ul class="flex flex-row justify-between p-4 mb-2 text-sm shadow">
         <li>
-            Liquidity Pool: {{
-                tokenLastUpdate.tez_pool|number_format(6)
-            }}&nbsp;ꜩ / {{
-                tokenLastUpdate.token_pool|number_format(
-                    token.metadata.decimals
-                )
-            }}
-            {{ token.metadata.symbol }}
+            <span>
+                {{
+                    (tokenLastUpdate.tez_pool
+                        / tokenLastUpdate.token_pool)|number_format(6)
+                }}&nbsp;ꜩ (1&nbsp;ꜩ = {{
+                    (tokenLastUpdate.token_pool
+                        / tokenLastUpdate.tez_pool)|number_format(
+                        token.metadata.decimals
+                    )
+                }} {{ token.metadata.symbol }})
+            </span>
         </li>
         <li>
-            Price/Ratio: 1&nbsp;{{ token.metadata.symbol }} = {{
-                (tokenLastUpdate.tez_pool
-                    / tokenLastUpdate.token_pool)|number_format(6)
-            }}&nbsp;ꜩ / 1&nbsp;ꜩ = {{
-                (tokenLastUpdate.token_pool
-                    / tokenLastUpdate.tez_pool)|number_format(
-                    token.metadata.decimals
-                )
-            }}
-            {{ token.metadata.symbol }}
+            <span>
+                LP {{ tokenLastUpdate.tez_pool|number_format(6) }}&nbsp;ꜩ / {{
+                    tokenLastUpdate.token_pool|number_format(
+                        token.metadata.decimals
+                    )
+                }}
+                {{ token.metadata.symbol }}
+            </span>
         </li>
+        <li><span>{{ tokenLastUpdate.datetime }} (UTC)</span></li>
     </ul>
 {% endif %}

@@ -152,25 +152,6 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <div class="mt-2"
-                        {{
-                        stimulus_controller(
-                            'refresh-content',
-                            {
-                                url: path(
-                                    '_app_token_last_update',
-                                    {
-                                        address: token.address
-                                    }
-                                ),
-                                interval: refresh_interval_ms,
-                                useEffect: true
-                            }
-                        )
-                        }}
-                        data-refresh-content-target="content">
-                        {% include './_token_last_update.html.twig' %}
-                    </div>
                 </div>
             </div>
         </div>
@@ -180,21 +161,64 @@
         {{ form(timeIntervalForm) }}
     </div>
 
-    <div {{
-        stimulus_controller(
-            'refresh-content',
-            {
-                url: path(
-                    '_app_token_charts',
-                    {
-                        address: token.address
-                    }
-                ),
-                interval: refresh_interval_ms
-            }
-        )
-        }}
-        data-refresh-content-target="content">
-        {% include './_token_charts.html.twig' %}
-    </div>
+    {% if charts is not empty %}
+        <div>
+            <div>
+                <div class="mt-2"
+                    {{
+                    stimulus_controller(
+                        'refresh-content',
+                        {
+                            url: path(
+                                '_app_token_last_update',
+                                {
+                                    address: token.address
+                                }
+                            ),
+                            interval: refresh_interval_ms,
+                            useEffect: true
+                        }
+                    )
+                    }}
+                    data-refresh-content-target="content"
+                    data-action="chartjs:updated->reload-content#refreshContent">
+                    {% include './_token_last_update.html.twig' %}
+                </div>
+            </div>
+            <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
+                <div class="tabs">
+                    <ul>
+                        {% for title in charts.QuipuSwap|keys %}
+                            <li data-tabs-target="tab" class="">
+                                <a data-action="tabs#change">{{ title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="charts">
+                    {% for title, chart in charts.QuipuSwap %}
+                        <div data-tabs-target="tabPanel">
+                            {{
+                                render_chart(
+                                    chart,
+                                    {
+                                        'data-controller': 'chartjs',
+                                        'data-action': 'chartjs:connect->chartjs#onChartConnect',
+                                        'data-chartjs-title-value': title,
+                                        'data-chartjs-interval-value': refresh_interval_ms,
+                                        'data-chartjs-diff-url-value': path(
+                                            '_app_token_diff',
+                                            {
+                                                address: token.address
+                                            }
+                                        )
+                                    }
+                                )
+                            }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

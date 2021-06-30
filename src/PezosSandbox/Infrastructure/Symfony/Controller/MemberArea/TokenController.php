@@ -14,6 +14,7 @@ use PezosSandbox\Application\UpdateToken;
 use PezosSandbox\Application\UpdateTokenExchange;
 use PezosSandbox\Domain\Model\Common\UserFacingError;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
+use PezosSandbox\Infrastructure\CacheReset;
 use PezosSandbox\Infrastructure\Mapping;
 use PezosSandbox\Infrastructure\Symfony\Form\TokenForm;
 use PezosSandbox\Infrastructure\Tezos\Contract;
@@ -36,15 +37,18 @@ final class TokenController extends AbstractController
     private ApplicationInterface $application;
     private TranslatorInterface $translator;
     private GetStorageHistory $getStorageHistory;
+    private CacheReset $cacheReset;
 
     public function __construct(
         ApplicationInterface $application,
         TranslatorInterface $translator,
-        GetStorageHistory $getStorageHistory
+        GetStorageHistory $getStorageHistory,
+        CacheReset $cacheReset
     ) {
         $this->application       = $application;
         $this->translator        = $translator;
         $this->getStorageHistory = $getStorageHistory;
+        $this->cacheReset        = $cacheReset;
     }
 
     /**
@@ -285,6 +289,37 @@ final class TokenController extends AbstractController
             );
             $this->application->updateToken($updateToken);
         }
+
+        return $this->redirectToRoute('app_token_list');
+    }
+
+    /**
+     * @Route("/tokens/reset-cache/{address}", name="app_token_reset_cache", methods={"POST"})
+     */
+    public function resetCache(Request $request): Response
+    {
+        $address = $request->attributes->get('address');
+        $token   = $this->application->getOneTokenByAddress($address);
+
+        $keys = [];
+        foreach ($token->exchanges() as $exchange) {
+            $keys[] = array_merge($keys, [
+                $exchange->contract()->asString(),
+                sprintf('%s_backup', $exchange->contract()->asString()),
+            ]);
+        }
+
+        if (\count($keys) !== $this->cacheReset->reset($keys)) {
+            $this->addFlash(
+                FlashType::WARNING,
+                'Cache reset failed! Some cache might not have been correctly deleted, please check.'
+            );
+        }
+
+        $this->addFlash(
+            FlashType::SUCCESS,
+            sprintf('Cache reset for %s!', $token->metadata()['symbol'])
+        );
 
         return $this->redirectToRoute('app_token_list');
     }

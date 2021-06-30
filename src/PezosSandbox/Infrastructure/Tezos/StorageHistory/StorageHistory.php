@@ -11,6 +11,7 @@ class StorageHistory
     use Mapping;
 
     private array $history = [];
+    private array $diff = [];
 
     public function __construct(array $history)
     {
@@ -18,7 +19,7 @@ class StorageHistory
     }
 
     public function history(
-        \DateTimeImmutable $currentTime,
+        ?\DateTimeImmutable $currentTime = null,
         ?string $interval = null
     ): array {
         if (!$interval) {
@@ -44,8 +45,22 @@ class StorageHistory
         $copy = clone $this;
 
         $copy->history = array_merge($this->history, $history);
+        $diff = array_diff(array_keys($history), array_keys($this->history()));
+
+        $copy->diff = array_map(
+            fn (string $key): array => array_merge(
+                ['datetime' => $key],
+                $history[$key]
+            ),
+            $diff
+        );
 
         return $copy;
+    }
+
+    public function diff(): array
+    {
+        return $this->diff;
     }
 
     private function selectDateFrom(

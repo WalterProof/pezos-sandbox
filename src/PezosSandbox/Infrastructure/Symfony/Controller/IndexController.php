@@ -60,8 +60,7 @@ final class IndexController extends AbstractController
             $this->application->getCurrentTime(),
             $this->session->get('time_interval')
         );
-        $lastUpdates = $this->tokenChart->lastUpdates();
-        $supply      = isset($token->metadata()['supply'])
+        $supply = isset($token->metadata()['supply'])
             ? $token->metadata()['supply']
             : $this->getTokenSupplyFromStorage(
                 $token->address()->contract(),
@@ -71,7 +70,6 @@ final class IndexController extends AbstractController
         return $this->render('index.html.twig', [
             'charts'           => $charts,
             'counters'         => $this->getCounters($tokens),
-            'lastUpdates'      => $lastUpdates,
             'loginForm'        => $loginForm->createView(),
             'timeIntervalForm' => $timeIntervalForm->createView(),
             'tokens'           => $tokens,
@@ -106,7 +104,12 @@ final class IndexController extends AbstractController
             )
             ->history($this->application->getCurrentTime());
 
-        return end($history);
+        $last = \array_slice($history, -1, 1, true);
+
+        return array_merge(
+            ['datetime' => current(array_keys($last))],
+            current($last)
+        );
     }
 
     private function getCounters(array $tokens): array
