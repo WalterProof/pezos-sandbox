@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Domain\Model\Token;
 
+use InvalidArgumentException;
 use TalisOrm\AggregateId;
 
 final class Address implements AggregateId
@@ -14,7 +15,7 @@ final class Address implements AggregateId
     private function __construct(string $contract, ?int $id = null)
     {
         $this->contract = $contract;
-        $this->id = $id;
+        $this->id       = $id;
     }
 
     public function __toString(): string
@@ -34,7 +35,9 @@ final class Address implements AggregateId
 
     public static function fromString(string $string): self
     {
-        preg_match('/^(KT1\w{33})_?(\d+)?/', $string, $matches);
+        if (!preg_match('/^(KT1\w{33})_?(\d+)?/', $string, $matches)) {
+            throw new InvalidArgumentException('The address is invalid');
+        }
 
         return new self(
             $matches[1],
@@ -49,6 +52,6 @@ final class Address implements AggregateId
 
     public function asString(): string
     {
-        return $this->contract . (!\is_null($this->id) ? '_' . $this->id : '');
+        return $this->contract.(!\is_null($this->id) ? '_'.$this->id : '');
     }
 }

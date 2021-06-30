@@ -15,4 +15,9 @@ final class ExchangeId implements AggregateId
     {
         return $this->asString();
     }
+
+    public function equals(ExchangeId $other): bool
+    {
+        return $this->id === $other->asString();
+    }
 }

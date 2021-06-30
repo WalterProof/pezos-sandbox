@@ -57,12 +57,12 @@ final class TokenChart
                 $this->session->set('time_interval', '-1 week');
             }
 
-            $charts[$exchange->name()] = [
+            $charts[$exchange->exchangeName()] = [
                 'Prices Dynamics' => $this->createPriceChart($data, $unit),
                 'Pool Dynamics'   => $this->createPoolChart($token, $data, $unit),
             ];
-            $dates                                = array_keys($data);
-            $this->lastUpdates[$exchange->name()] = end($dates);
+            $dates                                        = array_keys($data);
+            $this->lastUpdates[$exchange->exchangeName()] = end($dates);
         }
 
         return $charts;

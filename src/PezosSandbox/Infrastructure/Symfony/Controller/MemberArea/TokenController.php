@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure\Symfony\Controller\MemberArea;
 
 use PezosSandbox\Application\AddToken;
+use PezosSandbox\Application\AddTokenExchange;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
+use PezosSandbox\Application\RemoveTokenExchange;
+use PezosSandbox\Application\Tokens\TokenExchange;
 use PezosSandbox\Application\UpdateToken;
+use PezosSandbox\Application\UpdateTokenExchange;
 use PezosSandbox\Domain\Model\Common\UserFacingError;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Infrastructure\Mapping;
@@ -60,30 +64,42 @@ final class TokenController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        $tokenForm = $this->createForm(TokenForm::class);
-        $tokenForm->handleRequest($request);
+        $form = $this->createForm(TokenForm::class);
+        $form->handleRequest($request);
 
-        if ($tokenForm->isSubmitted() && $tokenForm->isValid()) {
-            $formData = $tokenForm->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
 
             try {
                 $addToken = new AddToken(
                     $formData['contract'].
-                        ($formData['id'] ? '_'.$formData['id'] : ''),
+                        (null !== $formData['id'] ? '_'.$formData['id'] : ''),
                     $formData['metadata'],
-                    $formData['active']
+                    $formData['active'],
+                    // TODO: form data transformer
+                    array_reduce(
+                        array_map(
+                            fn (array $item): array => [
+                                $item['exchangeId'] => $item['contract'],
+                            ],
+                            $formData['exchanges']
+                        ),
+                        fn ($acc, $item) => $acc + $item,
+                        []
+                    )
                 );
 
                 $this->application->addToken($addToken);
+                $this->addFlash(FlashType::SUCCESS, 'Token added!');
 
-                $this->redirectToRoute('app_token_list');
+                return $this->redirectToRoute('app_token_list');
             } catch (\Exception $e) {
-                $tokenForm->addError(new FormError($e->getMessage()));
+                $form->addError(new FormError($e->getMessage()));
             }
         }
 
-        return $this->render('member_area/tokens/new.html.twig', [
-            'tokenForm' => $tokenForm->createView(),
+        return $this->render('member_area/tokens/token.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
@@ -100,16 +116,23 @@ final class TokenController extends AbstractController
 
             return $this->redirectToRoute('app_token_list');
         }
-        $tokenForm = $this->createForm(TokenForm::class, [
-            'contract' => $token->address()->contract(),
-            'id'       => $token->address()->id(),
-            'metadata' => $token->metadata(),
-            'active'   => $token->isActive(),
+        $form = $this->createForm(TokenForm::class, [
+            'contract'                              => $token->address()->contract(),
+            'id'                                    => $token->address()->id(),
+            'metadata'                              => $token->metadata(),
+            'active'                                => $token->isActive(),
+            'exchanges'                             => array_map(
+                fn (TokenExchange $exchange): array => [
+                    'exchangeId' => $exchange->exchangeId(),
+                    'contract'   => $exchange->contract(),
+                ],
+                $token->exchanges()
+            ),
         ]);
-        $tokenForm->handleRequest($request);
+        $form->handleRequest($request);
 
-        if ($tokenForm->isSubmitted() && $tokenForm->isValid()) {
-            $formData = $tokenForm->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
 
             try {
                 $updateToken = new UpdateToken(
@@ -123,14 +146,75 @@ final class TokenController extends AbstractController
 
                 $this->application->updateToken($updateToken);
 
+                $currentExchanges = array_reduce(
+                    array_map(
+                        fn (TokenExchange $item): array => [
+                            $item->exchangeId() => $item->contract(),
+                        ],
+                        $token->exchanges()
+                    ),
+                    fn ($acc, $item) => $acc + $item,
+                    []
+                );
+
+                $exchanges = array_reduce(
+                    array_map(
+                        fn (array $item): array => [
+                            $item['exchangeId'] => $item['contract'],
+                        ],
+                        $formData['exchanges']
+                    ),
+                    fn ($acc, $item) => $acc + $item,
+                    []
+                );
+
+                if (\count($formData['exchanges']) > \count($exchanges)) {
+                    throw new \Exception('You can only add one contract for each exchange');
+                }
+
+                foreach ($token->exchanges() as $tokenExchange) {
+                    /** @var TokenExchange $tokenExchange * */
+                    if (!isset($exchanges[$tokenExchange->exchangeId()])) {
+                        $removeTokenExchange = new RemoveTokenExchange(
+                            $token->tokenId()->asString(),
+                            $tokenExchange->exchangeId()
+                        );
+                        $this->application->removeTokenExchange(
+                            $removeTokenExchange
+                        );
+                    }
+                }
+
+                foreach ($exchanges as $exchangeId => $contract) {
+                    if (!isset($currentExchanges[$exchangeId])) {
+                        $addTokenExchange = new AddTokenExchange(
+                            $token->tokenId()->asString(),
+                            $exchangeId,
+                            $contract
+                        );
+                        $this->application->addTokenExchange($addTokenExchange);
+                    } else {
+                        $updateTokenExchange = new UpdateTokenExchange(
+                            $token->tokenId()->asString(),
+                            $exchangeId,
+                            $contract
+                        );
+                        $this->application->updateTokenExchange(
+                            $updateTokenExchange
+                        );
+                    }
+                }
+
+                $this->addFlash(FlashType::SUCCESS, 'Token edited!');
+
                 return $this->redirectToRoute('app_token_list');
             } catch (\Exception $e) {
-                $tokenForm->addError(new FormError($e->getMessage()));
+                $form->addError(new FormError($e->getMessage()));
             }
         }
 
-        return $this->render('member_area/tokens/edit.html.twig', [
-            'tokenForm' => $tokenForm->createView(),
+        return $this->render('member_area/tokens/token.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
@@ -146,7 +230,8 @@ final class TokenController extends AbstractController
             $token->address()->asString(),
             $token->metadata(),
             !$token->isActive(),
-            $token->position()
+            $token->position(),
+            $token->exchanges()
         );
 
         $this->application->updateToken($updateToken);
@@ -195,7 +280,8 @@ final class TokenController extends AbstractController
                 $token->address()->asString(),
                 $token->metadata(),
                 $token->isActive(),
-                $position
+                $position,
+                $token->exchanges()
             );
             $this->application->updateToken($updateToken);
         }

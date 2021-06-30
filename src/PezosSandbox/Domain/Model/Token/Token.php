@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Domain\Model\Token;
 
+use Assert\Assert;
 use Doctrine\DBAL\Schema\Schema;
 use PezosSandbox\Domain\Model\Exchange\ExchangeId;
 use PezosSandbox\Infrastructure\Mapping;
@@ -20,10 +21,20 @@ final class Token implements Aggregate, SpecifiesSchema
     private TokenId $tokenId;
     private Address $address;
     private array $metadata;
-    private bool $active     = true;
+    private bool $active;
     private ?int $position   = null;
     private array $tags      = [];
     private array $exchanges = [];
+
+    public function updateExchange(ExchangeId $exchangeId, string $contract)
+    {
+        foreach ($this->exchanges as $exchange) {
+            /** @var TokenExchange $exchange */
+            if ($exchange->exchangeId()->equals($exchangeId)) {
+                $exchange->update($contract);
+            }
+        }
+    }
 
     public function addExchange(ExchangeId $exchangeId, string $contract)
     {
@@ -32,6 +43,17 @@ final class Token implements Aggregate, SpecifiesSchema
             $exchangeId,
             $contract
         );
+    }
+
+    public function removeExchange(ExchangeId $exchangeId)
+    {
+        foreach ($this->exchanges as $key => $exchange) {
+            /** @var TokenExchange $exchange */
+            if ($exchange->exchangeId()->equals($exchangeId)) {
+                unset($this->exchanges[$key]);
+                $this->deleteChildEntity($exchange);
+            }
+        }
     }
 
     /**
@@ -73,7 +95,18 @@ final class Token implements Aggregate, SpecifiesSchema
         $instance->metadata = self::asArray($aggregateState, 'metadata');
         $instance->active   = self::asBool($aggregateState, 'active');
         $instance->position = self::asIntOrNull($aggregateState, 'position');
-        $instance->tags     = $childEntitiesByType[TokenTag::class];
+
+        $tags = $childEntitiesByType[TokenTag::class];
+        Assert::that($tags)
+            ->all()
+            ->isInstanceOf(Tag::class);
+        $instance->tags = $tags;
+
+        $exchanges = $childEntitiesByType[TokenExchange::class];
+        Assert::that($exchanges)
+            ->all()
+            ->isInstanceOf(TokenExchange::class);
+        $instance->exchanges = $exchanges;
 
         return $instance;
     }
@@ -81,13 +114,15 @@ final class Token implements Aggregate, SpecifiesSchema
     public static function createToken(
         TokenId $tokenId,
         Address $address,
-        array $metadata
+        array $metadata,
+        bool $active
     ): self {
         $token = new self();
 
         $token->tokenId  = $tokenId;
         $token->address  = $address;
         $token->metadata = $metadata;
+        $token->active   = $active;
 
         return $token;
     }
@@ -101,20 +136,12 @@ final class Token implements Aggregate, SpecifiesSchema
         Address $address,
         array $metadata,
         bool $active,
-        ?int $position = null
+        ?int $position
     ) {
         $this->address  = $address;
         $this->metadata = $metadata;
         $this->active   = $active;
         $this->position = $position;
-
-        $this->events[] = new TokenWasUpdated(
-            $this->tokenId,
-            $address,
-            $metadata,
-            $active,
-            $position
-        );
     }
 
     /**
@@ -166,7 +193,6 @@ final class Token implements Aggregate, SpecifiesSchema
 
         $table->addColumn('contract', 'string')->setNotnull(true);
         $table->addColumn('id', 'integer')->setNotnull(false);
-        $table->addUniqueIndex(['contract', 'id']);
 
         $table->addColumn('metadata', 'text')->setNotNull(true);
         $table->addColumn('position', 'integer')->setNotNull(false);

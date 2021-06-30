@@ -115,6 +115,7 @@ final class TokensUsingDoctrineDbal implements Tokens
         $records   = $this->connection->selectAll($qb);
         $exchanges = array_map(
             fn (array $record): TokenExchange => new TokenExchange(
+                self::asString($record, 'exchange_id'),
                 self::asString($record, 'name'),
                 self::asString($record, 'contract')
             ),

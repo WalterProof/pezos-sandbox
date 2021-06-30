@@ -30,8 +30,6 @@ interface ApplicationInterface
      */
     public function getOneTokenByAddress(string $address): Token;
 
-    public function addTokenExchange(AddTokenExchange $addTokenExchange): void;
-
     /**
      * @return array<Token>
      */
@@ -42,9 +40,20 @@ interface ApplicationInterface
      */
     public function listTokensForAdmin(): array;
 
+    /**
+     * @return array<Exchange>
+     */
+    public function listExchanges(): array;
+
     public function addExchange(AddExchange $command): void;
 
     public function updateExchange(UpdateExchange $command): void;
+
+    public function addTokenExchange(AddTokenExchange $command): void;
+
+    public function updateTokenExchange(UpdateTokenExchange $command): void;
+
+    public function removeTokenExchange(RemoveTokenExchange $command): void;
 
     public function addToken(AddToken $command): void;
 
