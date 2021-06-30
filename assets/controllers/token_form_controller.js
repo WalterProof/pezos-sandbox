@@ -33,12 +33,15 @@ export default class extends Controller {
         newForm = newForm.replace(/__name__/g, index);
         $collectionHolder.data('index', index + 1);
         const $newFormBlock = $('<div></div>').append(newForm);
+        this.addFormDeleteLink($newFormBlock);
         $collectionHolder.append($newFormBlock);
     }
 
     addFormDeleteLink($formBlock) {
-        const $removeFormButton = $('<button type="button">Delete</button>');
-        $formBlock.append($removeFormButton);
+        const $removeFormButton = $(
+            '<button class="btn btn-danger float-right">Delete</button>'
+        );
+        $formBlock.prepend($removeFormButton);
 
         $removeFormButton.on('click', function () {
             $formBlock.remove();
