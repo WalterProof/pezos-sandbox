@@ -7,7 +7,7 @@ parameters:
     router.request_context.scheme: '%env(SITE_BASE_SCHEME)%'
     router.request_context.host: '%env(SITE_BASE_HOST)%'
     site_base_scheme: '%env(SITE_BASE_SCHEME)%'
-    refresh_interval: '%env(REFRESH_INTERVAL)%'
+    refresh_interval_ms: '%env(REFRESH_INTERVAL_MS)%'
     redis_url: '%env(REDIS_URL)%'
 
 services:
@@ -54,7 +54,7 @@ services:
     PezosSandbox\Infrastructure\Tezos\StorageHistory\CachedGetStorageHistory:
         decorates: PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistoryFromQuipuSwap
         calls:
-            - setRefreshInterval: ['%refresh_interval%']
+            - setRefreshInterval: ['%refresh_interval_ms%']
 
     PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistory: '@PezosSandbox\Infrastructure\Tezos\StorageHistory\CachedGetStorageHistory'
 
@@ -78,6 +78,8 @@ services:
     PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider: ~
 
     PezosSandbox\Infrastructure\Symfony\SetSchemeOnRequestContext: ~
+
+    PezosSandbox\Infrastructure\CacheReset: ~
 
     app.redis_provider:
         class: \Predis\Client

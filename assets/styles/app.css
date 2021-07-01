@@ -179,7 +179,7 @@
         color: #ffbf81;
     }
 
-    .blink {
+    .blink span {
         animation: blinker 1s linear infinite;
     }
 

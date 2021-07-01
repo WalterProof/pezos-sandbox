@@ -43,10 +43,16 @@
             </div>
             <footer>
                 <div class="container">
-                    <div>
-                        <p>
-                            Page auto-refresh every 2 minutes
-                        </p>
+                    <div class="flex flex-row py-4">
+                        <div>
+                            <p>
+                                Page auto-refresh every {{ refresh_interval_ms
+                                / 1000 }} seconds </p>
+                            <p>
+                            Data from <a href="https://api.tzkt.io/">
+                                https://api.tzkt.io/
+                            </p>
+                        </div>
 
                         <div class="socializing">
                             <a href="https://twitter.com/BzhDevv">

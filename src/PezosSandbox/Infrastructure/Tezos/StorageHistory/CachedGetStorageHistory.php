@@ -70,6 +70,6 @@ final class CachedGetStorageHistory implements GetStorageHistory
 
     public function setRefreshInterval(?string $refreshInterval): void
     {
-        $this->refreshInterval = $refreshInterval;
+        $this->refreshInterval = sprintf('%d seconds', $refreshInterval / 1000);
     }
 }
