@@ -125,23 +125,27 @@
     }
 
     .custom-radio-buttons {
-        @apply my-2;
-    }
-    .custom-radio-buttons #interval {
-        @apply flex flex-row items-stretch content-between;
-    }
-    .custom-radio-buttons input {
-        @apply hidden;
+        @apply flex justify-around;
     }
 
-    .custom-radio-buttons label {
-        @apply flex-1 block px-3 py-2 text-gray-700 shadow cursor-pointer bg-gray-50;
+    .custom-radio-buttons .radio input {
+        @apply invisible;
     }
 
-    .custom-radio-buttons input:checked + label,
-    .custom-radio-buttons label:hover {
-        @apply font-bold bg-gray-50;
+    .custom-radio-buttons .radio label {
+        @apply flex-1 px-3 py-2 rounded cursor-pointer;
+        background-color: rgb(233, 225, 225);
+        color: rgb(158, 146, 146);
     }
+
+    .custom-radio-buttons .radio.checked label {
+        background-color: rgb(70, 230, 22);
+        color: white;
+    }
+
+    /* form[name='token_form'] .exchanges { */
+    /*     @apply mb-4; */
+    /* } */
 
     #token_form_submit {
         @apply float-right my-2;

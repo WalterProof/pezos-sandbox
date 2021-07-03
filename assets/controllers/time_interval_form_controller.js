@@ -1,11 +1,12 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-    static targets = ['interval', 'timeIntervalForm'];
+    static targets = ['form'];
 
     connect() {
-        this.intervalTarget.addEventListener('change', () =>
-            this.timeIntervalFormTarget.submit()
+        const radios = this.formTarget.elements['interval'];
+        radios.forEach((radio) =>
+            radio.addEventListener('change', () => this.formTarget.submit())
         );
     }
 }

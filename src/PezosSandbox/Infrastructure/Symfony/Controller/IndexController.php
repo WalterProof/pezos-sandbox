@@ -46,6 +46,11 @@ final class IndexController extends AbstractController
      */
     public function index(Request $request): Response
     {
+        // use session for form default value to work in display
+        if (null === $this->session->get('time_interval')) {
+            $this->session->set('time_interval', '-24 hours');
+        }
+
         $loginForm        = $this->createForm(LoginForm::class);
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
         $tokens           = $this->application->listTokens();

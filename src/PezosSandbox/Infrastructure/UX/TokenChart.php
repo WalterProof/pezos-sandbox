@@ -33,7 +33,10 @@ final class TokenChart
         \DateTimeImmutable $currentTime,
         ?string $interval
     ) {
-        $charts   = [];
+        $charts = [];
+        if ('max' === $interval) {
+            $interval = null;
+        }
         $unit     = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
         $decimals = Decimals::fromInt($token->metadata()['decimals']);
 
