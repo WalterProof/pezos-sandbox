@@ -102,8 +102,8 @@ final class TokenController extends AbstractController
             }
         }
 
-        return $this->render('member_area/tokens/token.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('member_area/tokens/token.html.twig', [
+            'form' => $form,
         ]);
     }
 
@@ -217,8 +217,8 @@ final class TokenController extends AbstractController
             }
         }
 
-        return $this->render('member_area/tokens/token.html.twig', [
-            'form' => $form->createView(),
+        return $this->renderForm('member_area/tokens/token.html.twig', [
+            'form' => $form,
         ]);
     }
 

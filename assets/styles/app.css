@@ -146,6 +146,14 @@
     #token_form_submit {
         @apply float-right my-2;
     }
+
+    .spinner {
+        @apply flex justify-center align-middle;
+    }
+
+    .spinner svg {
+        @apply text-blue-400 fill-current animate-spin;
+    }
 }
 
 @layer utilities {

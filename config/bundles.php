@@ -16,4 +16,5 @@ return [
     PezosSandbox\Infrastructure\TalisOrm\TalisOrmBundle\TalisOrmBundle::class => ['all' => true],
     Bzzhh\Pezos\Bridge\Symfony\BzzhhPezosBundle::class => ['all' => true],
     Symfony\UX\Chartjs\ChartjsBundle::class => ['all' => true],
+    Symfony\UX\Turbo\TurboBundle::class => ['all' => true],
 ];

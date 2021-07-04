@@ -1,5 +1,6 @@
 import { Controller } from 'stimulus';
 import { useDispatch } from 'stimulus-use';
+import { addClass, removeClass } from '../util/class';
 
 export default class extends Controller {
     static values = {
@@ -13,6 +14,9 @@ export default class extends Controller {
     }
 
     onChartConnect(event) {
+        document
+            .querySelectorAll('.spinner')
+            .forEach((spinner) => addClass(spinner, 'hidden'));
         this.chart = event.detail.chart;
         setInterval(() => this.setNewData(), this.intervalValue);
     }

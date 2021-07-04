@@ -12,6 +12,7 @@ export default class extends Controller {
     }
 
     prettyPrint() {
+        if (this.metadataTarget.value === '') return;
         const obj = JSON.parse(this.metadataTarget.value);
         const pretty = JSON.stringify(obj, undefined, 4);
         this.metadataTarget.value = pretty;
