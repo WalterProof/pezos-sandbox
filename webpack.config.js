@@ -88,14 +88,11 @@ if (Encore.isProduction()) {
             defaultExtractor: (content) => {
                 return content.match(/[\w-/:]+(?<!:)/g) || [];
             },
-            safelist: [
+            safelist: {
                 // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
-                'type',
-                'textarea',
-                'select',
-                'hidden',
-                'is-active',
-            ],
+                standard: [/type/, /textarea/, /select/, /hidden/, /is-active/],
+                deep: [/^choices/],
+            },
         })
     );
 }

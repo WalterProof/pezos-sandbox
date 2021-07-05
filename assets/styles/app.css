@@ -1,3 +1,5 @@
+@import 'choices.js/public/assets/styles/choices.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,7 +39,7 @@
     }
 
     .main {
-        @apply container flex-grow;
+        @apply container flex-grow pb-8;
     }
 
     .header {

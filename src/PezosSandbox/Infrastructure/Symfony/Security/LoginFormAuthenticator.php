@@ -125,7 +125,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
                 );
         }
 
-        return $this->redirectToRoute($request, 'index');
+        return $this->redirectToRoute($request, 'app_homepage');
     }
 
     public function onAuthenticationSuccess(
@@ -142,12 +142,15 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return $this->httpUtils->createRedirectResponse($request, 'index');
+        return $this->httpUtils->createRedirectResponse(
+            $request,
+            'app_homepage'
+        );
     }
 
     protected function getLoginUrl(): string
     {
-        return $this->urlGenerator->generate('index');
+        return $this->urlGenerator->generate('app_homepage');
     }
 
     private function redirectToRoute(Request $request, string $route): Response

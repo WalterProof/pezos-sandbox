@@ -1,38 +1,33 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="flex | tags">
-        {% for standard, count in counters %}
-            <span>{{ count }} {{ standard }} tokens</span>
-        {% endfor %}
-        <div class="self-center">
-            <a href="https://tzkt.io/buy-tezos"
-                target="new"
-                class="font-bold underline">
-                BUY TEZOS
-            </a>
-        </div>
-    </div>
-
     <div class="dashboard">
-        <form>
-            <div>
-                <select onchange="window.location.replace('?address=' + this.value)"
-                    class="w-full">
-                    {% for t in tokens %}
-                        {% set selected = t.address == token.address
-                            ? 'selected'
-                            : ''
-                        %}
-                        <option value="{{ t.address }}"
-                            {{ selected }}
-                            class="w-full">
-                            {{ t.metadata.symbol }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-        </form>
+        <div id="token-choices-wrapper"
+            class="mt-2"
+            {{ stimulus_controller('token-choices') }}>
+            <div class="w-full bg-gray-50 h-11"
+                data-token-choices-target="holder"></div>
+            <form data-token-choices-target="form" class="hidden">
+                <div>
+                    <select class="form-control"
+                        id="token-choices"
+                        onchange="window.location.replace('?address=' + this.value)"
+                        class="w-full">
+                        {% for t in tokens %}
+                            {% set selected = t.address == token.address
+                                ? 'selected'
+                                : ''
+                            %}
+                            <option value="{{ t.address }}"
+                                {{ selected }}
+                                class="w-full">
+                                {{ t.metadata.symbol }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
 
         <div class="divide-x divide-gray-200 | token">
             <div>

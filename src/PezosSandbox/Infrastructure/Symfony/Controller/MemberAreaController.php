@@ -45,7 +45,7 @@ final class MemberAreaController extends AbstractController
     public function membership(Request $request): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('index');
+            return $this->redirectToRoute('app_homepage');
         }
 
         $loginForm  = $this->createForm(LoginForm::class);
@@ -59,7 +59,7 @@ final class MemberAreaController extends AbstractController
             try {
                 $validSign = $pubKey->verifySignedHex(
                     $formData['signature'],
-                    bin2hex($formData['password']),
+                    bin2hex($formData['password'])
                 );
 
                 if (!$validSign) {
@@ -76,16 +76,14 @@ final class MemberAreaController extends AbstractController
             if (isset($validSign) && $validSign) {
                 $this->application->signup(
                     new Signup($pubKey->getAddress(), $formData['password']),
-                    $this->passwordEncoder,
+                    $this->passwordEncoder
                 );
 
                 $this->session
                     ->getFlashBag()
                     ->add(
                         FlashType::SUCCESS,
-                        $this->translator->trans(
-                            'signup_success.flash_message',
-                        ),
+                        $this->translator->trans('signup_success.flash_message')
                     );
             }
         }
