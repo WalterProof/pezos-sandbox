@@ -124,7 +124,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $table = $schema->createTable(self::tableName());
 
         $table->addColumn('pub_key', 'string')->setNotnull(true);
-        $table->addColumn('address', 'string')->setNotnull(false);
+        $table->addColumn('address', 'string')->setNotnull(true);
         $table->addColumn('registered_at', 'datetime')->setNotnull(true);
 
         $table->setPrimaryKey(['pub_key']);
