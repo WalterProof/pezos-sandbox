@@ -56,16 +56,10 @@ class Application implements ApplicationInterface
     {
         $member = Member::requestAccess(
             $command->pubKey(),
+            $command->address(),
             $this->clock->currentTime()
         );
 
-        $this->memberRepository->save($member);
-    }
-
-    public function grantAccess(PubKey $pubKey): void
-    {
-        $member = $this->memberRepository->getByPubKey($pubKey);
-        $member->grantAccess();
         $this->memberRepository->save($member);
     }
 

@@ -21,10 +21,6 @@
         @apply font-bold text-blue-800 underline;
     }
 
-    footer {
-        @apply bg-gray-200;
-    }
-
     @variants hover {
         a {
             @apply text-blue-600;
@@ -33,23 +29,6 @@
 }
 
 @layer components {
-    /* Sticky footer */
-    .page {
-        @apply flex flex-col h-screen bg-gray-100;
-    }
-
-    .main {
-        @apply container flex-grow pb-8;
-    }
-
-    .header {
-        @apply flex flex-row my-8;
-    }
-
-    .header > div {
-        @apply flex flex-col justify-center;
-    }
-
     /* Footer */
 
     footer nth-child(2) {
@@ -72,7 +51,7 @@
     }
 
     .dashboard {
-        @apply flex flex-col mt-8;
+        @apply flex flex-col;
     }
     .dashboard form div {
         @apply flex-grow;

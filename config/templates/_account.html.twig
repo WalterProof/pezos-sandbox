@@ -1,4 +1,4 @@
-<div {{ stimulus_controller('wallet') }}>
+<div {{ stimulus_controller('wallet') }} class="flex flex-col justify-center">
     <div>
         {% if is_granted('ROLE_MEMBER') %}
             Welcome {{ (app.user.pubKey|slice(0, 6)) ~ '...'

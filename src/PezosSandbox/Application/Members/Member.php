@@ -10,10 +10,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class Member implements UserInterface
 {
     private string $pubKey;
+    private string $address;
 
-    public function __construct(string $pubKey)
+    public function __construct(string $pubKey, string $address)
     {
-        $this->pubKey = $pubKey;
+        $this->pubKey  = $pubKey;
+        $this->address = $address;
     }
 
     /**
@@ -42,6 +44,11 @@ final class Member implements UserInterface
     public function pubKey(): PubKey
     {
         return PubKey::fromString($this->pubKey);
+    }
+
+    public function address(): string
+    {
+        return $this->address;
     }
 
     public function eraseCredentials(): void

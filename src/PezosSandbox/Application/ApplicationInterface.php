@@ -6,14 +6,14 @@ namespace PezosSandbox\Application;
 
 use PezosSandbox\Application\Exchanges\Exchange;
 use PezosSandbox\Application\Members\Member;
+use PezosSandbox\Application\RequestAccess\RequestAccess;
 use PezosSandbox\Application\Tokens\Token;
 use PezosSandbox\Domain\Model\Exchange\CouldNotFindExchange;
 use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
-use PezosSandbox\Domain\Model\Member\PubKey;
 
 interface ApplicationInterface
 {
-    public function grantAccess(PubKey $pubKey): void;
+    public function requestAccess(RequestAccess $command): void;
 
     /**
      * @throws CouldNotFindExchange

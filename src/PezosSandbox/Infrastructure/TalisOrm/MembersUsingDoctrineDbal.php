@@ -33,7 +33,7 @@ final class MembersUsingDoctrineDbal implements Members
                     ->select('*')
                     ->from('members')
                     ->andWhere('pub_key = :pub_key')
-                    ->setParameter('pub_key', $pubKey->asString()),
+                    ->setParameter('pub_key', $pubKey->asString())
             );
 
             return $this->createMember($data);
@@ -49,7 +49,7 @@ final class MembersUsingDoctrineDbal implements Members
                 ->createQueryBuilder()
                 ->select('*')
                 ->from('members')
-                ->orderBy('wasGrantedAccess', 'desc'),
+                ->orderBy('wasGrantedAccess', 'desc')
         );
 
         return array_map(
@@ -58,9 +58,9 @@ final class MembersUsingDoctrineDbal implements Members
             ): MemberForAdministrator => new MemberForAdministrator(
                 self::asString($record, 'address'),
                 self::asString($record, 'requestedAccessAt'),
-                self::asBool($record, 'wasGrantedAccess'),
+                self::asBool($record, 'wasGrantedAccess')
             ),
-            $records,
+            $records
         );
     }
 
@@ -69,6 +69,9 @@ final class MembersUsingDoctrineDbal implements Members
      */
     private function createMember($data): Member
     {
-        return new Member(self::asString($data, 'pub_key'));
+        return new Member(
+            self::asString($data, 'pub_key'),
+            self::asString($data, 'address')
+        );
     }
 }

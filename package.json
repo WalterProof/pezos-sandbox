@@ -28,6 +28,7 @@
         "stimulus": "^2.0.0",
         "stimulus-use": "^0.23.0",
         "tailwindcss": "^2.1.2",
+        "tailwindcss-stimulus-components": "^2.2.0",
         "webpack-bundle-analyzer": "^4.4.2",
         "webpack-notifier": "^1.6.0"
     },

@@ -18,16 +18,19 @@ final class Member implements Aggregate, SpecifiesSchema
     use Mapping;
 
     private PubKey $pubKey;
+    private string $address;
     private bool $wasGrantedAccess = false;
     private DateTimeImmutable $registeredAt;
 
     public static function requestAccess(
         PubKey $pubKey,
+        string $address,
         DateTimeImmutable $registeredAt
     ): self {
         $member = new self();
 
         $member->pubKey       = $pubKey;
+        $member->address      = $address;
         $member->registeredAt = self::removeMicrosecondsPart($registeredAt);
 
         return $member;
@@ -65,12 +68,13 @@ final class Member implements Aggregate, SpecifiesSchema
         $instance = new self();
 
         $instance->pubKey = PubKey::fromString(
-            self::asString($aggregateState, 'pub_key'),
+            self::asString($aggregateState, 'pub_key')
         );
+        $instance->address = self::asString($aggregateState, 'address');
 
         $instance->registeredAt = self::dateTimeAsDateTimeImmutable(
             $aggregateState,
-            'registered_at',
+            'registered_at'
         );
 
         return $instance;
@@ -83,8 +87,9 @@ final class Member implements Aggregate, SpecifiesSchema
     {
         return [
             'pub_key'       => $this->pubKey->asString(),
+            'address'       => $this->address,
             'registered_at' => self::dateTimeImmutableAsDateTimeString(
-                $this->registeredAt,
+                $this->registeredAt
             ),
         ];
     }
@@ -119,6 +124,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $table = $schema->createTable(self::tableName());
 
         $table->addColumn('pub_key', 'string')->setNotnull(true);
+        $table->addColumn('address', 'string')->setNotnull(false);
         $table->addColumn('registered_at', 'datetime')->setNotnull(true);
 
         $table->setPrimaryKey(['pub_key']);

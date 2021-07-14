@@ -5909,6 +5909,13 @@ svgo@^2.3.0:
     csso "^4.2.0"
     stable "^0.1.8"
 
+tailwindcss-stimulus-components@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/tailwindcss-stimulus-components/-/tailwindcss-stimulus-components-2.2.0.tgz#55b4d6d0179a382866ef8b1d085d0bdabf52306e"
+  integrity sha512-mOLJT5+jVm/PWRMvyx1aIcsKwQb+LRx3+XR3spYAn3CDff1qLW4R/GEz/8bz2cz2IkAn/eLmwzbRGzZSWFRw+w==
+  dependencies:
+    stimulus "^2.0.0"
+
 tailwindcss@^2.1.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-2.2.2.tgz#28a99c87b5a6b2bf6298a77d88dc0590e84fa8ee"

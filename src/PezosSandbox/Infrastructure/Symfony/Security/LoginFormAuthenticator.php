@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,7 +38,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     private TranslatorInterface $translator;
     private $urlGenerator;
     private $csrfTokenManager;
-    private $passwordEncoder;
 
     public function __construct(
         ApplicationInterface $application,
@@ -47,8 +45,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         HttpUtils $httpUtils,
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
-        CsrfTokenManagerInterface $csrfTokenManager,
-        UserPasswordEncoderInterface $passwordEncoder
+        CsrfTokenManagerInterface $csrfTokenManager
     ) {
         $this->application      = $application;
         $this->session          = $session;
@@ -56,7 +53,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->translator       = $translator;
         $this->urlGenerator     = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder  = $passwordEncoder;
     }
 
     public function supports(Request $request): bool
@@ -89,8 +85,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
                 $credentials['pubKey']
             );
         } catch (CouldNotFindmember $exception) {
+            $pubKey = PubKey::fromBase58($credentials['pubKey'], new Ed25519());
             $this->application->requestAccess(
-                new RequestAccess($credentials['pubKey'])
+                new RequestAccess($credentials['pubKey'], $pubKey->getAddress())
             );
             $user = $this->application->getOneMemberByPubKey(
                 $credentials['pubKey']

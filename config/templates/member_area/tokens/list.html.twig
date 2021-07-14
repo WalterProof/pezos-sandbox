@@ -5,8 +5,21 @@
 {% endblock %}
 
 {% block body %}
+    {% include './_header.html.twig' %}
+    <div>
+        {% for key, messages in app.flashes() %}
+            {% for message in messages %}
+                <div class="px-4 py-3 text-blue-700 bg-blue-100 border-t border-b border-blue-500"
+                    role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
     <div class="flex flex-row mt-8">
-        <a href="{{ path('app_token_new') }}" class="no-underline btn btn-primary">
+        <a href="{{ path('app_token_new') }}"
+            class="no-underline btn btn-primary">
             Add Token
         </a>
         <form action="{{ path('app_token_reorder') }}" method="post">

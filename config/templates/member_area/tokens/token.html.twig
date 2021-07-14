@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+    {% include './_header.html.twig' %}
     <div {{ stimulus_controller('token_form') }}>
         {{ form_start(form) }}
         {{ form_errors(form) }}

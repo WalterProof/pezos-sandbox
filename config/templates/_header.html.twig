@@ -1,0 +1,77 @@
+<div class="flex flex-col flex-wrap items-stretch justify-between p-6 bg-blue-100 rounded-b md:flex-row md:flex-nowrap md:items-center shadow">
+    <div class="flex flex-grow" {{ stimulus_controller('token-choices') }}>
+        <div class="w-full bg-gray-50 h-11"
+            data-token-choices-target="holder"></div>
+        <form data-token-choices-target="form" class="hidden w-full">
+            <div>
+                <select class="form-control"
+                    id="token-choices"
+                    onchange="window.location.replace('?address=' + this.value)"
+                    class="w-full">
+                    {% for t in tokens %}
+                        {% set selected = t.address == token.address
+                            ? 'selected'
+                            : ''
+                        %}
+                        <option value="{{ t.address }}"
+                            {{ selected }}
+                            class="w-full">
+                            {{ t.metadata.symbol }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="flex justify-end order-first mb-3 md:order-none md:mb-0">
+        <div class="relative" data-controller="dropdown">
+            <div data-action="click->dropdown#toggle click@window->dropdown#hide"
+                role="button"
+                data-dropdown-target="button"
+                tabindex="0"
+                class="flex flex-row ml-6">
+                {% if is_granted('ROLE_MEMBER') %}
+                    <div class="flex items-center align-middle rounded-full">
+                        {{ app.user.address }}
+                    </div>
+                {% else %}
+                    <div class="flex items-center text-blue-300 align-middle rounded-full fill-current">
+                        {% include './svg/noun_anonymous_638448.svg' %}
+                    </div>
+                {% endif %}
+                <div class="flex items-center text-gray-700 align-middle">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        class="w-4 h-4">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div data-dropdown-target="menu"
+                class="absolute right-0 z-10 hidden mt-2">
+                <div class="overflow-hidden bg-white border rounded shadow">
+                    {% if is_granted('ROLE_MEMBER') %}
+                        <a href="{{ path('app_logout') }}"
+                            class="block px-8 py-3 text-gray-900 no-underline bg-white border-t hover:bg-gray-300 whitespace-nowrap">
+                            Disconnect
+                        </a>
+                        <a href="{{ path('app_token_list') }}"
+                            class="block px-8 py-3 text-gray-900 no-underline bg-white border-t hover:bg-gray-300 whitespace-nowrap">
+                            Admin
+                        </a>
+                    {% else %}
+                        <div {{ stimulus_controller('wallet') }}>
+                            <a href="#"
+                                data-action="wallet#login"
+                                class="z-50 block px-8 py-3 text-gray-900 no-underline bg-white border-t hover:bg-gray-300 whitespace-nowrap">
+                                Connect Wallet
+                            </a>
+                            {{ form(loginForm) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -54,7 +54,10 @@ services:
         image: 'redis:alpine'
         ports:
             - '6379:6379'
+        volumes: 
+            - redis_data:/data
 
 volumes:
     var:
     db_data:
+    redis_data:
