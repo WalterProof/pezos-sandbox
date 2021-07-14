@@ -100,6 +100,7 @@ if (Encore.isProduction()) {
                     /required/,
                     /block/,
                     /text-gray-800/,
+                    /inactive/,
                 ],
                 deep: [/^choices/],
             },
