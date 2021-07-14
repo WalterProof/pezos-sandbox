@@ -237,42 +237,47 @@
                 {{ form(timeIntervalForm) }}
             </div>
 
-            <div {{ stimulus_controller('tabs') }} data-tabs-index="0">
-                <div class="tabs">
-                    <ul>
-                        {% for title in charts.QuipuSwap|keys %}
-                            <li data-tabs-target="tab" class="">
-                                <a data-action="tabs#change">{{ title }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="charts">
-                    <span class="spinner">
-                        {% include './svg/noun_spinner_639850.svg' %}
-                    </span>
-                    {% for title, chart in charts.QuipuSwap %}
-                        <div data-tabs-target="tabPanel">
-                            {{
-                                render_chart(
-                                    chart,
-                                    {
-                                        'data-controller': 'chartjs',
-                                        'data-action': 'chartjs:connect->chartjs#onChartConnect',
-                                        'data-chartjs-title-value': title,
-                                        'data-chartjs-interval-value': refresh_interval_ms,
-                                        'data-chartjs-diff-url-value': path(
-                                            '_app_token_diff',
-                                            {
-                                                address: token.address
-                                            }
-                                        )
-                                    }
-                                )
-                            }}
-                        </div>
+            <div {{ stimulus_controller('tabs') }}
+                data-tabs-active-tab="z-10 -mb-px bg-gray-50"
+                class="tabs">
+                <ul class="flex items-end border-b">
+                    {% for title in charts.QuipuSwap|keys %}
+                        <li data-tabs-target="tab"
+                            data-action="click->tabs#change"
+                            class="mr-1">
+                            <a class="inline-block px-4 py-2 font-semibold text-blue-800 no-underline bg-white border-t border-l border-r rounded-t cursor-pointer hover:text-blue-800">
+                                {{ title }}
+                            </a>
+                        </li>
                     {% endfor %}
-                </div>
+                </ul>
+                {% for title, chart in charts.QuipuSwap %}
+                    <div data-tabs-target="panel" class="chart">
+                        {% if loop.first %}
+                            <span class="spinner">
+                                {% include './svg/noun_spinner_639850.svg' %}
+                            </span>
+                        {% endif %}
+
+                        {{
+                            render_chart(
+                                chart,
+                                {
+                                    'data-controller': 'chartjs',
+                                    'data-action': 'chartjs:connect->chartjs#onChartConnect',
+                                    'data-chartjs-title-value': title,
+                                    'data-chartjs-interval-value': refresh_interval_ms,
+                                    'data-chartjs-diff-url-value': path(
+                                        '_app_token_diff',
+                                        {
+                                            address: token.address
+                                        }
+                                    )
+                                }
+                            )
+                        }}
+                    </div>
+                {% endfor %}
             </div>
         </div>
     {% endif %}

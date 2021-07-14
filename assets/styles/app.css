@@ -73,35 +73,15 @@
         @apply self-center flex-grow p-3 mr-3 bg-gray-50;
     }
 
-    .tabs {
-        @apply flex;
-        @apply border-b;
+    .tabs .inactive a {
+        @apply text-blue-500 bg-gray-100 border-t border-l border-r rounded-t;
     }
 
-    .tabs ul {
-        @apply flex items-end;
-    }
-    .tabs li {
-        @apply mr-1;
-    }
-    .tabs .is-active {
-        @apply z-10 -mb-px bg-gray-50;
-    }
-    .tabs a {
-        @apply inline-block px-4 py-2 font-semibold text-blue-500 no-underline bg-gray-100 cursor-pointer;
-    }
-    .tabs a:hover {
-        @apply text-blue-800;
-    }
-    .tabs .is-active a {
-        @apply text-blue-700 bg-white border-t border-l border-r rounded-t;
-    }
-
-    .charts {
+    .chart {
         @apply py-8 bg-gray-50;
     }
 
-    .charts canvas {
+    .chart canvas {
         image-rendering: pixelated;
     }
 
