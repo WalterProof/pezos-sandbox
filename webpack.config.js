@@ -90,7 +90,17 @@ if (Encore.isProduction()) {
             },
             safelist: {
                 // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
-                standard: [/type/, /textarea/, /select/, /hidden/, /is-active/],
+                standard: [
+                    /type/,
+                    /textarea/,
+                    /select/,
+                    /hidden/,
+                    /is-active/,
+                    /text-red-700/,
+                    /required/,
+                    /block/,
+                    /text-gray-800/,
+                ],
                 deep: [/^choices/],
             },
         })
