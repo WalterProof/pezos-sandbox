@@ -10,6 +10,21 @@
 
             {% endblock %}
         </title>
+        <script>
+            if ( localStorage.theme === 'dark' || (!('theme' in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches) ) {
+            document.documentElement.classList.add('dark'); } else {
+            document.documentElement.classList.remove('dark'); }
+
+            // Whenever the user explicitly chooses light mode
+            //localStorage.theme = 'light';
+
+            // Whenever the user explicitly chooses dark mode localStorage.theme
+            //= 'dark';
+
+            // Whenever the user explicitly chooses to respect the OS preference
+            // localStorage.removeItem('theme');
+        </script>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -24,14 +39,14 @@
             {% endif %}
         {% endblock %}
     </head>
-    <body>
+    <body class="text-sm dark:bg-gray-800 dark:text-gray-50">
         <div class="flex flex-col h-screen">
             <div class="container flex-grow pb-8">
                 {% block body %}
 
                 {% endblock %}
             </div>
-            <footer class="bg-blue-50">
+            <footer class="bg-blue-50 dark:bg-gray-700">
                 <div class="container">
                     <div class="flex flex-row py-4">
                         <div>

@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace PezosSandbox\Domain\Model\Tag;
+namespace PezosSandbox\Domain\Model\Category;
 
 use Doctrine\DBAL\Schema\Schema;
-use PezosSandbox\Domain\Model\Category\CategoryId;
 use PezosSandbox\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
 use TalisOrm\AggregateId;
 use TalisOrm\Schema\SpecifiesSchema;
 
-final class Tag implements Aggregate, SpecifiesSchema
+final class Category implements Aggregate, SpecifiesSchema
 {
     use AggregateBehavior;
     use Mapping;
 
-    private TagId $tagId;
     private CategoryId $categoryId;
     private string $label;
 
@@ -47,9 +45,6 @@ final class Tag implements Aggregate, SpecifiesSchema
     ): self {
         $instance = new self();
 
-        $instance->tagId = TagId::fromString(
-            self::asString($aggregateState, 'tag_id')
-        );
         $instance->categoryId = CategoryId::fromString(
             self::asString($aggregateState, 'category_id')
         );
@@ -60,13 +55,12 @@ final class Tag implements Aggregate, SpecifiesSchema
 
     public static function tableName(): string
     {
-        return 'tags';
+        return 'categories';
     }
 
     public function state(): array
     {
         return [
-            'tag_id'      => $this->tagId->asString(),
             'category_id' => $this->categoryId->asString(),
             'label'       => $this->label,
         ];
@@ -78,7 +72,7 @@ final class Tag implements Aggregate, SpecifiesSchema
     public function identifier(): array
     {
         return [
-            'tag_id' => $this->tagId->asString(),
+            'category_id' => $this->categoryId->asString(),
         ];
     }
 
@@ -87,17 +81,16 @@ final class Tag implements Aggregate, SpecifiesSchema
      */
     public static function identifierForQuery(AggregateId $aggregateId): array
     {
-        return ['tagId' => (string) $aggregateId];
+        return ['categoryId' => (string) $aggregateId];
     }
 
     public static function specifySchema(Schema $schema): void
     {
         $table = $schema->createTable(self::tableName());
 
-        $table->addColumn('tag_id', 'string')->setNotnull(true);
-        $table->setPrimaryKey(['tag_id']);
-
         $table->addColumn('category_id', 'string')->setNotnull(true);
+        $table->setPrimaryKey(['category_id']);
+
         $table->addColumn('label', 'string')->setNotnull(true);
         $table->addUniqueIndex(['label']);
     }

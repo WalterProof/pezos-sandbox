@@ -1,0 +1,41 @@
+@import 'tailwindcss/utilities';
+
+.btn {
+    @apply px-4 py-2 font-bold rounded;
+}
+.btn-small {
+    @apply px-1 py-1 font-bold rounded;
+}
+
+.btn-primary {
+    @apply py-2 font-semibold text-white bg-blue-500 shadow-md;
+}
+.btn-primary:hover {
+    @apply bg-blue-400;
+}
+a.btn-buy {
+    @apply text-white no-underline bg-green-400;
+}
+a.btn-buy:hover {
+    @apply text-white bg-green-300;
+}
+a.btn-sell {
+    @apply text-white no-underline bg-red-400;
+}
+a.btn-sell:hover {
+    @apply text-white bg-red-300;
+}
+
+.btn-danger {
+    @apply text-white no-underline bg-red-400;
+}
+
+.blink span {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}

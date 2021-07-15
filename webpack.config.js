@@ -60,7 +60,12 @@ Encore
     })
 
     .enablePostCssLoader()
+    .configureDevServerOptions((options) => {
+        // hotfix for webpack-dev-server 4.0.0rc0
+        // @see: https://github.com/symfony/webpack-encore/issues/951#issuecomment-840719271
 
+        delete options.client;
+    })
     // enables Sass/SCSS support
     // .enableSassLoader()
 

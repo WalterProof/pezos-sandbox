@@ -1,0 +1,20 @@
+@import 'tailwindcss/base';
+
+label {
+    @apply dark:text-white;
+}
+
+input,
+textarea {
+    @apply dark:text-gray-800;
+}
+
+a {
+    @apply font-bold text-blue-800 underline dark:text-blue-400;
+}
+
+@variants hover {
+    a {
+        @apply text-blue-600;
+    }
+}

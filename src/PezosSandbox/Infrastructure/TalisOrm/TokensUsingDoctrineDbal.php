@@ -6,6 +6,7 @@ namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use PezosSandbox\Application\Tokens\Token;
 use PezosSandbox\Application\Tokens\TokenExchange;
+use PezosSandbox\Application\Tokens\TokenTag;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Token\Address;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
@@ -45,7 +46,7 @@ final class TokensUsingDoctrineDbal implements Tokens
 
             $token = $this->createToken($data);
 
-            return $this->withExchanges($token);
+            return $this->withExchanges($this->withTags($token));
         } catch (NoResult $exception) {
             throw CouldNotFindToken::withAddress($address);
         }
@@ -66,7 +67,7 @@ final class TokensUsingDoctrineDbal implements Tokens
         $records = $this->connection->selectAll($qb);
 
         return array_map(
-            fn (array $record): Token => new Token(
+            fn(array $record): Token => new Token(
                 TokenId::fromString(self::asString($record, 'token_id')),
                 Address::fromState(
                     self::asString($record, 'contract'),
@@ -112,9 +113,9 @@ final class TokensUsingDoctrineDbal implements Tokens
             ->andWhere('token_id = :tokenId')
             ->setParameter('tokenId', $token->tokenId()->asString());
 
-        $records   = $this->connection->selectAll($qb);
+        $records = $this->connection->selectAll($qb);
         $exchanges = array_map(
-            fn (array $record): TokenExchange => new TokenExchange(
+            fn(array $record): TokenExchange => new TokenExchange(
                 self::asString($record, 'exchange_id'),
                 self::asString($record, 'name'),
                 self::asString($record, 'contract')
@@ -123,5 +124,27 @@ final class TokensUsingDoctrineDbal implements Tokens
         );
 
         return $token->withExchanges($exchanges);
+    }
+
+    private function withTags(Token $token): Token
+    {
+        $qb = $this->connection
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('token_tags', 'tt')
+            ->leftJoin('tt', 'tags', 't', 't.tag_id = tt.tag_id')
+            ->andWhere('token_id = :tokenId')
+            ->setParameter('tokenId', $token->tokenId()->asString());
+
+        $records = $this->connection->selectAll($qb);
+        $tags = array_map(
+            fn(array $record): TokenTag => new TokenTag(
+                self::asString($record, 'tag_id'),
+                self::asString($record, 'label')
+            ),
+            $records
+        );
+
+        return $token->withTags($tags);
     }
 }

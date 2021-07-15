@@ -15,9 +15,9 @@ final class TokenExchange
         string $exchangeName,
         string $contract
     ) {
-        $this->exchangeId   = $exchangeId;
+        $this->exchangeId = $exchangeId;
         $this->exchangeName = $exchangeName;
-        $this->contract     = $contract;
+        $this->contract = $contract;
     }
 
     public function exchangeId(): string
