@@ -1,6 +1,6 @@
 import { Controller } from 'stimulus';
 import { useDispatch } from 'stimulus-use';
-import { addClass, removeClass } from '../util/class';
+import { addClass, hasClass, removeClass } from '../util/class';
 
 export default class extends Controller {
     static values = {
@@ -14,10 +14,16 @@ export default class extends Controller {
     }
 
     onChartConnect(event) {
+        const isDark = hasClass(document.documentElement, 'dark');
         document
             .querySelectorAll('.spinner')
             .forEach((spinner) => addClass(spinner, 'hidden'));
         this.chart = event.detail.chart;
+        if (isDark) {
+            this.chart.options.scales.xAxes[0].ticks.fontColor = '#fff';
+            this.chart.options.scales.yAxes[0].ticks.fontColor = '#fff';
+            this.chart.update();
+        }
         setInterval(() => this.setNewData(), this.intervalValue);
     }
 

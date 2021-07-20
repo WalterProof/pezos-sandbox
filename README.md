@@ -10,7 +10,15 @@ Run `make debug` to launch containers.
 
 Run `yarn run dev-server` for the frontend.
 
-Run `docker-compose exec php ./bin/console import` to import data.
+Import data
+
+```
+\copy exchanges(exchange_id, name, homepage) from '~/pezos-sandbox/data/exchanges.csv' delimiter ',' CSV HEADER
+\copy tokens(token_id, contract, id, metadata, active, position) from '~/pezos-sandbox/data/tokens.csv' delimiter ',' CSV HEADER
+\copy token_exchanges(token_id, exchange_id, contract) from '~/pezos-sandbox/data/token_exchanges.csv' delimiter ',' CSV HEADER
+\copy categories(category_id, label) from '~/Code/pezos-sandbox/data/categories.csv' delimiter ',' CSV HEADER
+\copy tags(tag_id, label,category_id) from '~/Code/pezos-sandbox/data/tags.csv' delimiter ',' CSV HEADER
+```
 
 You should see something at http://pezos-sandbox.localdev/
 
@@ -28,8 +36,8 @@ Roadmap:
 -   [ ] use https://github.com/dipdup-net
 -   [ ] improve UI (mobile version)
 -   [ ] count which token is most viewed
--   [ ] tokens ordering (by liquidity pool..) 
+-   [ ] tokens ordering (by liquidity pool..)
 -   [ ] use rollbar for error logs
--   [ ] have web server stats
+-   [x] have web server stats
 -   [ ] explanation of signature login
 -   [ ] links to other ecosystem tools (comet, teztools, tzflow..)

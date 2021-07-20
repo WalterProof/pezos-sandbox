@@ -1,5 +1,6 @@
 talis_orm:
     aggregates:
+        - PezosSandbox\Domain\Model\Category\Category
         - PezosSandbox\Domain\Model\Exchange\Exchange
         - PezosSandbox\Domain\Model\Member\Member
         - PezosSandbox\Domain\Model\Tag\Tag
