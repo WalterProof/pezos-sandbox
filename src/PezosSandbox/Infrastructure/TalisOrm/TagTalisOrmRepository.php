@@ -27,6 +27,11 @@ final class TagTalisOrmRepository implements TagRepository
         $this->aggregateRepository->save($tag);
     }
 
+    public function delete(Tag $tag): void
+    {
+        $this->aggregateRepository->delete($tag);
+    }
+
     public function getById(TagId $tagId): Tag
     {
         try {

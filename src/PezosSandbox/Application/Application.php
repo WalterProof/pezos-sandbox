@@ -9,6 +9,8 @@ use PezosSandbox\Application\Exchanges\Exchanges;
 use PezosSandbox\Application\Members\Member as MemberReadModel;
 use PezosSandbox\Application\Members\Members;
 use PezosSandbox\Application\RequestAccess\RequestAccess;
+use PezosSandbox\Application\Tags\Tag as TagReadModel;
+use PezosSandbox\Application\Tags\Tags;
 use PezosSandbox\Application\Tokens\Token as TokenReadModel;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Exchange\Exchange;
@@ -17,6 +19,9 @@ use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\Member;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
 use PezosSandbox\Domain\Model\Member\PubKey;
+use PezosSandbox\Domain\Model\Tag\Tag;
+use PezosSandbox\Domain\Model\Tag\TagId;
+use PezosSandbox\Domain\Model\Tag\TagRepository;
 use PezosSandbox\Domain\Model\Token\Address as TokenAddress;
 use PezosSandbox\Domain\Model\Token\Token;
 use PezosSandbox\Domain\Model\Token\TokenRepository;
@@ -26,6 +31,7 @@ class Application implements ApplicationInterface
     private ExchangeRepository $exchangeRepository;
     private MemberRepository $memberRepository;
     private TokenRepository $tokenRepository;
+    private TagRepository $tagRepository;
     private EventDispatcher $eventDispatcher;
     private Exchanges $exchanges;
     private Members $members;
@@ -36,19 +42,23 @@ class Application implements ApplicationInterface
         ExchangeRepository $exchangeRepository,
         MemberRepository $memberRepository,
         TokenRepository $tokenRepository,
+        TagRepository $tagRepository,
         EventDispatcher $eventDispatcher,
         Exchanges $exchanges,
         Members $members,
         Tokens $tokens,
+        Tags $tags,
         Clock $clock
     ) {
         $this->exchangeRepository = $exchangeRepository;
         $this->memberRepository   = $memberRepository;
         $this->tokenRepository    = $tokenRepository;
+        $this->tagRepository      = $tagRepository;
         $this->eventDispatcher    = $eventDispatcher;
         $this->exchanges          = $exchanges;
         $this->members            = $members;
         $this->tokens             = $tokens;
+        $this->tags               = $tags;
         $this->clock              = $clock;
     }
 
@@ -101,6 +111,30 @@ class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($token->releaseEvents());
     }
 
+    public function addTag(AddTag $command): void
+    {
+        $tagId = $this->tagRepository->nextIdentity();
+
+        $tag = Tag::createTag($tagId, $command->label());
+
+        $this->tagRepository->save($tag);
+    }
+
+    public function updateTag(UpdateTag $command): void
+    {
+        $tag = $this->tagRepository->getById($command->tagId());
+        $tag->update($command->label());
+
+        $this->tagRepository->save($tag);
+    }
+
+    public function removeTag(RemoveTag $command): void
+    {
+        $tag = $this->tagRepository->getById($command->tagId());
+
+        $this->tagRepository->delete($tag);
+    }
+
     public function updateToken(UpdateToken $command): void
     {
         $token = $this->tokenRepository->getById($command->tokenId());
@@ -135,6 +169,20 @@ class Application implements ApplicationInterface
         $this->tokenRepository->save($token);
     }
 
+    public function addTokenTag(AddTokenTag $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->addTag($command->tagId());
+        $this->tokenRepository->save($token);
+    }
+
+    public function removeTokenTag(RemoveTokenTag $command): void
+    {
+        $token = $this->tokenRepository->getById($command->tokenId());
+        $token->removeTag($command->tagId());
+        $this->tokenRepository->save($token);
+    }
+
     public function getOneExchangeByName(string $name): ExchangeReadModel
     {
         return $this->exchanges->getOneByName($name);
@@ -150,6 +198,13 @@ class Application implements ApplicationInterface
         $address = TokenAddress::fromString($tokenAddress);
 
         return $this->tokens->getOneByAddress($address);
+    }
+
+    public function getOneTagByTagId(string $tagId): TagReadModel
+    {
+        $tagId = TagId::fromString($tagId);
+
+        return $this->tags->getOneById($tagId);
     }
 
     public function listMembersForAdministrator(): array
@@ -171,6 +226,14 @@ class Application implements ApplicationInterface
     public function listTokensForAdmin(): array
     {
         return $this->tokens->listTokensForAdmin();
+    }
+
+    /**
+     * @return array<TagReadModel>
+     */
+    public function listTagsForAdmin(): array
+    {
+        return $this->tags->listTags();
     }
 
     /**

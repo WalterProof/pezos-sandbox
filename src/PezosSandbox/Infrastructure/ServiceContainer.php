@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PezosSandbox\Infrastructure;
 
 use Assert\Assert;
-use PezosSandbox\Application\AccessPolicy;
 use PezosSandbox\Application\Application;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\Clock;
@@ -13,6 +12,7 @@ use PezosSandbox\Application\EventDispatcher;
 use PezosSandbox\Application\EventDispatcherWithSubscribers;
 use PezosSandbox\Application\Exchanges\Exchanges;
 use PezosSandbox\Application\Members\Members;
+use PezosSandbox\Application\Tags\Tags;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
@@ -49,10 +49,12 @@ abstract class ServiceContainer
                 $this->exchangeRepository(),
                 $this->memberRepository(),
                 $this->tokenRepository(),
+                $this->tagRepository(),
                 $this->eventDispatcher(),
                 $this->exchanges(),
                 $this->members(),
                 $this->tokens(),
+                $this->tags(),
                 $this->clock()
             );
         }
@@ -91,4 +93,6 @@ abstract class ServiceContainer
     abstract protected function members(): Members;
 
     abstract protected function tokens(): Tokens;
+
+    abstract protected function tags(): Tags;
 }

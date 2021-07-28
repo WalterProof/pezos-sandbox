@@ -13,11 +13,12 @@ Run `yarn run dev-server` for the frontend.
 Import data
 
 ```
-\copy exchanges(exchange_id, name, homepage) from '~/pezos-sandbox/data/exchanges.csv' delimiter ',' CSV HEADER
-\copy tokens(token_id, contract, id, metadata, active, position) from '~/pezos-sandbox/data/tokens.csv' delimiter ',' CSV HEADER
-\copy token_exchanges(token_id, exchange_id, contract) from '~/pezos-sandbox/data/token_exchanges.csv' delimiter ',' CSV HEADER
-\copy categories(category_id, label) from '~/Code/pezos-sandbox/data/categories.csv' delimiter ',' CSV HEADER
-\copy tags(tag_id, label,category_id) from '~/Code/pezos-sandbox/data/tags.csv' delimiter ',' CSV HEADER
+\copy doctrine_migration_versions(version, executed_at, execution_time) from '~/code/pezos-sandbox/data/doctrine_migration_versions.csv' delimiter ',' CSV HEADER;
+\copy exchanges(exchange_id, name, homepage) from '~/code/pezos-sandbox/data/exchanges.csv' delimiter ',' CSV HEADER;
+\copy members(pub_key, registered_at, address) from '~/code/pezos-sandbox/data/members.csv' delimiter ',' CSV HEADER;
+\copy tokens(token_id, contract, id, metadata, active, position) from '~/code/pezos-sandbox/data/tokens.csv' delimiter ',' CSV HEADER;
+\copy token_exchanges(token_id, exchange_id, contract) from '~/code/pezos-sandbox/data/token_exchanges.csv' delimiter ',' CSV HEADER;
+\copy tags(tag_id, label) from '~/code/pezos-sandbox/data/tags.csv' delimiter ',' CSV HEADER;
 ```
 
 You should see something at http://pezos-sandbox.localdev/

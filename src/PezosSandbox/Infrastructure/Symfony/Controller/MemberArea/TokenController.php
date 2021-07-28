@@ -6,10 +6,13 @@ namespace PezosSandbox\Infrastructure\Symfony\Controller\MemberArea;
 
 use PezosSandbox\Application\AddToken;
 use PezosSandbox\Application\AddTokenExchange;
+use PezosSandbox\Application\AddTokenTag;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
 use PezosSandbox\Application\RemoveTokenExchange;
+use PezosSandbox\Application\RemoveTokenTag;
 use PezosSandbox\Application\Tokens\TokenExchange;
+use PezosSandbox\Application\Tokens\TokenTag;
 use PezosSandbox\Application\UpdateToken;
 use PezosSandbox\Application\UpdateTokenExchange;
 use PezosSandbox\Domain\Model\Common\UserFacingError;
@@ -120,19 +123,35 @@ final class TokenController extends AbstractController
 
             return $this->redirectToRoute('app_token_list');
         }
-        $form = $this->createForm(TokenForm::class, [
-            'contract'                              => $token->address()->contract(),
-            'id'                                    => $token->address()->id(),
-            'metadata'                              => $token->metadata(),
-            'active'                                => $token->isActive(),
-            'exchanges'                             => array_map(
-                fn (TokenExchange $exchange): array => [
-                    'exchangeId' => $exchange->exchangeId(),
-                    'contract'   => $exchange->contract(),
-                ],
-                $token->exchanges()
-            ),
-        ]);
+
+        $form = $this->createForm(
+            TokenForm::class,
+            [
+                'contract'                              => $token->address()->contract(),
+                'id'                                    => $token->address()->id(),
+                'metadata'                              => $token->metadata(),
+                'active'                                => $token->isActive(),
+                'exchanges'                             => array_map(
+                    fn (TokenExchange $exchange): array => [
+                        'exchangeId' => $exchange->exchangeId(),
+                        'contract'   => $exchange->contract(),
+                    ],
+                    $token->exchanges()
+                ),
+                'tags' => array_reduce(
+                    array_map(
+                        fn (TokenTag $tag): array => [
+                            $tag->label() => $tag->tagId(),
+                        ],
+                        $token->tags()
+                    ),
+                    fn (array $acc, array $tag) => array_merge($acc, $tag),
+                    []
+                ),
+            ],
+            ['tags' => $this->application->listTagsForAdmin()]
+        );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -149,65 +168,16 @@ final class TokenController extends AbstractController
                 );
 
                 $this->application->updateToken($updateToken);
-
-                $currentExchanges = array_reduce(
-                    array_map(
-                        fn (TokenExchange $item): array => [
-                            $item->exchangeId() => $item->contract(),
-                        ],
-                        $token->exchanges()
-                    ),
-                    fn ($acc, $item) => $acc + $item,
-                    []
+                $this->updateTokenExchanges(
+                    $token->tokenId()->asString(),
+                    $token->exchanges(),
+                    $formData['exchanges']
                 );
-
-                $exchanges = array_reduce(
-                    array_map(
-                        fn (array $item): array => [
-                            $item['exchangeId'] => $item['contract'],
-                        ],
-                        $formData['exchanges']
-                    ),
-                    fn ($acc, $item) => $acc + $item,
-                    []
+                $this->updateTags(
+                    $token->tokenId()->asString(),
+                    $token->tags(),
+                    $formData['tags']
                 );
-
-                if (\count($formData['exchanges']) > \count($exchanges)) {
-                    throw new \Exception('You can only add one contract for each exchange');
-                }
-
-                foreach ($token->exchanges() as $tokenExchange) {
-                    /** @var TokenExchange $tokenExchange * */
-                    if (!isset($exchanges[$tokenExchange->exchangeId()])) {
-                        $removeTokenExchange = new RemoveTokenExchange(
-                            $token->tokenId()->asString(),
-                            $tokenExchange->exchangeId()
-                        );
-                        $this->application->removeTokenExchange(
-                            $removeTokenExchange
-                        );
-                    }
-                }
-
-                foreach ($exchanges as $exchangeId => $contract) {
-                    if (!isset($currentExchanges[$exchangeId])) {
-                        $addTokenExchange = new AddTokenExchange(
-                            $token->tokenId()->asString(),
-                            $exchangeId,
-                            $contract
-                        );
-                        $this->application->addTokenExchange($addTokenExchange);
-                    } else {
-                        $updateTokenExchange = new UpdateTokenExchange(
-                            $token->tokenId()->asString(),
-                            $exchangeId,
-                            $contract
-                        );
-                        $this->application->updateTokenExchange(
-                            $updateTokenExchange
-                        );
-                    }
-                }
 
                 $this->addFlash(FlashType::SUCCESS, 'Token edited!');
 
@@ -322,6 +292,96 @@ final class TokenController extends AbstractController
         );
 
         return $this->redirectToRoute('app_token_list');
+    }
+
+    private function updateTags(
+        string $tokenId,
+        array $currentTags,
+        array $newTags
+    ) {
+        $currentTags = array_map(
+            fn (TokenTag $item): string => $item->tagId(),
+            $currentTags
+        );
+
+        foreach ($currentTags as $tokenTag) {
+            /* @var TokenTag $tag * */
+            if (!\in_array($tokenTag, $newTags)) {
+                $removeTokenTag = new RemoveTokenTag(
+                    $tokenId,
+                    $tokenTag->tagId()
+                );
+                $this->application->removeTokenTag($removeTokenTag);
+            }
+        }
+
+        foreach ($newTags as $tagId) {
+            if (!\in_array($tagId, $currentTags)) {
+                $addTokenTag = new AddTokenTag($tokenId, $tagId);
+                $this->application->addTokenTag($addTokenTag);
+            }
+        }
+    }
+
+    private function updateTokenExchanges(
+        string $tokenId,
+        array $currentTokenExchanges,
+        array $newTokenExchanges
+    ) {
+        $currentExchanges = array_reduce(
+            array_map(
+                fn (TokenExchange $item): array => [
+                    $item->exchangeId() => $item->contract(),
+                ],
+                $currentTokenExchanges
+            ),
+            fn ($acc, $item) => $acc + $item,
+            []
+        );
+
+        $exchanges = array_reduce(
+            array_map(
+                fn (array $item): array => [
+                    $item['exchangeId'] => $item['contract'],
+                ],
+                $newTokenExchanges
+            ),
+            fn ($acc, $item) => $acc + $item,
+            []
+        );
+
+        if (\count($newTokenExchanges) > \count($exchanges)) {
+            throw new \Exception('You can only add one contract for each exchange');
+        }
+
+        foreach ($currentTokenExchanges as $tokenExchange) {
+            /** @var TokenExchange $tokenExchange * */
+            if (!isset($exchanges[$tokenExchange->exchangeId()])) {
+                $removeTokenExchange = new RemoveTokenExchange(
+                    $tokenId,
+                    $tokenExchange->exchangeId()
+                );
+                $this->application->removeTokenExchange($removeTokenExchange);
+            }
+        }
+
+        foreach ($exchanges as $exchangeId => $contract) {
+            if (!isset($currentExchanges[$exchangeId])) {
+                $addTokenExchange = new AddTokenExchange(
+                    $tokenId,
+                    $exchangeId,
+                    $contract
+                );
+                $this->application->addTokenExchange($addTokenExchange);
+            } else {
+                $updateTokenExchange = new UpdateTokenExchange(
+                    $tokenId,
+                    $exchangeId,
+                    $contract
+                );
+                $this->application->updateTokenExchange($updateTokenExchange);
+            }
+        }
     }
 
     private function convertToFlashMessage(UserFacingError $exception): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\TalisOrm\TalisOrmBundle\DependencyInjection\Compiler;
@@ -14,7 +15,7 @@ final class SetAggregateClassesArgument implements CompilerPassInterface
         $definition = $container->getDefinition(AggregateSchemaProvider::class);
         $definition->setArguments(
             [
-                $container->getParameter('talis_orm.aggregate_classes')
+                $container->getParameter('talis_orm.aggregate_classes'),
             ]
         );
     }

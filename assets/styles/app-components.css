@@ -92,3 +92,5 @@ footer nth-child(2) {
 .spinner svg {
     @apply text-blue-400 fill-current animate-spin;
 }
+
+option[selected] { background-color: #333; color: #fff; }

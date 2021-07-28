@@ -6,8 +6,8 @@ namespace PezosSandbox\Infrastructure\TalisOrm;
 
 use PezosSandbox\Application\Tokens\Token;
 use PezosSandbox\Application\Tokens\TokenExchange;
-use PezosSandbox\Application\Tokens\TokenTag;
 use PezosSandbox\Application\Tokens\Tokens;
+use PezosSandbox\Application\Tokens\TokenTag;
 use PezosSandbox\Domain\Model\Token\Address;
 use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Domain\Model\Token\TokenId;
@@ -67,7 +67,7 @@ final class TokensUsingDoctrineDbal implements Tokens
         $records = $this->connection->selectAll($qb);
 
         return array_map(
-            fn(array $record): Token => new Token(
+            fn (array $record): Token => new Token(
                 TokenId::fromString(self::asString($record, 'token_id')),
                 Address::fromState(
                     self::asString($record, 'contract'),
@@ -113,9 +113,9 @@ final class TokensUsingDoctrineDbal implements Tokens
             ->andWhere('token_id = :tokenId')
             ->setParameter('tokenId', $token->tokenId()->asString());
 
-        $records = $this->connection->selectAll($qb);
+        $records   = $this->connection->selectAll($qb);
         $exchanges = array_map(
-            fn(array $record): TokenExchange => new TokenExchange(
+            fn (array $record): TokenExchange => new TokenExchange(
                 self::asString($record, 'exchange_id'),
                 self::asString($record, 'name'),
                 self::asString($record, 'contract')
@@ -137,8 +137,8 @@ final class TokensUsingDoctrineDbal implements Tokens
             ->setParameter('tokenId', $token->tokenId()->asString());
 
         $records = $this->connection->selectAll($qb);
-        $tags = array_map(
-            fn(array $record): TokenTag => new TokenTag(
+        $tags    = array_map(
+            fn (array $record): TokenTag => new TokenTag(
                 self::asString($record, 'tag_id'),
                 self::asString($record, 'label')
             ),

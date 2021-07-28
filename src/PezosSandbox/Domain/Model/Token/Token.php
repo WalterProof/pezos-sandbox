@@ -7,6 +7,7 @@ namespace PezosSandbox\Domain\Model\Token;
 use Assert\Assert;
 use Doctrine\DBAL\Schema\Schema;
 use PezosSandbox\Domain\Model\Exchange\ExchangeId;
+use PezosSandbox\Domain\Model\Tag\TagId;
 use PezosSandbox\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
@@ -56,6 +57,25 @@ final class Token implements Aggregate, SpecifiesSchema
         }
     }
 
+    public function addTag(TagId $tagId)
+    {
+        $this->tags[] = TokenTag::create(
+            $this->tokenId,
+            $tagId
+        );
+    }
+
+    public function removeTag(TagId $tagId)
+    {
+        foreach ($this->tags as $key => $tag) {
+            /** @var TokenTag $tag */
+            if ($tag->tagId()->equals($tagId)) {
+                unset($this->tag[$key]);
+                $this->deleteChildEntity($tag);
+            }
+        }
+    }
+
     /**
      * @return array<int,class-string>
      */
@@ -99,7 +119,7 @@ final class Token implements Aggregate, SpecifiesSchema
         $tags = $childEntitiesByType[TokenTag::class];
         Assert::that($tags)
             ->all()
-            ->isInstanceOf(Tag::class);
+            ->isInstanceOf(TokenTag::class);
         $instance->tags = $tags;
 
         $exchanges = $childEntitiesByType[TokenExchange::class];

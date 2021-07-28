@@ -34,11 +34,11 @@ final class IndexController extends AbstractController
         GetStorage $getStorage,
         TokenChart $tokenChart
     ) {
-        $this->application = $application;
-        $this->session = $session;
+        $this->application       = $application;
+        $this->session           = $session;
         $this->getStorageHistory = $getStorageHistory;
-        $this->getStorage = $getStorage;
-        $this->tokenChart = $tokenChart;
+        $this->getStorage        = $getStorage;
+        $this->tokenChart        = $tokenChart;
     }
 
     /**
@@ -51,15 +51,15 @@ final class IndexController extends AbstractController
             $this->session->set('time_interval', '-24 hours');
         }
 
-        $loginForm = $this->createForm(LoginForm::class);
+        $loginForm        = $this->createForm(LoginForm::class);
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
-        $tokens = $this->application->listTokens();
+        $tokens           = $this->application->listTokens();
 
         $address = $request->query->get(
             'address',
             $tokens[0]->address()->asString()
         );
-        $token = $this->application->getOneTokenByAddress($address);
+        $token  = $this->application->getOneTokenByAddress($address);
         $charts = $this->tokenChart->createCharts(
             $token,
             $this->application->getCurrentTime(),
@@ -73,14 +73,14 @@ final class IndexController extends AbstractController
             );
 
         return $this->render('index.html.twig', [
-            'charts' => $charts,
-            'counters' => $this->getCounters($tokens),
-            'loginForm' => $loginForm->createView(),
+            'charts'           => $charts,
+            'counters'         => $this->getCounters($tokens),
+            'loginForm'        => $loginForm->createView(),
             'timeIntervalForm' => $timeIntervalForm->createView(),
-            'tokens' => $tokens,
-            'token' => $token,
-            'tokenLastUpdate' => $this->getTokenLastUpdate($token),
-            'supply' => $supply,
+            'tokens'           => $tokens,
+            'token'            => $token,
+            'tokenLastUpdate'  => $this->getTokenLastUpdate($token),
+            'supply'           => $supply,
         ]);
     }
 
@@ -122,16 +122,16 @@ final class IndexController extends AbstractController
         return [
             'FA1.2' => array_reduce(
                 $tokens,
-                fn(int $count, Token $token): int => null ===
-                $token->address()->id()
+                fn (int $count, Token $token): int => null ===
+                    $token->address()->id()
                     ? $count + 1
                     : $count,
                 0
             ),
             'FA2' => array_reduce(
                 $tokens,
-                fn(int $count, Token $token): int => null !==
-                $token->address()->id()
+                fn (int $count, Token $token): int => null !==
+                    $token->address()->id()
                     ? $count + 1
                     : $count,
                 0

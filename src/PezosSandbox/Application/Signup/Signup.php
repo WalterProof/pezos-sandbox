@@ -11,7 +11,7 @@ final class Signup
 
     public function __construct(string $address, string $plainTextPassword)
     {
-        $this->address = $address;
+        $this->address           = $address;
         $this->plainTextPassword = $plainTextPassword;
     }
 
