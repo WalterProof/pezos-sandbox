@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection as DbalConnection;
 use PezosSandbox\Application\Clock;
 use PezosSandbox\Application\Exchanges\Exchanges;
 use PezosSandbox\Application\Members\Members;
+use PezosSandbox\Application\Tags\Tags;
 use PezosSandbox\Application\Tokens\Tokens;
 use PezosSandbox\Domain\Model\Exchange\ExchangeRepository;
 use PezosSandbox\Domain\Model\Member\MemberRepository;
@@ -19,6 +20,7 @@ use PezosSandbox\Infrastructure\TalisOrm\ExchangesUsingDoctrineDbal;
 use PezosSandbox\Infrastructure\TalisOrm\ExchangeTalisOrmRepository;
 use PezosSandbox\Infrastructure\TalisOrm\MembersUsingDoctrineDbal;
 use PezosSandbox\Infrastructure\TalisOrm\MemberTalisOrmRepository;
+use PezosSandbox\Infrastructure\TalisOrm\TagsUsingDoctrineDbal;
 use PezosSandbox\Infrastructure\TalisOrm\TagTalisOrmRepository;
 use PezosSandbox\Infrastructure\TalisOrm\TokensUsingDoctrineDbal;
 use PezosSandbox\Infrastructure\TalisOrm\TokenTalisOrmRepository;
@@ -65,6 +67,11 @@ class ProductionServiceContainer extends ServiceContainer
     protected function tokens(): Tokens
     {
         return new TokensUsingDoctrineDbal($this->connection());
+    }
+
+    protected function tags(): Tags
+    {
+        return new TagsUsingDoctrineDbal($this->connection());
     }
 
     protected function exchangeRepository(): ExchangeRepository

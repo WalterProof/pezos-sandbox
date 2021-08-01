@@ -5,7 +5,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     @apply dark:text-gray-800;
 }
 

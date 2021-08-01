@@ -58,7 +58,6 @@ final class TokenChart
                 'Prices Dynamics' => $this->createPriceChart($data, $unit),
                 'Pool Dynamics'   => $this->createPoolChart($token, $data, $unit),
             ];
-            $dates = array_keys($data);
         }
 
         return $charts;

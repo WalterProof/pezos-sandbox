@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\Symfony\Form;
 
+use PezosSandbox\Application\Tags\Tag;
 use PezosSandbox\Infrastructure\Symfony\Validation\TokenMetadataConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -53,6 +56,9 @@ final class TokenForm extends AbstractType
                 'attr'         => ['data-token-form-target' => 'collection'],
                 'label'        => false,
             ])
+            ->add('tags', ChoiceType::class, [
+                'choices' => $options['tags'], 'multiple' => true, 'expanded' => true,
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Save',
                 'attr'  => ['class' => 'btn btn-primary'],
@@ -67,9 +73,19 @@ final class TokenForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'tags' => [],
             'attr' => [
                 'novalidate' => 'novalidate',
             ],
         ]);
+
+        $resolver->setAllowedTypes('tags', 'array');
+        $resolver->setNormalizer('tags', static function (Options $options, $tags) {
+            if (null === $tags) {
+                return $tags;
+            }
+
+            return array_reduce(array_map(fn (Tag $tag): array => [$tag->label() => $tag->tagId()], $tags), fn (array $acc, array $tag): array => array_merge($acc, $tag), []);
+        });
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PezosSandbox\Domain\Model\Tag;
 
 use Doctrine\DBAL\Schema\Schema;
-use PezosSandbox\Domain\Model\Category\CategoryId;
 use PezosSandbox\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
@@ -18,7 +17,6 @@ final class Tag implements Aggregate, SpecifiesSchema
     use Mapping;
 
     private TagId $tagId;
-    private CategoryId $categoryId;
     private string $label;
 
     /**
@@ -50,12 +48,19 @@ final class Tag implements Aggregate, SpecifiesSchema
         $instance->tagId = TagId::fromString(
             self::asString($aggregateState, 'tag_id')
         );
-        $instance->categoryId = CategoryId::fromString(
-            self::asString($aggregateState, 'category_id')
-        );
         $instance->label = self::asString($aggregateState, 'label');
 
         return $instance;
+    }
+
+    public static function createTag(TagId $tagId, string $label): self
+    {
+        $tag = new self();
+
+        $tag->tagId = $tagId;
+        $tag->label = $label;
+
+        return $tag;
     }
 
     public static function tableName(): string
@@ -63,12 +68,16 @@ final class Tag implements Aggregate, SpecifiesSchema
         return 'tags';
     }
 
+    public function update(string $label)
+    {
+        $this->label = $label;
+    }
+
     public function state(): array
     {
         return [
-            'tag_id'      => $this->tagId->asString(),
-            'category_id' => $this->categoryId->asString(),
-            'label'       => $this->label,
+            'tag_id' => $this->tagId->asString(),
+            'label'  => $this->label,
         ];
     }
 
@@ -87,7 +96,7 @@ final class Tag implements Aggregate, SpecifiesSchema
      */
     public static function identifierForQuery(AggregateId $aggregateId): array
     {
-        return ['tagId' => (string) $aggregateId];
+        return ['tag_id' => (string) $aggregateId];
     }
 
     public static function specifySchema(Schema $schema): void
@@ -97,7 +106,6 @@ final class Tag implements Aggregate, SpecifiesSchema
         $table->addColumn('tag_id', 'string')->setNotnull(true);
         $table->setPrimaryKey(['tag_id']);
 
-        $table->addColumn('category_id', 'string')->setNotnull(true);
         $table->addColumn('label', 'string')->setNotnull(true);
         $table->addUniqueIndex(['label']);
     }

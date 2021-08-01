@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\Doctrine;
@@ -30,7 +31,7 @@ final class Connection
     {
         $data = $this->execute($queryBuilder)->fetch(PDO::FETCH_ASSOC);
 
-        if ($data === false) {
+        if (false === $data) {
             throw NoResult::forQuery($queryBuilder->getSQL(), $queryBuilder->getParameters());
         }
 

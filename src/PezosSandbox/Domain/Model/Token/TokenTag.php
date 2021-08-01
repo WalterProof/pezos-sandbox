@@ -24,6 +24,11 @@ final class TokenTag implements ChildEntity, SpecifiesSchema
     {
     }
 
+    public function tagId(): TagId
+    {
+        return $this->tagId;
+    }
+
     public static function create(TokenId $tokenId, TagId $tagId): self
     {
         $tag = new self();

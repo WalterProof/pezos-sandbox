@@ -1,6 +1,27 @@
 <div class="py-4">
-    <a href="{{ path('app_homepage') }}" class="flex items-center">
-        {% include './svg/noun_homepage_1998096.svg' %}
-        <span class="ml-3">Back to Homepage</span>
-    </a>
+    <ul class="flex items-center">
+        <li>
+            <a href="{{ path('app_homepage') }}" class="flex items-center">
+                {% include './svg/noun_homepage_1998096.svg' %}
+                <span class="ml-3">Back to Homepage</span>
+            </a>
+        </li>
+        <li class="ml-3">
+            <a href="{{ path('app_token_list') }}">Tokens Admin</a>
+        </li>
+        <li class="ml-3">
+            <a href="{{ path('app_tag_list') }}">Tags Admin</a>
+        </li>
+    </ul>
+</div>
+
+<div> 
+    {% for key, messages in app.flashes() %}
+        {% for message in messages %}
+            <div class="px-4 py-3 text-blue-700 bg-blue-100 border-t border-b border-blue-500"
+                 role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
 </div>

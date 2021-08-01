@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Tag Form
+{% endblock %}
+
+{% block body %}
+    {% include './member_area/_header.html.twig' %}
+    <div>
+        {{ form(form) }}
+    </div>
+{% endblock %}

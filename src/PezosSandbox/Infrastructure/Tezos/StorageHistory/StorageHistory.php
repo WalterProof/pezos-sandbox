@@ -11,7 +11,7 @@ class StorageHistory
     use Mapping;
 
     private array $history = [];
-    private array $diff = [];
+    private array $diff    = [];
 
     public function __construct(array $history)
     {
@@ -45,7 +45,7 @@ class StorageHistory
         $copy = clone $this;
 
         $copy->history = array_merge($this->history, $history);
-        $diff = array_diff(array_keys($history), array_keys($this->history()));
+        $diff          = array_diff(array_keys($history), array_keys($this->history()));
 
         $copy->diff = array_map(
             fn (string $key): array => array_merge(
