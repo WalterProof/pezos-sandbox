@@ -25,6 +25,7 @@
         "regenerator-runtime": "^0.13.2",
         "stimulus": "^2.0.0",
         "stimulus-use": "^0.23.0",
+        "store": "^2.0.12",
         "tailwindcss": "^2.1.2",
         "tailwindcss-stimulus-components": "^2.2.0",
         "webpack-bundle-analyzer": "^4.4.2",

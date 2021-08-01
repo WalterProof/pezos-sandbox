@@ -2,6 +2,38 @@
 
 {% block body %}
     <div class="flex flex-col flex-wrap items-stretch justify-between p-6 bg-blue-100 rounded-b shadow md:flex-row md:flex-nowrap md:items-center dark:bg-gray-600">
+        <div class="flex justify-start order-first mb-3 md:order-none md:mb-0">
+            <div class="relative" data-controller="dropdown">
+                <div data-action="click->dropdown#toggle click@window->dropdown#hide"
+                    role="button"
+                    data-dropdown-target="button"
+                    tabindex="0"
+                    class="flex flex-row mr-6">
+                    <div class="flex items-center text-yellow-400 align-middle rounded-full fill-current">
+                        {% include './svg/noun_fav star_2154219.svg' %}
+                    </div>
+                    <div class="flex items-center text-gray-700 align-middle">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            class="w-4 h-4">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div data-dropdown-target="menu"
+                    class="absolute right-0 z-10 hidden mt-2">
+                    <div class="overflow-hidden bg-white border rounded shadow"
+                        {{ stimulus_controller('fav') }}
+                        data-fav-target="list">
+                        <a href="#"
+                            class="block px-8 py-3 text-gray-900 no-underline bg-white border-t dark:text-gray-100 dark:hover:bg-gray-600 hover:bg-gray-300 dark:bg-gray-700 whitespace-nowrap">
+                            It seems that you havn't any favorites yet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="flex flex-grow" {{ stimulus_controller('token-choices') }}>
             <div class="w-full bg-gray-50 h-11"
                 data-token-choices-target="holder"></div>
@@ -163,6 +195,24 @@
                             {% include './svg/Octicons-mark-github.svg' %}
                         </a>
                     {% endif %}
+
+                    <a class="ml-3 fill-current fav-button text-gray-50 hover:text-yellow-400"
+                        href="#"
+                        title="Click to add to favorites"
+                        {{
+                        stimulus_controller(
+                            'fav-button',
+                            {
+                                url: path('app_homepage') ~ '?address='
+                                    ~ token.address,
+                                name: token.metadata.symbol
+                            }
+                        )
+                        }}
+                        data-action="click->fav-button#toggle"
+                        data-fav-button-target="button">
+                        {% include './svg/noun_fav star_2154219.svg' %}
+                    </a>
                 </div>
 
                 {% if token.metadata.description is defined %}
@@ -206,7 +256,7 @@
                     </div>
                     <div class="pt-4">
                         {% for tag in token.tags %}
-                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full">
+                            <span class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
                                 {{ tag.label }}
                             </span>
                         {% endfor %}
