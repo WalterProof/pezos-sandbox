@@ -17,7 +17,7 @@ export default class extends Controller {
         }
     }
 
-    toggle(e) {
+    toggle() {
         if (undefined !== this.storeGet(this.nameValue)) {
             this.storeRemove(this.nameValue);
             removeClass(this.buttonTarget, 'active');

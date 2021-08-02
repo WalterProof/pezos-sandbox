@@ -21,13 +21,13 @@
                     </div>
                 </div>
                 <div data-dropdown-target="menu"
-                    class="absolute right-0 z-10 hidden mt-2">
+                    class="absolute left-0 z-10 hidden mt-2">
                     <div class="overflow-hidden bg-white border rounded shadow"
                         {{ stimulus_controller('fav') }}
                         data-fav-target="list">
                         <a href="#"
                             class="block px-8 py-3 text-gray-900 no-underline bg-white border-t dark:text-gray-100 dark:hover:bg-gray-600 hover:bg-gray-300 dark:bg-gray-700 whitespace-nowrap">
-                            It seems that you havn't any favorites yet
+                            It seems that you haven't any favorites yet
                         </a>
                     </div>
                 </div>
@@ -196,9 +196,9 @@
                         </a>
                     {% endif %}
 
-                    <a class="ml-3 fill-current fav-button text-gray-50 hover:text-yellow-400"
+                    <a class="ml-3 text-blue-200 fill-current fav-button hover:text-yellow-400"
                         href="#"
-                        title="Click to add to favorites"
+                        title="Click to toggle favorite"
                         {{
                         stimulus_controller(
                             'fav-button',
