@@ -112,6 +112,13 @@
                     </div>
                 </div>
             </div>
+            <div {{ stimulus_controller('theme') }}
+                data-theme-target="button"
+                class="flex items-center ml-4 text-blue-300 align-middle fill-current">
+                <a href="#" data-action="click->theme#toggle">
+                    {% include './svg/noun_choose themes_3076375.svg' %}
+                </a>
+            </div>
         </div>
     </div>
 
