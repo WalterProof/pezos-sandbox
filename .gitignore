@@ -1,5 +1,6 @@
 TAGS
 .php_cs.cache
+.log
 
 ###> symfony/framework-bundle ###
 /.env.local

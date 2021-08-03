@@ -13,6 +13,8 @@
         "chart.js": "^2.9.4",
         "choices.js": "^9.0.1",
         "core-js": "^3.0.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.0",
         "glob-all": "^3.2.1",
         "jquery": "^3.6.0",
         "node-polyfill-webpack-plugin": "^1.1.0",
@@ -38,5 +40,16 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "eslintConfig": {
+        "extends": [
+            "prettier"
+        ],
+        "plugins": [
+            "prettier"
+        ],
+        "rules": {
+            "prettier/prettier": "error"
+        }
     }
 }

@@ -20,8 +20,6 @@ use PezosSandbox\Domain\Model\Token\CouldNotFindToken;
 use PezosSandbox\Infrastructure\CacheReset;
 use PezosSandbox\Infrastructure\Mapping;
 use PezosSandbox\Infrastructure\Symfony\Form\TokenForm;
-use PezosSandbox\Infrastructure\Tezos\Contract;
-use PezosSandbox\Infrastructure\Tezos\Decimals;
 use PezosSandbox\Infrastructure\Tezos\StorageHistory\GetStorageHistory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -48,10 +46,10 @@ final class TokenController extends AbstractController
         GetStorageHistory $getStorageHistory,
         CacheReset $cacheReset
     ) {
-        $this->application       = $application;
-        $this->translator        = $translator;
+        $this->application = $application;
+        $this->translator = $translator;
         $this->getStorageHistory = $getStorageHistory;
-        $this->cacheReset        = $cacheReset;
+        $this->cacheReset = $cacheReset;
     }
 
     /**
@@ -79,19 +77,19 @@ final class TokenController extends AbstractController
 
             try {
                 $addToken = new AddToken(
-                    $formData['contract'].
-                        (null !== $formData['id'] ? '_'.$formData['id'] : ''),
+                    $formData['contract'] .
+                        (null !== $formData['id'] ? '_' . $formData['id'] : ''),
                     $formData['metadata'],
                     $formData['active'],
                     // TODO: form data transformer
                     array_reduce(
                         array_map(
-                            fn (array $item): array => [
+                            fn(array $item): array => [
                                 $item['exchangeId'] => $item['contract'],
                             ],
                             $formData['exchanges']
                         ),
-                        fn ($acc, $item) => $acc + $item,
+                        fn($acc, $item) => $acc + $item,
                         []
                     )
                 );
@@ -127,25 +125,25 @@ final class TokenController extends AbstractController
         $form = $this->createForm(
             TokenForm::class,
             [
-                'contract'                              => $token->address()->contract(),
-                'id'                                    => $token->address()->id(),
-                'metadata'                              => $token->metadata(),
-                'active'                                => $token->isActive(),
-                'exchanges'                             => array_map(
-                    fn (TokenExchange $exchange): array => [
+                'contract' => $token->address()->contract(),
+                'id' => $token->address()->id(),
+                'metadata' => $token->metadata(),
+                'active' => $token->isActive(),
+                'exchanges' => array_map(
+                    fn(TokenExchange $exchange): array => [
                         'exchangeId' => $exchange->exchangeId(),
-                        'contract'   => $exchange->contract(),
+                        'contract' => $exchange->contract(),
                     ],
                     $token->exchanges()
                 ),
                 'tags' => array_reduce(
                     array_map(
-                        fn (TokenTag $tag): array => [
+                        fn(TokenTag $tag): array => [
                             $tag->label() => $tag->tagId(),
                         ],
                         $token->tags()
                     ),
-                    fn (array $acc, array $tag) => array_merge($acc, $tag),
+                    fn(array $acc, array $tag) => array_merge($acc, $tag),
                     []
                 ),
             ],
@@ -160,8 +158,8 @@ final class TokenController extends AbstractController
             try {
                 $updateToken = new UpdateToken(
                     $token->tokenId()->asString(),
-                    $formData['contract'].
-                        (null !== $formData['id'] ? '_'.$formData['id'] : ''),
+                    $formData['contract'] .
+                        (null !== $formData['id'] ? '_' . $formData['id'] : ''),
                     $formData['metadata'],
                     $formData['active'],
                     $token->position()
@@ -197,8 +195,8 @@ final class TokenController extends AbstractController
      */
     public function toggleActive(Request $request): Response
     {
-        $address     = $request->attributes->get('address');
-        $token       = $this->application->getOneTokenByAddress($address);
+        $address = $request->attributes->get('address');
+        $token = $this->application->getOneTokenByAddress($address);
         $updateToken = new UpdateToken(
             $token->tokenId()->asString(),
             $token->address()->asString(),
@@ -214,62 +212,12 @@ final class TokenController extends AbstractController
     }
 
     /**
-     * @Route("/tokens/reorder", name="app_token_reorder", methods={"POST"})
-     */
-    public function reorder(Request $request): Response
-    {
-        $tokens   = $this->application->listTokens();
-        $tezPools = [];
-
-        foreach ($tokens as $t) {
-            $token = $this->application->getOneTokenByAddress(
-                $t->address()->asString()
-            );
-            $tezPools[$token->address()->asString()] = 0;
-            if ($token->isActive()) {
-                $history = $this->getStorageHistory
-                    ->getStorageHistory(
-                        Contract::fromString(
-                            $token->exchanges()[0]->contract()
-                        ),
-                        Decimals::fromInt($token->metadata()['decimals'])
-                    )
-                    ->history($this->application->getCurrentTime());
-                $history                                 = end($history);
-                $tezPools[$token->address()->asString()] = self::asInt(
-                    $history,
-                    'tez_pool'
-                );
-            }
-        }
-
-        arsort($tezPools);
-        $tezPools = array_flip($tezPools);
-        $position = 0;
-        foreach ($tezPools as $address) {
-            $position    = $position + 1;
-            $token       = $this->application->getOneTokenByAddress($address);
-            $updateToken = new UpdateToken(
-                $token->tokenId()->asString(),
-                $token->address()->asString(),
-                $token->metadata(),
-                $token->isActive(),
-                $position,
-                $token->exchanges()
-            );
-            $this->application->updateToken($updateToken);
-        }
-
-        return $this->redirectToRoute('app_token_list');
-    }
-
-    /**
      * @Route("/tokens/reset-cache/{address}", name="app_token_reset_cache", methods={"POST"})
      */
     public function resetCache(Request $request): Response
     {
         $address = $request->attributes->get('address');
-        $token   = $this->application->getOneTokenByAddress($address);
+        $token = $this->application->getOneTokenByAddress($address);
 
         $keys = [];
         foreach ($token->exchanges() as $exchange) {
@@ -300,7 +248,7 @@ final class TokenController extends AbstractController
         array $newTags
     ) {
         $currentTags = array_map(
-            fn (TokenTag $item): string => $item->tagId(),
+            fn(TokenTag $item): string => $item->tagId(),
             $currentTags
         );
 
@@ -330,28 +278,30 @@ final class TokenController extends AbstractController
     ) {
         $currentExchanges = array_reduce(
             array_map(
-                fn (TokenExchange $item): array => [
+                fn(TokenExchange $item): array => [
                     $item->exchangeId() => $item->contract(),
                 ],
                 $currentTokenExchanges
             ),
-            fn ($acc, $item) => $acc + $item,
+            fn($acc, $item) => $acc + $item,
             []
         );
 
         $exchanges = array_reduce(
             array_map(
-                fn (array $item): array => [
+                fn(array $item): array => [
                     $item['exchangeId'] => $item['contract'],
                 ],
                 $newTokenExchanges
             ),
-            fn ($acc, $item) => $acc + $item,
+            fn($acc, $item) => $acc + $item,
             []
         );
 
         if (\count($newTokenExchanges) > \count($exchanges)) {
-            throw new \Exception('You can only add one contract for each exchange');
+            throw new \Exception(
+                'You can only add one contract for each exchange'
+            );
         }
 
         foreach ($currentTokenExchanges as $tokenExchange) {
