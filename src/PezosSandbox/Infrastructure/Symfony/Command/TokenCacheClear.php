@@ -43,7 +43,7 @@ final class TokenCacheClear extends Command
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $tokens = $this->application->listTokensForAdmin();
+        $tokens = $this->application->listTokens();
 
         foreach ($tokens as $t) {
             $token = $this->application->getOneTokenByAddress(
