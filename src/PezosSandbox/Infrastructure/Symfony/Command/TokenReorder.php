@@ -40,7 +40,7 @@ final class TokenReorder extends Command
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $tokens = $this->application->listTokens();
+        $tokens   = $this->application->listTokens();
         $tezPools = [];
 
         foreach ($tokens as $t) {
@@ -50,6 +50,7 @@ final class TokenReorder extends Command
             if (empty($token->exchanges)) {
                 continue;
             }
+
             if ($token->isActive()) {
                 $history = $this->getStorageHistory
                     ->getStorageHistory(
@@ -59,7 +60,7 @@ final class TokenReorder extends Command
                         Decimals::fromInt($token->metadata()['decimals'])
                     )
                     ->history($this->application->getCurrentTime());
-                $history = end($history);
+                $history                                 = end($history);
                 $tezPools[$token->address()->asString()] = self::asInt(
                     $history,
                     'tez_pool'
@@ -71,8 +72,8 @@ final class TokenReorder extends Command
         $tezPools = array_flip($tezPools);
         $position = 0;
         foreach ($tezPools as $address) {
-            $position = $position + 1;
-            $token = $this->application->getOneTokenByAddress($address);
+            $position    = $position + 1;
+            $token       = $this->application->getOneTokenByAddress($address);
             $updateToken = new UpdateToken(
                 $token->tokenId()->asString(),
                 $token->address()->asString(),
