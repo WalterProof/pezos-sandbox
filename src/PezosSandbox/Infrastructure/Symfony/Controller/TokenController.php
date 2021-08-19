@@ -119,8 +119,4 @@ final class TokenController extends AbstractController
 
         return $this->redirect($request->server->get('HTTP_REFERER'));
     }
-
-    public function chartDiff()
-    {
-    }
 }

@@ -1,5 +1,11 @@
 import { Controller } from 'stimulus';
-import { DAppClient, PermissionScope, SigningType } from '@airgap/beacon-sdk';
+import { hasClass } from '../util/class';
+import {
+    ColorMode,
+    DAppClient,
+    PermissionScope,
+    SigningType,
+} from '@airgap/beacon-sdk';
 import $ from 'jquery';
 
 export default class extends Controller {
@@ -9,7 +15,10 @@ export default class extends Controller {
     dAppClient = null;
 
     async initialize() {
-        this.dAppClient = new DAppClient({ name: 'Pezos Sandbox' });
+        this.dAppClient = new DAppClient({
+            name: 'Pezos Sandbox',
+            colorMode: this.isDark() ? ColorMode.DARK : ColorMode.LIGHT,
+        });
     }
 
     async login() {
@@ -23,7 +32,9 @@ export default class extends Controller {
     }
 
     async signLoginRequest() {
-        await this.dAppClient.requestPermissions([PermissionScope.SIGN]);
+        await this.dAppClient.requestPermissions({
+            scopes: [PermissionScope.SIGN],
+        });
         const acct = await this.dAppClient.getActiveAccount();
 
         return await this.signMessage(
@@ -67,5 +78,9 @@ export default class extends Controller {
         }
 
         return { msg, signedMsg };
+    }
+
+    isDark() {
+        return hasClass(document.documentElement, 'dark');
     }
 }

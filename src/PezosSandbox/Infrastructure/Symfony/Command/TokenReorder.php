@@ -47,7 +47,8 @@ final class TokenReorder extends Command
             $token = $this->application->getOneTokenByAddress(
                 $t->address()->asString()
             );
-            if (empty($token->exchanges)) {
+
+            if (empty($token->exchanges())) {
                 continue;
             }
 
