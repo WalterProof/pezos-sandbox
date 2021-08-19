@@ -42,3 +42,7 @@ Roadmap:
 -   [x] have web server stats
 -   [ ] explanation of signature login
 -   [ ] links to other ecosystem tools (comet, teztools, tzflow..)
+-   [ ] scam detection
+-   [ ] prices delta percentages
+-   [ ] add circulating supply editable field
+-   [ ] social media activity
