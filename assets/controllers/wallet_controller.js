@@ -22,12 +22,11 @@ export default class extends Controller {
     }
 
     async login() {
-        const activeAccount = await this.dAppClient.getActiveAccount();
-        const { msg, signedMsg } = await this.signLoginRequest();
+        const { publicKey, msg, signedPayload } = await this.signLoginRequest();
 
         $(this.loginFormTarget).find('#msg').val(msg);
-        $(this.loginFormTarget).find('#sig').val(signedMsg);
-        $(this.loginFormTarget).find('#pubKey').val(activeAccount.publicKey);
+        $(this.loginFormTarget).find('#sig').val(signedPayload);
+        $(this.loginFormTarget).find('#pubKey').val(publicKey);
         $(this.loginFormTarget).submit();
     }
 
@@ -44,11 +43,13 @@ export default class extends Controller {
                 pkh: await acct.address,
                 nonce: Math.random() * 100000000000000000,
             }),
-            acct.address
+            acct
         );
     }
 
-    async signMessage(msg, address) {
+    async signMessage(msg, acct) {
+        const { address, publicKey } = acct;
+
         msg = 'Tezos Signed Message: ' + msg;
         const input = Buffer.from(msg);
         const prefix = Buffer.from('0501', 'hex');
@@ -64,9 +65,9 @@ export default class extends Controller {
         // Bytes to hex
         msg = msg.toString('hex');
 
-        let signedMsg = false;
+        let signedPayload = false;
         try {
-            signedMsg = (
+            signedPayload = (
                 await this.dAppClient.requestSignPayload({
                     SigningType: SigningType.MICHELINE,
                     payload: msg,
@@ -77,7 +78,7 @@ export default class extends Controller {
             console.error(signPayloadError);
         }
 
-        return { msg, signedMsg };
+        return { publicKey, msg, signedPayload };
     }
 
     isDark() {

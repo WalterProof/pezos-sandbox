@@ -73,7 +73,7 @@ services:
     PezosSandbox\Infrastructure\Symfony\LogEvents:
         public: true
 
-    PezosSandbox\Infrastructure\Symfony\Security\LoginFormAuthenticator: ~
+    PezosSandbox\Infrastructure\Symfony\Security\TezosAuthenticator: ~
 
     PezosSandbox\Infrastructure\Symfony\Security\MemberUserProvider: ~
 

@@ -274,6 +274,15 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "simplito/bigint-wrapper-php": {
+        "version": "1.0.0"
+    },
+    "simplito/bn-php": {
+        "version": "1.1.2"
+    },
+    "simplito/elliptic-php": {
+        "version": "1.0.8"
+    },
     "squizlabs/php_codesniffer": {
         "version": "3.6",
         "recipe": {
@@ -641,6 +650,9 @@
     },
     "thecodingmachine/safe": {
         "version": "v1.3.3"
+    },
+    "tuupola/base58": {
+        "version": "2.1.0"
     },
     "twig/extra-bundle": {
         "version": "v3.3.0"
