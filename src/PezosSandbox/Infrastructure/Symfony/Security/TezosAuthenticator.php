@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PezosSandbox\Infrastructure\Symfony\Security;
 
-use Bzzhh\Pezos\Keys\Ed25519;
 use Bzzhh\Pezos\Keys\PubKey;
+use Exception;
 use PezosSandbox\Application\ApplicationInterface;
 use PezosSandbox\Application\FlashType;
 use PezosSandbox\Application\RequestAccess\RequestAccess;
-use PezosSandbox\Domain\Model\Member\CouldNotFindmember;
+use PezosSandbox\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,17 +18,17 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
+class TezosAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
 
@@ -59,52 +59,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         return 'app_login' === $request->attributes->get('_route') &&
             $request->isMethod('POST');
-    }
-
-    public function getCredentials(Request $request)
-    {
-        return [
-            'msg'        => $request->request->get('msg'),
-            'sig'        => $request->request->get('sig'),
-            'pubKey'     => $request->request->get('pubKey'),
-            'csrf_token' => $request->request->get('_csrf_token'),
-        ];
-    }
-
-    public function getUser(
-        $credentials,
-        UserProviderInterface $userProvider
-    ): ?UserInterface {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
-
-        try {
-            $user = $this->application->getOneMemberByPubKey(
-                $credentials['pubKey']
-            );
-        } catch (CouldNotFindmember $exception) {
-            $pubKey = PubKey::fromBase58($credentials['pubKey'], new Ed25519());
-            $this->application->requestAccess(
-                new RequestAccess($credentials['pubKey'], $pubKey->getAddress())
-            );
-            $user = $this->application->getOneMemberByPubKey(
-                $credentials['pubKey']
-            );
-        }
-
-        return $user;
-    }
-
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        $pubKey = PubKey::fromBase58($credentials['pubKey'], new Ed25519());
-
-        return $pubKey->verifySignedHex(
-            $credentials['sig'],
-            bin2hex($credentials['msg'])
-        );
     }
 
     public function onAuthenticationFailure(
@@ -142,6 +96,43 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         return $this->httpUtils->createRedirectResponse(
             $request,
             'app_homepage'
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function authenticate(Request $request): PassportInterface
+    {
+        $message   = $request->request->get('msg');
+        $signature = $request->request->get('sig');
+        $pubKey    = $request->request->get('pubKey');
+        $csrfToken = $request->request->get('_csrf_token');
+
+        $pubKey = PubKey::fromBase58($pubKey);
+        if (
+            !$pubKey->verifySignature($signature, $message) &&
+            !$pubKey->verifySignature($signature, bin2hex($message))
+        ) {
+            throw new Exception('Signature verification failed');
+        }
+
+        try {
+            $this->application->getOneMemberByPubKey($pubKey->getPublicKey());
+        } catch (CouldNotFindMember $exception) {
+            $this->application->requestAccess(
+                new RequestAccess(
+                    $pubKey->getPublicKey(),
+                    $pubKey->getAddress()
+                )
+            );
+        }
+
+        return new SelfValidatingPassport(
+            new UserBadge($pubKey->getPublicKey(), function ($pubKey) {
+                return $this->application->getOneMemberByPubKey($pubKey);
+            }),
+            [new CsrfTokenBadge('authenticate', $csrfToken)]
         );
     }
 
