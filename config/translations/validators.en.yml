@@ -1,2 +1,0 @@
-pub_key.invalid: 'This is not a valid public key.'
-token_metadata.invalid: 'Invalid metadata: {{ message }}'

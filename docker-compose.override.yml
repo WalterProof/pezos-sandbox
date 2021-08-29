@@ -11,13 +11,37 @@ services:
     php:
         image: bzzhh/pezos-sandbox-development-php:latest
         volumes:
-            - .:/srv/app
-        depends_on:
-            - mailhog
+          # The "cached" option has no effect on Linux but improves performance on Mac
+          - ./:/srv/app:rw,cached
+          - ./docker/php/conf.d/symfony.dev.ini:/usr/local/etc/php/conf.d/symfony.ini
+          # If you develop on Mac you can remove the var/ directory from the bind-mount
+          # for better performance by enabling the next line 
+          # - /srv/app/var
         env_file:
             - .env
 
-    mailhog:
-        image: mailhog/mailhog
+    db:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: 'secret'
+        volumes:
+            - db_data:/var/lib/postgresql/data
         ports:
-            - '8025:8025'
+            - 5432:5432
+
+    adminer:
+        image: adminer
+        ports:
+            - 7000:8080
+
+    redis:
+        image: 'redis:alpine'
+        ports:
+            - '6379:6379'
+        volumes: 
+            - redis_data:/data
+
+volumes:
+    var:
+    db_data:
+    redis_data:

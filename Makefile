@@ -4,11 +4,11 @@ export HOST_UID := $(shell id -u)
 export HOST_GID := $(shell id -g)
 
 RUN_PHP:=docker-compose run --rm php
-DOCKER_COMPOSE_DEV:=docker-compose
-DOCKER_COMPOSE_DEBUG:=docker-compose -f docker-compose.yml -f docker-compose.debug.yml
+DOCKER_COMPOSE_DEV:=docker-compose -f docker-compose.yml -f docker-compose.override.yml
+DOCKER_COMPOSE_DEBUG:=$(DOCKER_COMPOSE_DEV) -f docker-compose.debug.yml
 DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
 
-HOSTNAME:=pezos-sandbox.localdev
+HOSTNAME:=pezos.localdev
 HOSTS_ENTRY:=127.0.0.1 ${HOSTNAME}
 
 .PHONY: hosts-entry

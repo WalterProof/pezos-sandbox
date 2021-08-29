@@ -3,7 +3,6 @@ version: '3.4'
 services:
     nginx:
         build:
-            dockerfile: docker/php/Dockerfile
             context: .
             target: symfony_nginx
         depends_on:
@@ -11,7 +10,6 @@ services:
 
     php:
         build:
-            dockerfile: docker/php/Dockerfile
             context: .
             target: symfony_php
             args:

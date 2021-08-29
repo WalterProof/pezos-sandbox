@@ -1,6 +1,0 @@
-twig:
-    default_path: '%kernel.project_dir%/config/templates'
-    globals:
-        siteTitle: '%env(SITE_TITLE)%'
-        refresh_interval_ms: '%env(REFRESH_INTERVAL_MS)%'
-    form_themes: ['tailwind_2_layout.html.twig']

@@ -1,8 +1,0 @@
-talis_orm:
-    aggregates:
-        - PezosSandbox\Domain\Model\Exchange\Exchange
-        - PezosSandbox\Domain\Model\Member\Member
-        - PezosSandbox\Domain\Model\Tag\Tag
-        - PezosSandbox\Domain\Model\Token\Token
-        - PezosSandbox\Domain\Model\Token\TokenExchange
-        - PezosSandbox\Domain\Model\Token\TokenTag

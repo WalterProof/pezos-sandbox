@@ -1,4 +1,0 @@
-services:
-    PezosSandbox\Infrastructure\ServiceContainer:
-        alias: 'PezosSandbox\Infrastructure\ProductionServiceContainer'
-        public: true

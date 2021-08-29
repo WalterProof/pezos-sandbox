@@ -1,7 +1,7 @@
 controllers:
-    resource: ../../src/PezosSandbox/Infrastructure/Symfony/Controller
+    resource: ../../src/Controller/
     type: annotation
 
 kernel:
-    resource: ../../src/PezosSandbox/Infrastructure/Symfony/Kernel.php
+    resource: ../../src/Kernel.php
     type: annotation

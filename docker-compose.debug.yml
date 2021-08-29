@@ -25,39 +25,6 @@ services:
 
         volumes:
             - .:/srv/app
-            - ../pezos:/srv/pezos
-        depends_on:
-            - mailhog
         env_file:
             - .env
 
-    mailhog:
-        image: mailhog/mailhog
-        ports:
-            - '8025:8025'
-
-    db:
-        image: postgres
-        environment:
-            POSTGRES_PASSWORD: 'secret'
-        volumes:
-            - db_data:/var/lib/postgresql/data
-        ports:
-            - 5432:5432
-
-    adminer:
-        image: adminer
-        ports:
-            - 7000:8080
-
-    redis:
-        image: 'redis:alpine'
-        ports:
-            - '6379:6379'
-        volumes: 
-            - redis_data:/data
-
-volumes:
-    var:
-    db_data:
-    redis_data:
