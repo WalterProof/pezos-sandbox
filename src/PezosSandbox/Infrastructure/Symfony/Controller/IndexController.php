@@ -123,7 +123,7 @@ final class IndexController extends AbstractController
             'FA1.2' => array_reduce(
                 $tokens,
                 fn (int $count, Token $token): int => null ===
-                    $token->address()->id()
+                $token->address()->id()
                     ? $count + 1
                     : $count,
                 0
@@ -131,7 +131,7 @@ final class IndexController extends AbstractController
             'FA2' => array_reduce(
                 $tokens,
                 fn (int $count, Token $token): int => null !==
-                    $token->address()->id()
+                $token->address()->id()
                     ? $count + 1
                     : $count,
                 0

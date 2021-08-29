@@ -62,6 +62,8 @@ services:
 
     PezosSandbox\Infrastructure\Tezos\Storage\CachedGetStorage:
         decorates: PezosSandbox\Infrastructure\Tezos\Storage\GetStorageFromTzkt
+        calls:
+            - setRefreshInterval: ['%refresh_interval_ms%']
 
     PezosSandbox\Infrastructure\Tezos\Storage\GetStorage: '@PezosSandbox\Infrastructure\Tezos\Storage\CachedGetStorage'
 

@@ -54,7 +54,7 @@ final class TokenCacheClear extends Command
                 continue;
             }
 
-            $keys = [];
+            $keys = [sprintf('%s_storage', $token->address())];
             foreach ($token->exchanges() as $exchange) {
                 $keys[] = $exchange->contract();
                 $keys[] = sprintf('%s_backup', $exchange->contract());
