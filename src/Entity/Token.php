@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use App\Repository\TokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,9 +13,9 @@ class Token
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="ulid", unique=true)
+     * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
+     * @ORM\CustomIdGenerator(class=UuidGenerator::class)
      */
     private $id;
 

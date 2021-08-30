@@ -20,10 +20,12 @@
         "symfony/proxy-manager-bridge": "5.3.*",
         "symfony/runtime": "5.3.*",
         "symfony/twig-bundle": "5.3.*",
+        "symfony/uid": "5.3.*",
         "symfony/webpack-encore-bundle": "^1.12",
         "symfony/yaml": "5.3.*"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.1",
         "symfony/maker-bundle": "^1.33"
     },
     "config": {

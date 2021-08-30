@@ -1,4 +1,5 @@
 {
+    "phpVersion": "8.0",
     "printWidth": 80,
     "tabWidth": 4,
     "useTabs": false,
