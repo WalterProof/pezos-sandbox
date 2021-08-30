@@ -59,7 +59,7 @@ Encore
         config.corejs = 3;
     })
 
-    .enablePostCssLoader()
+    // .enablePostCssLoader()
     .configureDevServerOptions((options) => {
         // hotfix for webpack-dev-server 4.0.0rc0
         // @see: https://github.com/symfony/webpack-encore/issues/951#issuecomment-840719271
@@ -67,7 +67,7 @@ Encore
         delete options.client;
     })
     // enables Sass/SCSS support
-    // .enableSassLoader()
+    .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -87,7 +87,7 @@ if (Encore.isProduction()) {
     Encore.addPlugin(
         new PurgeCssPlugin({
             paths: glob.sync([
-                path.join(__dirname, 'config/templates/**/*.html.twig'),
+                path.join(__dirname, 'templates/**/*.html.twig'),
             ]),
             content: ['**/*.twig'],
             defaultExtractor: (content) => {

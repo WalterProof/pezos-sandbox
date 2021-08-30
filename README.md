@@ -21,9 +21,7 @@ Import data
 \copy tags(tag_id, label) from '~/code/pezos-sandbox/data/tags.csv' delimiter ',' CSV HEADER;
 ```
 
-You should see something at http://pezos-sandbox.localdev/
-
-The project architecture will try to follow domain driven design, it is directly inspired from https://leanpub.com/web-application-architecture (great book).
+You should see something at http://pezos.localdev/
 
 https://github.com/dunglas/symfony-docker is used as a base infra.
 
