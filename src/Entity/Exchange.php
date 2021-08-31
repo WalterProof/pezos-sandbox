@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\ExchangeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass=ExchangeRepository::class)
@@ -14,8 +16,6 @@ class Exchange
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\CustomIdGenerator(class=UuidGenerator::class)
      */
     private $id;
 
@@ -29,7 +29,18 @@ class Exchange
      */
     private $homepage;
 
-    public function getId(): ?int
+    /**
+     * @ORM\OneToMany(targetEntity=TokenExchange::class, mappedBy="relation")
+     */
+    private $tokenExchanges;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v4(); 
+        $this->tokenExchanges = new ArrayCollection();
+    }
+
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -54,6 +65,36 @@ class Exchange
     public function setHomepage(string $homepage): self
     {
         $this->homepage = $homepage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TokenExchange[]
+     */
+    public function getTokenExchanges(): Collection
+    {
+        return $this->tokenExchanges;
+    }
+
+    public function addTokenExchange(TokenExchange $tokenExchange): self
+    {
+        if (!$this->tokenExchanges->contains($tokenExchange)) {
+            $this->tokenExchanges[] = $tokenExchange;
+            $tokenExchange->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTokenExchange(TokenExchange $tokenExchange): self
+    {
+        if ($this->tokenExchanges->removeElement($tokenExchange)) {
+            // set the owning side to null (unless already changed)
+            if ($tokenExchange->getRelation() === $this) {
+                $tokenExchange->setRelation(null);
+            }
+        }
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Exchange;
 use App\Entity\Token;
+use App\Entity\TokenExchange;
 use App\Mapping;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -39,7 +40,6 @@ class ImportCommand extends Command
             ->setName('QuipuSwap')
             ->setHomepage('https://quipuswap.com/swap');
         $this->em->persist($quip);
-        $this->em->flush();
 
         $tokens = [];
         if (
@@ -78,9 +78,7 @@ class ImportCommand extends Command
             fclose($handle);
         }
 
-
         foreach ($tokens as $data) {
-        dump($data);
             $token = (new Token())
                 ->setAddress(self::asString($data, 'address'))
                 ->setTokenId(self::asIntOrNull($data, 'tokenId'))
@@ -88,6 +86,9 @@ class ImportCommand extends Command
                 ->setActive(self::asBool($data, 'active'))
                 ->setPosition(self::asIntOrNull($data, 'position'));
             $this->em->persist($token);
+
+            $tokenExchange = (new TokenExchange)->setAddress(self::asString($data, 'quip'))->setExchange($quip)->setToken($token);
+            $this->em->persist($tokenExchange);
         }
 
         $this->em->flush();
