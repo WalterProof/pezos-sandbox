@@ -45,7 +45,7 @@ class Token
     private $position;
 
     /**
-     * @ORM\OneToMany(targetEntity=TokenExchange::class, mappedBy="rel")
+     * @ORM\OneToMany(targetEntity=TokenExchange::class, mappedBy="token")
      */
     private $tokenExchanges;
 

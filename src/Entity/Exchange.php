@@ -30,7 +30,7 @@ class Exchange
     private $homepage;
 
     /**
-     * @ORM\OneToMany(targetEntity=TokenExchange::class, mappedBy="relation")
+     * @ORM\OneToMany(targetEntity=TokenExchange::class, mappedBy="exchange")
      */
     private $tokenExchanges;
 
