@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\TokenRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\TokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -51,11 +53,11 @@ class Token
 
     public function __construct()
     {
-        $this->id = Uuid::v4(); 
+        $this->id             = Uuid::v4();
         $this->tokenExchanges = new ArrayCollection();
     }
 
-    public function getId(): Uuid 
+    public function getId(): Uuid
     {
         return $this->id;
     }

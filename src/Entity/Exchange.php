@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\ExchangeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\ExchangeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -36,7 +38,7 @@ class Exchange
 
     public function __construct()
     {
-        $this->id = Uuid::v4(); 
+        $this->id             = Uuid::v4();
         $this->tokenExchanges = new ArrayCollection();
     }
 

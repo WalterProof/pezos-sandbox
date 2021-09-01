@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\Exchange;
@@ -44,18 +46,21 @@ class ImportCommand extends Command
         $tokens = [];
         if (
             ($handle = fopen(
-                dirname(__FILE__, 3) . '/data/tokens.csv',
+                \dirname(__FILE__, 3).'/data/tokens.csv',
                 'r'
             )) !== false
         ) {
             $skip = true;
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-               if($skip) { $skip = false; continue; }
+                if ($skip) {
+                    $skip = false;
+                    continue;
+                }
                 $tokens[self::asString($data, 0)] = [
-                    'address' => self::asString($data, 1),
-                    'tokenId' => $data[2],
+                    'address'  => self::asString($data, 1),
+                    'tokenId'  => $data[2],
                     'metadata' => $data[3],
-                    'active' => $data[4],
+                    'active'   => $data[4],
                     'position' => $data[5],
                 ];
             }
@@ -64,14 +69,17 @@ class ImportCommand extends Command
 
         if (
             ($handle = fopen(
-                dirname(__FILE__, 3) . '/data/token_exchanges.csv',
+                \dirname(__FILE__, 3).'/data/token_exchanges.csv',
                 'r'
             )) !== false
         ) {
             $skip = true;
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if($skip) { $skip = false; continue; }
-                if(isset($tokens[$data[0]])) {
+                if ($skip) {
+                    $skip = false;
+                    continue;
+                }
+                if (isset($tokens[$data[0]])) {
                     $tokens[$data[0]]['quip'] = $data[2];
                 }
             }
@@ -87,7 +95,7 @@ class ImportCommand extends Command
                 ->setPosition(self::asIntOrNull($data, 'position'));
             $this->em->persist($token);
 
-            $tokenExchange = (new TokenExchange)->setAddress(self::asString($data, 'quip'))->setExchange($quip)->setToken($token);
+            $tokenExchange = (new TokenExchange())->setAddress(self::asString($data, 'quip'))->setExchange($quip)->setToken($token);
             $this->em->persist($tokenExchange);
         }
 

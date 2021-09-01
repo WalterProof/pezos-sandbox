@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\TokenExchangeRepository;
@@ -34,11 +36,12 @@ class TokenExchange
      */
     private $token;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->id = Uuid::v4();
     }
 
-    public function getId(): Uuid 
+    public function getId(): Uuid
     {
         return $this->id;
     }
