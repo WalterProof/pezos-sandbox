@@ -84,32 +84,32 @@ Encore
     .addPlugin(new NodePolyfillPlugin());
 
 if (Encore.isProduction()) {
-    Encore.addPlugin(
-        new PurgeCssPlugin({
-            paths: glob.sync([
-                path.join(__dirname, 'templates/**/*.html.twig'),
-            ]),
-            content: ['**/*.twig'],
-            defaultExtractor: (content) => {
-                return content.match(/[\w-/:]+(?<!:)/g) || [];
-            },
-            safelist: {
-                // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
-                standard: [
-                    /type/,
-                    /textarea/,
-                    /select/,
-                    /hidden/,
-                    /is-active/,
-                    /text-red-700/,
-                    /required/,
-                    /block/,
-                    /text-gray-800/,
-                    /inactive/,
-                ],
-                deep: [/^choices/],
-            },
-        })
-    );
+    // Encore.addPlugin(
+    //     new PurgeCssPlugin({
+    //         paths: glob.sync([
+    //             path.join(__dirname, 'templates/**/*.html.twig'),
+    //         ]),
+    //         content: ['**/*.twig'],
+    //         defaultExtractor: (content) => {
+    //             return content.match(/[\w-/:]+(?<!:)/g) || [];
+    //         },
+    //         safelist: {
+    //             // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
+    //             standard: [
+    //                 /type/,
+    //                 /textarea/,
+    //                 /select/,
+    //                 /hidden/,
+    //                 /is-active/,
+    //                 /text-red-700/,
+    //                 /required/,
+    //                 /block/,
+    //                 /text-gray-800/,
+    //                 /inactive/,
+    //             ],
+    //             deep: [/^choices/],
+    //         },
+    //     })
+    // );
 }
 module.exports = Encore.getWebpackConfig();
