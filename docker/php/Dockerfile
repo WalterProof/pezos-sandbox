@@ -74,14 +74,13 @@ RUN set -eux; \
 		echo 'ping.path = /ping'; \
 	} | tee /usr/local/etc/php-fpm.d/docker-healthcheck.conf
 
-# SETUP PHP-FPM CONFIG SETTINGS (max_children / max_requests)
-RUN echo 'pm = dynamic' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.start_servers = 5' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.max_children = 50' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.min_spare_servers = 5' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.max_spare_servers = 10' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.process_idle_timeout = 10s' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
-    echo 'pm.max_requests = 500' >> /usr/local/etc/php-fpm.d/zz-docker.conf
+# https://gist.github.com/num8er/43ae78ee6404b12db799946616c36251
+RUN set -eux; \
+    { \
+        echo 'pm = ondemand'; \
+        echo 'pm.max_children = 1024'; \
+        echo 'pm.process_idle_timeout = 10s'; \
+    } | tee /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
