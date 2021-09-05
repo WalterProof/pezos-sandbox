@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {#
     <nav class="columns">
         <div class="column is-full" {{ stimulus_controller('token-choices') }}>
             <div class="" data-token-choices-target="holder"></div>
@@ -9,19 +8,19 @@
                 <div>
                     <select class="form-control"
                         id="token-choices"
-                        onchange="window.location.replace('?address=' + this.value)"
+                        onchange="window.location.replace('?identifier=' + this.value)"
                         class="">
                         {% for t in tokens %}
-                            {% set selected = t.address == currentToken.address
+                            {% set selected = t.identifier == selectedToken.identifier
                                 ? 'selected'
                                 : ''
                             %}
-                            <option value="{{ t.address }}"
+                            <option value="{{ t.identifier }}"
                                 {{ selected }}
                                 class="">
-                                {{ t.metadata.symbol }} {% if
-                                    t.metadata.name is defined %}
-                                    ({{ t.metadata.name }})
+                                {{ t.symbol }} {% if
+                                    t.name is defined %}
+                                    ({{ t.name }})
                                 {% endif %}
                             </option>
                         {% endfor %}
@@ -30,5 +29,4 @@
             </form>
         </div>
     </div>
-    #}
 {% endblock %}
