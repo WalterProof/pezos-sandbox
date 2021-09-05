@@ -29,18 +29,34 @@ class ChartExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('render_chart', [$this, 'renderChart'], ['needs_environment' => true, 'is_safe' => ['html']]),
+            new TwigFunction(
+                'render_chart',
+                [$this, 'renderChart'],
+                ['needs_environment' => true, 'is_safe' => ['html']]
+            ),
         ];
     }
 
-    public function renderChart(Environment $env, Chart $chart, array $attributes = []): string
-    {
-        $chart->setAttributes(array_merge($chart->getAttributes(), $attributes));
+    public function renderChart(
+        Environment $env,
+        Chart $chart,
+        array $attributes = []
+    ): string {
+        $chart->setAttributes(
+            array_merge($chart->getAttributes(), $attributes)
+        );
 
-        $html = '
+        $html =
+            '
             <canvas
-                data-controller="'.trim($chart->getDataController().' symfony--ux-chartjs--chart').'"
-                data-view="'.twig_escape_filter($env, json_encode($chart->createView()), 'html_attr').'"
+                data-controller="chartjs"
+                data-view="'.
+            twig_escape_filter(
+                $env,
+                json_encode($chart->createView()),
+                'html_attr'
+            ).
+            '"
         ';
 
         foreach ($chart->getAttributes() as $name => $value) {

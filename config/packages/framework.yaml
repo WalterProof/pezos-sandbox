@@ -23,6 +23,9 @@ framework:
                 base_uri: 'https://api.teztools.io/v1/'
                 headers:
                     Accept: 'application/json'
+    cache:
+        app: cache.adapter.redis
+        default_redis_provider: app.redis_provider
 
 when@test:
     framework:

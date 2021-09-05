@@ -1,61 +1,31 @@
 import { Controller } from 'stimulus';
-import { useDispatch } from 'stimulus-use';
-import { addClass, hasClass, removeClass } from '../util/class';
+import Chart from 'chart.js/auto';
 
 export default class extends Controller {
-    static values = {
-        diffUrl: String,
-        interval: Number,
-        title: String,
-    };
-
     connect() {
-        useDispatch(this);
-    }
-
-    onChartConnect(event) {
-        const isDark = hasClass(document.documentElement, 'dark');
-        document
-            .querySelectorAll('.spinner')
-            .forEach((spinner) => addClass(spinner, 'hidden'));
-        this.chart = event.detail.chart;
-        if (isDark) {
-            this.chart.options.scales.xAxes[0].ticks.fontColor = '#fff';
-            this.chart.options.scales.yAxes[0].ticks.fontColor = '#fff';
-            this.chart.update();
-        }
-        setInterval(() => this.setNewData(), this.intervalValue);
-    }
-
-    async setNewData() {
-        const resp = await fetch(this.diffUrlValue);
-        const diff = await resp.json();
-
-        if (diff.length === 0) {
-            return;
+        const payload = JSON.parse(this.element.getAttribute('data-view'));
+        if (Array.isArray(payload.options) && 0 === payload.options.length) {
+            payload.options = {};
         }
 
-        const headLabels = this.chart.data.labels.slice(
-            this.chart.data.labels.length - 10,
-            this.chart.data.labels.length
-        );
-
-        diff.forEach((item) => {
-            if (undefined === headLabels.find((el) => el === item.datetime)) {
-                this.chart.data.labels.push(item.datetime);
-
-                if (this.titleValue === 'Prices Dynamics') {
-                    this.chart.data.datasets[0].data.push(item.ratio);
-                    this.dispatch('updated');
-                }
-
-                if (this.titleValue === 'Pool Dynamics') {
-                    this.chart.data.datasets[0].data.push(item.tez_pool);
-                    this.chart.data.datasets[1].data.push(item.token_pool);
-                }
-            }
+        this._dispatchEvent('chartjs:pre-connect', {
+            options: payload.options,
         });
 
-        this.chart.update();
+        const chart = new Chart(this.element.getContext('2d'), payload);
+
+        this._dispatchEvent('chartjs:connect', { chart });
+    }
+
+    _dispatchEvent(
+        name,
+        payload = null,
+        canBubble = false,
+        cancelable = false
+    ) {
+        const userEvent = document.createEvent('CustomEvent');
+        userEvent.initCustomEvent(name, canBubble, cancelable, payload);
+
+        this.element.dispatchEvent(userEvent);
     }
 }

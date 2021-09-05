@@ -11,15 +11,15 @@
                         onchange="window.location.replace('?identifier=' + this.value)"
                         class="">
                         {% for t in tokens %}
-                            {% set selected = t.identifier == selectedToken.identifier
+                            {% set selected = t.identifier
+                                == selectedToken.identifier
                                 ? 'selected'
                                 : ''
                             %}
                             <option value="{{ t.identifier }}"
                                 {{ selected }}
                                 class="">
-                                {{ t.symbol }} {% if
-                                    t.name is defined %}
+                                {{ t.symbol }} {% if t.name is defined %}
                                     ({{ t.name }})
                                 {% endif %}
                             </option>
@@ -28,5 +28,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </nav>
+
+    {{ render_chart(chart) }}
 {% endblock %}

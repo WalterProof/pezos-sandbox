@@ -22,7 +22,8 @@ class Client
     public function fetchContracts(): array
     {
         return $this->cache->get('contracts', function (ItemInterface $item) {
-            $item->expiresAfter(\DateInterval::createFromDateString('1 hour'));
+            // TODO refresh on demand in admin
+            $item->expiresAfter(null);
 
             $json = $this->teztoolsClient->request('GET', 'contracts')->getContent();
             $decoded = json_decode($json, true);
@@ -36,5 +37,10 @@ class Client
                 $contracts
             );
         });
+    }
+
+    public function fetchPriceHistory(): array
+    {
+        return [];
     }
 }
