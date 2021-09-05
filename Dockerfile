@@ -108,15 +108,6 @@ ARG SYMFONY_VERSION=""
 RUN composer create-project "symfony/skeleton ${SYMFONY_VERSION}" . --stability=$STABILITY --prefer-dist --no-dev --no-progress --no-scripts --no-interaction; \
 	composer clear-cache
 
-###> recipes ###
-###> doctrine/doctrine-bundle ###
-RUN apk add --no-cache --virtual .pgsql-deps postgresql-dev; \
-	docker-php-ext-install -j$(nproc) pdo_pgsql; \
-	apk add --no-cache --virtual .pgsql-rundeps so:libpq.so.5; \
-	apk del .pgsql-deps
-###< doctrine/doctrine-bundle ###
-###< recipes ###
-
 VOLUME /srv/app/var
 
 COPY docker/php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck

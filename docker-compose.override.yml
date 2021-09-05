@@ -11,23 +11,14 @@ services:
     php:
         image: bzzhh/pezos-sandbox-development-php:latest
         volumes:
-          # The "cached" option has no effect on Linux but improves performance on Mac
-          - ./:/srv/app:rw,cached
-          - ./docker/php/conf.d/symfony.dev.ini:/usr/local/etc/php/conf.d/symfony.ini
-          # If you develop on Mac you can remove the var/ directory from the bind-mount
-          # for better performance by enabling the next line 
-          # - /srv/app/var
+            # The "cached" option has no effect on Linux but improves performance on Mac
+            - ./:/srv/app:rw,cached
+            - ./docker/php/conf.d/symfony.dev.ini:/usr/local/etc/php/conf.d/symfony.ini
+            # If you develop on Mac you can remove the var/ directory from the bind-mount
+            # for better performance by enabling the next line
+            # - /srv/app/var
         env_file:
             - .env
-
-    db:
-        image: postgres
-        environment:
-            POSTGRES_PASSWORD: 'secret'
-        volumes:
-            - db_data:/var/lib/postgresql/data
-        ports:
-            - 5432:5432
 
     adminer:
         image: adminer
@@ -38,10 +29,9 @@ services:
         image: 'redis:alpine'
         ports:
             - '6379:6379'
-        volumes: 
+        volumes:
             - redis_data:/data
 
 volumes:
     var:
-    db_data:
     redis_data:
