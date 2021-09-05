@@ -21,22 +21,19 @@ class TokenRepository extends ServiceEntityRepository
         parent::__construct($registry, Token::class);
     }
 
-    // /**
-    //  * @return Token[] Returns an array of Token objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Token[] Returns an array of Token objects
+     */
+    public function findActive()
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('t.active = :active')
+            ->setParameter('active', true)
+            ->orderBy('t.position', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Token

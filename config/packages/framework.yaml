@@ -17,6 +17,13 @@ framework:
     php_errors:
         log: true
 
+    http_client:
+        scoped_clients:
+            teztools.client:
+                base_uri: 'https://api.teztools.io/v1/'
+                headers:
+                    Accept: 'application/json'
+
 when@test:
     framework:
         test: true

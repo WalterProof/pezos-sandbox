@@ -71,6 +71,18 @@ RUN set -eux; \
 		echo 'ping.path = /ping'; \
 	} | tee /usr/local/etc/php-fpm.d/docker-healthcheck.conf
 
+# https://gist.github.com/num8er/43ae78ee6404b12db799946616c36251
+RUN set -eux; \
+    { \
+        echo 'pm = dynamic'; \
+        echo 'pm.start_servers = 5'; \
+        echo 'pm.max_children = 50'; \
+        echo 'pm.min_spare_servers = 5'; \
+        echo 'pm.max_spare_servers = 10'; \
+        echo 'pm.process_idle_timeout = 10s'; \
+        echo 'pm.max_requests = 500'; \
+    } >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
 # install Symfony Flex globally to speed up download of Composer packages (parallelized prefetching)

@@ -12,6 +12,12 @@
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        {% if app.environment == 'prod' %}
+            <script async
+                defer
+                data-domain="pezos.fi"
+                src="https://pezos-stats.duckdns.org/js/plausible.js"></script>
+        {% endif %}
     </head>
     <body>
         <div class="content">
