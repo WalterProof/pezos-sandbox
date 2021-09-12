@@ -11,22 +11,21 @@ jobs:
         steps:
             - name: Checkout Repo
               uses: actions/checkout@v2
-            - name: Build the stack
-              run: make build-prod
+            - name: Build
+              run: |
+                  mv .env.prod .env
+                  docker build -t bzzhh/pezos:latest .
             - name: Log in to Docker Hub
               uses: docker/login-action@v1
               with:
                   username: ${{ secrets.DOCKER_USERNAME }}
                   password: ${{ secrets.DOCKER_PASSWORD }}
             - name: Push to Docker Hub
-              run: make push-prod
+              run: docker push bzzhh/pezos:latest
             - name: Install SSH Key
               uses: shimataro/ssh-key-action@v2
               with:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
             - name: Deploy
-              run: |
-                  echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET}}" >> .env.prod
-                  scp deploy.sh docker-compose.yml docker-compose.prod.yml .env.prod deploy@${{ secrets.PROD_SERVER_IP }}:/home/deploy/pezos.fi
-                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "cd ./pezos.fi && ./deploy.sh"
+              run: ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rm -f pezos && docker run --name pezos -p 7800:8080 -d bzzhh/pezos:latest"

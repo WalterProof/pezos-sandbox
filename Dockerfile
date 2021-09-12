@@ -1,161 +1,85 @@
-# Copied from https://github.com/dunglas/symfony-docker
+FROM composer AS composer
 
-# the different stages of this Dockerfile are meant to be built into separate images
-# https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
-# https://docs.docker.com/compose/compose-file/#target
+# copying the source directory and install the dependencies with composer
+COPY . /app
 
+# run composer install to install the dependencies
+RUN composer install \
+  --optimize-autoloader \
+  --no-interaction \
+  --no-progress
 
-# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG PHP_VERSION=8.0
-ARG NGINX_VERSION=1.21
+FROM node AS node
 
-# "php" stage
-FROM php:${PHP_VERSION}-fpm-alpine AS symfony_php
-
-# Install pcntl for long-running processes
-RUN docker-php-ext-install pcntl
-
-# persistent / runtime deps
-RUN apk add --no-cache \
-        acl \
-        fcgi \
-        file \
-        gettext \
-        git \
-        jq \
-    ;
-
-ARG APCU_VERSION=5.1.20
-RUN set -eux; \
-	apk add --no-cache --virtual .build-deps \
-	    $PHPIZE_DEPS \
-        gmp-dev \
-	    icu-dev \
-	    libzip-dev \
-	    zlib-dev \
-	; \
-	\
-	docker-php-ext-configure zip; \
-	docker-php-ext-install -j$(nproc) \
-        gmp \
-	    intl \
-	    zip \
-	; \
-	pecl install \
-	    apcu-${APCU_VERSION} \
-	; \
-	pecl clear-cache; \
-	docker-php-ext-enable \
-	    apcu \
-	    opcache \
-	; \
-	\
-	runDeps="$( \
-	    scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
-	        | tr ',' '\n' \
-	        | sort -u \
-	        | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
-	\
-	apk del .build-deps
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-RUN ln -s $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-COPY docker/php/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini
+WORKDIR /app
+COPY --from=composer /app /app
 
 RUN set -eux; \
-	{ \
-		echo '[www]'; \
-		echo 'ping.path = /ping'; \
-	} | tee /usr/local/etc/php-fpm.d/docker-healthcheck.conf
-
-# https://gist.github.com/num8er/43ae78ee6404b12db799946616c36251
-RUN set -eux; \
-    { \
-        echo 'pm = dynamic'; \
-        echo 'pm.start_servers = 5'; \
-        echo 'pm.max_children = 50'; \
-        echo 'pm.min_spare_servers = 5'; \
-        echo 'pm.max_spare_servers = 10'; \
-        echo 'pm.process_idle_timeout = 10s'; \
-        echo 'pm.max_requests = 500'; \
-    } >> /usr/local/etc/php-fpm.d/zz-docker.conf
-
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
-ENV COMPOSER_ALLOW_SUPERUSER=1
-# install Symfony Flex globally to speed up download of Composer packages (parallelized prefetching)
-RUN set -eux; \
-	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative; \
-	composer clear-cache
-
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
-
-WORKDIR /srv/app
-
-# Allow to use development versions of Symfony
-ARG STABILITY="stable"
-ENV STABILITY ${STABILITY:-stable}
-
-# Allow to select skeleton version
-ARG SYMFONY_VERSION=""
-
-# Download the Symfony skeleton and leverage Docker cache layers
-RUN composer create-project "symfony/skeleton ${SYMFONY_VERSION}" . --stability=$STABILITY --prefer-dist --no-dev --no-progress --no-scripts --no-interaction; \
-	composer clear-cache
-
-VOLUME /srv/app/var
-
-COPY docker/php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
-RUN chmod +x /usr/local/bin/docker-healthcheck
-
-HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
-
-COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
-
-ENTRYPOINT ["docker-entrypoint"]
-CMD ["php-fpm"]
-
-# "nginx" stage
-# depends on the "php" stage above
-FROM nginx:${NGINX_VERSION}-alpine AS symfony_nginx
-
-COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-
-WORKDIR /srv/app
-
-COPY ./public public/
-
-FROM symfony_php as symfony_php_production
-
-# build for production
-ARG APP_ENV=prod
-
-WORKDIR /srv/app
-
-COPY . .
-RUN set -eux; \
-	mkdir -p var/cache var/log; \
-	composer install --prefer-dist --no-progress --no-interaction --no-dev; \
-    composer dump-autoload --classmap-authoritative --no-dev; sync; \
-    apk add --no-cache --virtual .build-deps nodejs npm; \
-    npm install -g yarn; \
     yarn install && yarn run build; \
-    apk del .build-deps
+    rm -rf node_modules
 
-FROM symfony_nginx AS symfony_nginx_production
+FROM alpine:3.14 as pezos
+LABEL Maintainer="Tim de Pater <code@trafex.nl>"
+LABEL Description="Lightweight container with Nginx 1.20 & PHP 8.0 based on Alpine Linux."
 
-WORKDIR /srv/app
+# Install packages and remove default server definition
+RUN apk --no-cache add \
+  curl \
+  nginx \
+  php8 \
+  php8-ctype \
+  php8-curl \
+  php8-dom \
+  php8-fpm \
+  php8-gd \
+  php8-intl \
+  php8-json \
+  php8-mbstring \
+  php8-mysqli \
+  php8-opcache \
+  php8-openssl \
+  php8-phar \
+  php8-session \
+  php8-tokenizer \
+  php8-xml \
+  php8-xmlreader \
+  php8-zlib \
+  supervisor
 
-COPY --from=symfony_php_production /srv/app/public /srv/app/public
+# Create symlink so programs depending on `php` still function
+RUN ln -s /usr/bin/php8 /usr/bin/php
 
-FROM symfony_php as symfony_php_debug
+# Configure nginx
+COPY docker/nginx.conf /etc/nginx/nginx.conf
 
-ARG XDEBUG_VERSION=3.0.4
-RUN set -eux; \
-	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
-	pecl install xdebug-$XDEBUG_VERSION; \
-	docker-php-ext-enable xdebug; \
-	apk del .build-deps
+# Configure PHP-FPM
+COPY docker/fpm-pool.conf /etc/php8/php-fpm.d/www.conf
+COPY docker/php.ini /etc/php8/conf.d/custom.ini
+
+# Configure supervisord
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Setup document root
+RUN mkdir -p /var/www/html
+
+# Make sure files/folders needed by the processes are accessable when they run under the nobody user
+RUN chown -R nobody.nobody /var/www/html && \
+  chown -R nobody.nobody /run && \
+  chown -R nobody.nobody /var/lib/nginx && \
+  chown -R nobody.nobody /var/log/nginx
+
+# Switch to use a non-root user from here on
+USER nobody
+
+# Add application
+WORKDIR /var/www/html
+COPY --chown=nobody --from=node /app /var/www/html
+
+# Expose the port nginx is reachable on
+EXPOSE 8080
+
+# Let supervisord start nginx & php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# Configure a healthcheck to validate that everything is up&running
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping

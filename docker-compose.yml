@@ -1,29 +1,10 @@
-version: '3.4'
+version: '3.5'
 
 services:
-    nginx:
+    pezos:
         build:
             context: .
-            target: symfony_nginx
-        depends_on:
-            - php
-
-    php:
-        build:
-            context: .
-            target: symfony_php
-            args:
-                SYMFONY_VERSION: ${SYMFONY_VERSION:-}
-                STABILITY: ${STABILITY:-stable}
-        healthcheck:
-            interval: 10s
-            timeout: 3s
-            retries: 3
-            start_period: 30s
-        environment:
-            - SYMFONY_VERSION
-        volumes:
-            - var:/srv/app/var/
-
-volumes:
-    var:
+            target: pezos
+        image: bzzhh/pezos:latest
+        container_name: pezos
+        ports: ['7800:80']
