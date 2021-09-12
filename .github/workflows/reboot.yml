@@ -28,5 +28,5 @@ jobs:
             - name: Deploy
               run: |
                   echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET}}" >> .env.prod
-                  scp deploy.sh docker-compose.yml docker-compose.prod.yml .env.prod deploy@${{ secrets.PROD_SERVER_IP }}:/home/deploy/pezos_sandbox
+                  scp deploy.sh docker-compose.yml docker-compose.prod.yml .env.prod deploy@${{ secrets.PROD_SERVER_IP }}:/home/deploy/pezos.fi
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "cd ./pezos.fi && ./deploy.sh"
