@@ -24,10 +24,10 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/app.js')
+    .addEntry('app', './assets/js/app.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
+    .enableStimulusBridge('./assets/js/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -59,7 +59,7 @@ Encore
         config.corejs = 3;
     })
 
-    // .enablePostCssLoader()
+    .enablePostCssLoader()
     .configureDevServerOptions((options) => {
         // hotfix for webpack-dev-server 4.0.0rc0
         // @see: https://github.com/symfony/webpack-encore/issues/951#issuecomment-840719271
@@ -67,7 +67,7 @@ Encore
         delete options.client;
     })
     // enables Sass/SCSS support
-    .enableSassLoader()
+    // .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -84,32 +84,32 @@ Encore
     .addPlugin(new NodePolyfillPlugin());
 
 if (Encore.isProduction()) {
-    // Encore.addPlugin(
-    //     new PurgeCssPlugin({
-    //         paths: glob.sync([
-    //             path.join(__dirname, 'templates/**/*.html.twig'),
-    //         ]),
-    //         content: ['**/*.twig'],
-    //         defaultExtractor: (content) => {
-    //             return content.match(/[\w-/:]+(?<!:)/g) || [];
-    //         },
-    //         safelist: {
-    //             // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
-    //             standard: [
-    //                 /type/,
-    //                 /textarea/,
-    //                 /select/,
-    //                 /hidden/,
-    //                 /is-active/,
-    //                 /text-red-700/,
-    //                 /required/,
-    //                 /block/,
-    //                 /text-gray-800/,
-    //                 /inactive/,
-    //             ],
-    //             deep: [/^choices/],
-    //         },
-    //     })
-    // );
+    Encore.addPlugin(
+        new PurgeCssPlugin({
+            paths: glob.sync([
+                path.join(__dirname, 'templates/**/*.html.twig'),
+            ]),
+            content: ['**/*.twig'],
+            defaultExtractor: (content) => {
+                return content.match(/[\w-/:]+(?<!:)/g) || [];
+            },
+            safelist: {
+                // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
+                standard: [
+                    /type/,
+                    /textarea/,
+                    /select/,
+                    /hidden/,
+                    /is-active/,
+                    /text-red-700/,
+                    /required/,
+                    /block/,
+                    /text-gray-800/,
+                    /inactive/,
+                ],
+                deep: [/^choices/],
+            },
+        })
+    );
 }
 module.exports = Encore.getWebpackConfig();

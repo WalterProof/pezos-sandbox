@@ -1,10 +1,13 @@
 version: '3.5'
 
 services:
-    pezos:
-        build:
-            context: .
-            target: pezos
-        image: bzzhh/pezos:latest
-        container_name: pezos
-        ports: ['7800:80']
+    redis:
+        image: 'redis:alpine'
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+
+volumes:
+    var:
+    redis_data:
