@@ -23,7 +23,7 @@ class CachedClient
 
     public function fetchContracts(): array
     {
-        return $this->cache->get('contracts', function (ItemInterface $item) {
+        return $this->cache->get('tt_contracts', function (ItemInterface $item) {
             $item->expiresAfter(null);
 
             $response  = $this->teztoolsClient->request('GET', '/v1/contracts');
@@ -40,7 +40,7 @@ class CachedClient
 
     public function fetchXtzPrice(): XtzPriceGetResponse200
     {
-        return $this->cache->get('xtz_price', function (ItemInterface $item) {
+        return $this->cache->get('tt_price', function (ItemInterface $item) {
             $item->expiresAfter(null);
 
             $response  = $this->teztoolsClient->request('GET', '/v1/xtz-price');
@@ -55,7 +55,7 @@ class CachedClient
 
     public function fetchPriceHistory(string $identifier): PriceHistory
     {
-        return $this->cache->get(sprintf('price_history_%s', $identifier), function (ItemInterface $item) use ($identifier) {
+        return $this->cache->get(sprintf('tt_history_%s', $identifier), function (ItemInterface $item) use ($identifier) {
             $item->expiresAfter(null);
 
             $response = $this->teztoolsClient->request(

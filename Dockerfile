@@ -94,9 +94,6 @@ ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 WORKDIR /srv/app
 
-# build for production
-ARG APP_ENV=prod
-
 # Allow to use development versions of Symfony
 ARG STABILITY="stable"
 ENV STABILITY ${STABILITY:-stable}
@@ -133,12 +130,15 @@ COPY ./public public/
 
 FROM symfony_php as symfony_php_production
 
+# build for production
+ARG APP_ENV=prod
+
 WORKDIR /srv/app
 
 COPY . .
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
-	composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev; \
+	composer install --prefer-dist --no-progress --no-interaction --no-dev; \
     composer dump-autoload --classmap-authoritative --no-dev; sync; \
     apk add --no-cache --virtual .build-deps nodejs npm; \
     npm install -g yarn; \
