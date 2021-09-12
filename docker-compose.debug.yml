@@ -25,6 +25,6 @@ services:
 
         volumes:
             - .:/srv/app
+            - ../packages:/srv/packages
         env_file:
             - .env
-

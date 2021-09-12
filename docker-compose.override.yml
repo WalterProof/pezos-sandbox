@@ -20,11 +20,6 @@ services:
         env_file:
             - .env
 
-    adminer:
-        image: adminer
-        ports:
-            - 7000:8080
-
     redis:
         image: 'redis:alpine'
         ports:
