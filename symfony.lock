@@ -142,18 +142,6 @@
     "nikic/php-parser": {
         "version": "v4.12.0"
     },
-    "nyholm/psr7": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "0cd4d2d0e7f646fda75f9944f747a56e6ed13d4c"
-        },
-        "files": [
-            "config/packages/nyholm_psr7.yaml"
-        ]
-    },
     "php-cs-fixer/diff": {
         "version": "v2.0.2"
     },
@@ -180,6 +168,15 @@
     },
     "php-jsonpointer/php-jsonpointer": {
         "version": "v3.0.2"
+    },
+    "phpdocumentor/reflection-common": {
+        "version": "2.2.0"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "5.2.2"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "1.4.0"
     },
     "predis/predis": {
         "version": "v1.1.7"
@@ -495,5 +492,8 @@
     },
     "twig/twig": {
         "version": "v3.3.2"
+    },
+    "webmozart/assert": {
+        "version": "1.10.0"
     }
 }

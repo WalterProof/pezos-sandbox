@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Builder\ChartBuilder;
+use App\Http\TezTools\CachedClient;
+use App\Http\TezTools\Model\Contract;
 use App\Model\Chart;
-use Bzzhh\Pezos\Http\TezTools\Client as TezToolsClient;
-use Bzzhh\Pezos\Http\TezTools\Model\Contract;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ class HomeController extends AbstractController
     public const DEFAULT_TOKEN_IDENTIFIER = 'KT1GRSvLoikDsXujKgZPsGLX8k8VvR2Tq95b';
 
     public function __construct(
-        private TezToolsClient $teztools
+        private CachedClient $teztools
     ) {
     }
 
@@ -27,30 +28,50 @@ class HomeController extends AbstractController
     {
         $identifier = $request->query->get('identifier', self::DEFAULT_TOKEN_IDENTIFIER);
 
-        $tokens        = $this->teztools->fetchContracts()->contracts;
+        $tokens        = $this->teztools->fetchContracts();
         $filtered      = array_filter($tokens, fn (Contract $contract): bool => $contract->identifier === $identifier);
         $selectedToken = array_pop($filtered);
 
-        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $interval     = '-1 week';
+        $priceHistory = $this->teztools->fetchPriceHistory($selectedToken->identifier)->byInterval(new DateTimeImmutable(), $interval);
+        $prices       = array_values(array_map(fn (array $item) => $item['price'], $priceHistory));
+
+        $chart        = $chartBuilder->createChart(Chart::TYPE_LINE);
         $chart->setData([
-            'labels'   => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            'labels'   => array_keys($priceHistory),
             'datasets' => [
                 [
-                    'label'           => 'My First dataset',
-                    'backgroundColor' => 'rgb(255, 99, 132)',
-                    'borderColor'     => 'rgb(255, 99, 132)',
-                    'data'            => [0, 10, 5, 2, 20, 30, 45],
+                    'borderColor'     => 'rgb(59,130,246)',
+                    'backgroundColor' => 'rgb(59,130,246)',
+                    'borderWidth'     => 1.5,
+                    'data'            => $prices,
+                    'radius'          => 0,
+                    'fill'            => false,
+                    'tension'         => 0,
                 ],
             ],
         ]);
 
-        /* $chart->setOptions([ */
-        /*     'scales' => [ */
-        /*         'yAxes' => [ */
-        /*             ['ticks' => ['min' => 0, 'max' => 100]], */
-        /*         ], */
-        /*     ], */
-        /* ]); */
+        $unit     = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
+        $chart->setOptions([
+            'animation' => false,
+            'scales'    => [
+                'yAxes' => [
+                    ['ticks' => ['min' => min($prices), 'max' => max($prices)]],
+                ],
+                'xAxes' => [
+                    [
+                        'type' => 'time',
+                        'time' => [
+                            'unit' => $unit,
+                        ],
+                        'gridLines' => ['display' => false],
+                    ],
+                ],
+            ],
+            'legend'   => ['display' => false],
+            'tooltips' => ['intersect' => false],
+        ]);
 
         return $this->render('homepage.html.twig', [
             'tokens'        => $tokens,

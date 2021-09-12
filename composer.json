@@ -3,31 +3,30 @@
     "type": "project",
     "license": "MIT",
     "description": "A minimal Symfony project recommended to create bare bones applications",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "bzzhh/pezos": "dev-main",
         "composer/package-versions-deprecated": "1.11.99.3",
+        "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.4",
         "doctrine/doctrine-migrations-bundle": "^3.1",
-        "doctrine/orm": "^2.9",
-        "nyholm/psr7": "^1.4",
+        "phpdocumentor/reflection-docblock": "^5.2",
         "predis/predis": "^1.1",
-        "psr/http-client": "^1.0",
+        "symfony/cache": "5.3.*",
         "symfony/console": "5.3.*",
         "symfony/dotenv": "5.3.*",
         "symfony/flex": "^1.3.1",
-        "symfony/form": "5.3.*",
         "symfony/framework-bundle": "5.3.*",
         "symfony/http-client": "5.3.*",
+        "symfony/property-access": "5.3.*",
+        "symfony/property-info": "5.3.*",
         "symfony/proxy-manager-bridge": "5.3.*",
         "symfony/runtime": "5.3.*",
         "symfony/serializer": "5.3.*",
         "symfony/twig-bundle": "5.3.*",
-        "symfony/uid": "5.3.*",
         "symfony/webpack-encore-bundle": "^1.12",
         "symfony/yaml": "5.3.*"
     },
@@ -82,14 +81,5 @@
             "require": "5.3.*",
             "docker": true
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/srv/packages/pezos",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+    }
 }

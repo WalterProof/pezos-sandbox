@@ -11,5 +11,4 @@ return [
     ],
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
-    Bzzhh\Pezos\Bridge\Symfony\BzzhhPezosBundle::class => ['all' => true],
 ];
