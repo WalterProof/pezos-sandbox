@@ -1,6 +1,22 @@
 version: '3.5'
 
 services:
+    # test prod container (use .env.docker)
+    # pezos:
+    #     image: bzzhh/pezos:latest
+    #     ports:
+    #         - 7800:8080
+
+    db:
+        image: postgres:13-alpine
+        environment:
+            POSTGRES_PASSWORD: secret
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        command: ['postgres', '-c', 'log_statement=all']
+
     redis:
         image: 'redis:alpine'
         ports:
@@ -10,4 +26,5 @@ services:
 
 volumes:
     var:
+    db_data:
     redis_data:

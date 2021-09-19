@@ -8,7 +8,7 @@ use App\Builder\ChartBuilder;
 use App\Http\TezTools\CachedClient;
 use App\Http\TezTools\Model\Contract;
 use App\Model\Chart;
-use DateTimeImmutable;
+use App\Repository\PriceHistoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,8 @@ class HomeController extends AbstractController
     public const DEFAULT_TOKEN_IDENTIFIER = 'KT1GRSvLoikDsXujKgZPsGLX8k8VvR2Tq95b';
 
     public function __construct(
-        private CachedClient $teztools
+        private CachedClient $teztools,
+        private PriceHistoryRepository $priceHistoryRepository
     ) {
     }
 
@@ -33,12 +34,19 @@ class HomeController extends AbstractController
         $selectedToken = array_pop($filtered);
 
         $interval     = '-1 week';
-        $priceHistory = $this->teztools->fetchPriceHistory($selectedToken->identifier)->byInterval(new DateTimeImmutable(), $interval);
-        $prices       = array_values(array_map(fn (array $item) => $item['price'], $priceHistory));
+        $now          = new \DateTimeImmutable();
+
+        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $now->modify($interval));
+
+        $prices = $timestamps = [];
+        foreach ($history as $snap) {
+            $prices[]     = $snap->getPrice();
+            $timestamps[] = $snap->getTimestamp()->format('Y-m-d H:i:s');
+        }
 
         $chart        = $chartBuilder->createChart(Chart::TYPE_LINE);
         $chart->setData([
-            'labels'   => array_keys($priceHistory),
+            'labels'   => $timestamps,
             'datasets' => [
                 [
                     'borderColor'     => 'rgb(59,130,246)',

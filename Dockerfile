@@ -38,12 +38,16 @@ RUN apk --no-cache add \
   php8-mysqli \
   php8-opcache \
   php8-openssl \
+  php8-pdo \
+  php8-pdo_pgsql \
   php8-phar \
   php8-session \
+  php8-sodium \
   php8-tokenizer \
   php8-xml \
   php8-xmlreader \
   php8-zlib \
+  postgresql-dev \
   supervisor
 
 # Create symlink so programs depending on `php` still function

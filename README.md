@@ -1,6 +1,28 @@
 # Pezos Sandbox
 
-![build](https://github.com/bzzhh/pezos-sandbox/workflows/main/badge.svg)
+![build](https://github.com/bzzhh/pezos-sandbox/workflows/reboot/badge.svg)
+
+## Dev
+
+Launch infra:
+
+```
+docker-compose up -d
+```
+
+Launch PHP server:
+
+```
+symfony serve
+```
+
+Launch webpack:
+
+```
+yarn dev-server
+```
+
+## Prod
 
 Build container:
 

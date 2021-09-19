@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\TezTools\Model;
+namespace App\Http\TezTools\Response;
 
-class Block
+class BlocksLiveGetResponse200
 {
     public string $hash;
     public string $timestamp;
