@@ -60,6 +60,11 @@ class PricesBootstrapCommand extends Command
 
             $params = [];
             foreach ($prices as $price) {
+                // skip some weird stuff
+                // (observed: KT1QDt84bd4YUfE3ZJQYAu2Ckb7ZYNaWytee_0)
+                if ($price['price'] > 10000) {
+                    continue;
+                }
                 $params[] = $contract->identifier;
                 $params[] = $price['timestamp'];
                 $params[] = $price['price'];
