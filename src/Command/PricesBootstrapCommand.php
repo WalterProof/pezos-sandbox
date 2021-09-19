@@ -51,10 +51,6 @@ class PricesBootstrapCommand extends Command
                 continue;
             }
 
-            if ('KT1E6C7WkwG8GWnPBBJJDMADrYuuYaK7ddmM_0' !== $contract->identifier) {
-                continue;
-            }
-
             try {
                 $prices = $this->fetchPriceHistory($contract->identifier);
             } catch (\Exception $e) {

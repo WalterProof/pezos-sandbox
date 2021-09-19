@@ -32,8 +32,6 @@ class PricesLiveCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         while (true) {
-            $io->success('foo');
-
             $message = new UpdatePrices();
             $this->messageBus->dispatch($message);
 
