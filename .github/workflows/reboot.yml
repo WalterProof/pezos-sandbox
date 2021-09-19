@@ -32,7 +32,7 @@ jobs:
               run: |
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rm -f pezos"
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rmi -f $(docker images 'bzzhh/pezos' -a -q)"
-                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker run --name pezos -p 7800:8080 -d bzzhh/pezos:latest"
+                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "echo ${{ secrets.DOCKER_PASSWORD}} | docker login --username bzzhh --password-stdin && docker run --name pezos -p 7800:8080 -d bzzhh/pezos:latest"
                   sleep 3
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker exec -u nobody pezos sh -c 'export APP_RUNTIME_ENV=prod; php bin/console secrets:decrypt-to-local --force'"
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker exec -u nobody pezos bin/console doctrine:database:create --if-not-exists"
