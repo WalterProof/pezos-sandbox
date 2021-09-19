@@ -1,5 +1,5 @@
 <?php
 
-return array (
-  'DATABASE_URL' => NULL,
-);
+return [
+    'DATABASE_URL' => null,
+];
