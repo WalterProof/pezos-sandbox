@@ -51,7 +51,16 @@ class PricesBootstrapCommand extends Command
                 continue;
             }
 
-            $prices = $this->fetchPriceHistory($contract->identifier);
+            if ('KT1E6C7WkwG8GWnPBBJJDMADrYuuYaK7ddmM_0' !== $contract->identifier) {
+                continue;
+            }
+
+            try {
+                $prices = $this->fetchPriceHistory($contract->identifier);
+            } catch (\Exception $e) {
+                $io->error($e->getMessage());
+                continue;
+            }
 
             $params = [];
             foreach ($prices as $price) {
@@ -98,11 +107,16 @@ class PricesBootstrapCommand extends Command
 
     private function fetchPriceHistory(string $identifier): array
     {
-        $response = $this->teztoolsClient->request(
-                'GET',
-                sprintf('/v1/%s/price-history', $identifier)
-            );
+        $url = sprintf('/v1/%s/price-history', $identifier);
 
-        return json_decode($response->getContent(), true);
+        $response = $this->teztoolsClient->request('GET', $url);
+
+        $json = json_decode($response->getContent(), true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \Exception(sprintf('Could not decode response from %s: %s', $url, json_last_error_msg()));
+        }
+
+        return $json;
     }
 }
