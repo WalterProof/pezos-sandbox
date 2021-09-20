@@ -40,18 +40,26 @@ class PriceHistoryRepository extends ServiceEntityRepository
     /**
      * @return PriceHistory[]
      */
-    public function fromDate(string $token, \DateTimeInterface $fromDate): array
-    {
-        return $this->createQueryBuilder('p')
+    public function fromDate(
+        string $token,
+        ?\DateTimeInterface $fromDate = null
+    ): array {
+        $qb = $this->createQueryBuilder('p')
             ->select('p')
             ->where('p.token = :token')
-            ->andWhere('p.timestamp > :fromDate')
-            ->setParameters([
-                'token'    => $token,
-                'fromDate' => $fromDate->format('Y-m-d H:i:s'),
-            ])
-            ->orderBy('p.timestamp', 'asc')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('p.timestamp', 'asc');
+
+        $parameters = [
+            'token' => $token,
+        ];
+        if (null !== $fromDate) {
+            $qb = $qb->andWhere('p.timestamp > :fromDate');
+
+            $parameters['fromDate'] = $fromDate->format('Y-m-d H:i:s');
+        }
+
+        $qb = $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
     }
 }

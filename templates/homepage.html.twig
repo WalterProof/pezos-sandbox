@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div {{ stimulus_controller('time_interval_form') }}
+        class="custom-radio-buttons">
+        {% form_theme timeIntervalForm with['form_div_layout.html.twig'] only %}
+        {{ form(timeIntervalForm) }}
+    </div>
+
     <nav class="columns">
         <div class="column is-full" {{ stimulus_controller('token-choices') }}>
             <div class="" data-token-choices-target="holder"></div>

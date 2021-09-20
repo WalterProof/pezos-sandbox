@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Builder\ChartBuilder;
+use App\Form\TimeIntervalForm;
 use App\Http\TezTools\CachedClient;
 use App\Http\TezTools\Model\Contract;
 use App\Model\Chart;
@@ -12,6 +13,7 @@ use App\Repository\PriceHistoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -20,7 +22,8 @@ class HomeController extends AbstractController
 
     public function __construct(
         private CachedClient $teztools,
-        private PriceHistoryRepository $priceHistoryRepository
+        private PriceHistoryRepository $priceHistoryRepository,
+        private SessionInterface $session
     ) {
     }
 
@@ -28,15 +31,20 @@ class HomeController extends AbstractController
     public function index(Request $request, ChartBuilder $chartBuilder): Response
     {
         $identifier = $request->query->get('identifier', self::DEFAULT_TOKEN_IDENTIFIER);
+        if (null === $this->session->get('time_interval')) {
+            $this->session->set('time_interval', '-24 hours');
+        }
 
-        $tokens        = $this->teztools->fetchContracts();
-        $filtered      = array_filter($tokens, fn (Contract $contract): bool => $contract->identifier === $identifier);
-        $selectedToken = array_pop($filtered);
+        $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
+        $tokens           = $this->teztools->fetchContracts();
+        $filtered         = array_filter($tokens, fn (Contract $contract): bool => $contract->identifier === $identifier);
+        $selectedToken    = array_pop($filtered);
 
-        $interval     = '-1 week';
+        $interval     = $this->session->get('time_interval');
         $now          = new \DateTimeImmutable();
+        $fromDate     = 'max' !== $interval ? $now->modify($interval) : null;
 
-        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $now->modify($interval));
+        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $fromDate);
 
         $prices = $timestamps = [];
         foreach ($history as $snap) {
@@ -82,9 +90,26 @@ class HomeController extends AbstractController
         ]);
 
         return $this->render('homepage.html.twig', [
-            'tokens'        => $tokens,
-            'selectedToken' => $selectedToken,
-            'chart'         => $chart,
+            'tokens'           => $tokens,
+            'selectedToken'    => $selectedToken,
+            'chart'            => $chart,
+            'timeIntervalForm' => $timeIntervalForm->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/token/time-interval", name="_app_time_interval", methods={"POST"})
+     */
+    public function timeInterval(Request $request): Response
+    {
+        $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
+        $timeIntervalForm->handleRequest($request);
+
+        if ($timeIntervalForm->isSubmitted() && $timeIntervalForm->isValid()) {
+            $formData = $timeIntervalForm->getData();
+            $this->session->set('time_interval', $formData['interval']);
+        }
+
+        return $this->redirect($request->server->get('HTTP_REFERER'));
     }
 }
