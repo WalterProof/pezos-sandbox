@@ -107,7 +107,7 @@ if (Encore.isProduction()) {
                     /text-gray-800/,
                     /inactive/,
                 ],
-                deep: [/^choices/],
+                deep: [/^choices/, /^custom-radio-buttons/],
             },
         })
     );

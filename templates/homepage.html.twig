@@ -28,8 +28,8 @@
             </form>
         </div>
 
-        <div {{ stimulus_controller('time_interval_form') }}
-            class="custom-radio-buttons">
+        <div class="custom-radio-buttons"
+            {{ stimulus_controller('time_interval_form') }}>
             {% form_theme timeIntervalForm
                 with['form_div_layout.html.twig']
                 only
