@@ -50,8 +50,8 @@ class HomeController extends AbstractController
 
         $prices = $timestamps = [];
         foreach ($history as $snap) {
-            $prices[]     = $snap->getPrice();
-            $timestamps[] = $snap->getTimestamp()->format('Y-m-d H:i:s');
+            $prices[]     = $snap['p_price'];
+            $timestamps[] = $snap['p_timestamp']->format('Y-m-d H:i:s');
         }
 
         $chart        = $chartBuilder->createChart(Chart::TYPE_LINE);

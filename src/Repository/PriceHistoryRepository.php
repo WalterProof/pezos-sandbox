@@ -60,6 +60,6 @@ class PriceHistoryRepository extends ServiceEntityRepository
 
         $qb = $qb->setParameters($parameters);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getScalarResult();
     }
 }
