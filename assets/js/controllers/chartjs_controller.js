@@ -1,5 +1,6 @@
 import { Controller } from 'stimulus';
 import Chart from 'chart.js/auto';
+import 'chartjs-adapter-moment';
 
 export default class extends Controller {
     connect() {

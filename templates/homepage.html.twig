@@ -1,21 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div {{ stimulus_controller('time_interval_form') }}
-        class="custom-radio-buttons">
-        {% form_theme timeIntervalForm with['form_div_layout.html.twig'] only %}
-        {{ form(timeIntervalForm) }}
-    </div>
-
-    <nav class="columns">
-        <div class="column is-full" {{ stimulus_controller('token-choices') }}>
-            <div class="" data-token-choices-target="holder"></div>
+    <div class="space-y-4">
+        <div {{ stimulus_controller('token-choices') }}>
+            <div data-token-choices-target="holder"></div>
             <form data-token-choices-target="form" class="">
                 <div>
                     <select class="form-control"
                         id="token-choices"
-                        onchange="window.location.replace('?identifier=' + this.value)"
-                        class="">
+                        onchange="window.location.replace('?identifier=' + this.value)">
                         {% for t in tokens %}
                             {% set selected = t.identifier
                                 == selectedToken.identifier
@@ -34,7 +27,16 @@
                 </div>
             </form>
         </div>
-    </nav>
 
-    {{ render_chart(chart) }}
+        <div {{ stimulus_controller('time_interval_form') }}
+            class="custom-radio-buttons">
+            {% form_theme timeIntervalForm
+                with['form_div_layout.html.twig']
+                only
+            %}
+            {{ form(timeIntervalForm) }}
+        </div>
+
+        {{ render_chart(chart) }}
+    </div>
 {% endblock %}

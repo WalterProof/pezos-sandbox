@@ -35,3 +35,11 @@ Run container:
 ```
 docker run -p 7800:8080 bzzhh/pezos:latest
 ```
+
+TODO:
+
+-   [ ] use https://mercure.rocks
+-   [ ] node polling for new blocks like https://github.com/blockwatch-cc/tzgo#monitoring-for-new-blocks
+-   [ ] datasource selector (teztools and tzkt)
+-   [ ] candle charts with https://github.com/chartjs/chartjs-chart-financial
+-   [ ] env vars on run instead of build, to allow using public docker image

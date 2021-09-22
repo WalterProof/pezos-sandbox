@@ -4,3 +4,26 @@
  * Styles for the Home page.
  *
  */
+
+
+.custom-radio-buttons {
+    @apply my-2;
+}
+.custom-radio-buttons #interval {
+    @apply flex flex-row items-stretch content-between;
+}
+.custom-radio-buttons label {
+    @apply dark:bg-gray-800 dark:text-blue-300;
+}
+.custom-radio-buttons input {
+    @apply hidden;
+}
+
+.custom-radio-buttons label {
+    @apply flex-1 block px-3 py-2 text-gray-700 shadow cursor-pointer bg-gray-50;
+}
+
+.custom-radio-buttons input:checked + label,
+.custom-radio-buttons label:hover {
+    @apply font-bold bg-gray-50 dark:bg-gray-700;
+}

@@ -10,6 +10,7 @@ use App\Http\TezTools\CachedClient;
 use App\Http\TezTools\Model\Contract;
 use App\Model\Chart;
 use App\Repository\PriceHistoryRepository;
+use App\System\Clock;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,8 @@ class HomeController extends AbstractController
     public function __construct(
         private CachedClient $teztools,
         private PriceHistoryRepository $priceHistoryRepository,
-        private SessionInterface $session
+        private SessionInterface $session,
+        private Clock $clock
     ) {
     }
 
@@ -38,11 +40,11 @@ class HomeController extends AbstractController
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
         $tokens           = $this->teztools->fetchContracts();
         $filtered         = array_filter($tokens, fn (Contract $contract): bool => $contract->identifier === $identifier);
+        /** @var Contract $selectedToken */
         $selectedToken    = array_pop($filtered);
 
         $interval     = $this->session->get('time_interval');
-        $now          = new \DateTimeImmutable();
-        $fromDate     = 'max' !== $interval ? $now->modify($interval) : null;
+        $fromDate     = 'max' !== $interval ? $this->clock->currentTime()->modify($interval) : null;
 
         $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $fromDate);
 
@@ -70,22 +72,21 @@ class HomeController extends AbstractController
 
         $unit     = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
         $chart->setOptions([
-            'animation' => false,
-            'scales'    => [
-                'yAxes' => [
+            'animation'  => false,
+            'responsive' => true,
+            'scales'     => [
+                'x' => [
+                    'type' => 'time',
+                    'time' => [
+                        'unit' => $unit,
+                    ],
+                    'grid' => ['display' => false],
+                ],
+                'y' => [
                     ['ticks' => ['min' => min($prices), 'max' => max($prices)]],
                 ],
-                'xAxes' => [
-                    [
-                        'type' => 'time',
-                        'time' => [
-                            'unit' => $unit,
-                        ],
-                        'gridLines' => ['display' => false],
-                    ],
-                ],
             ],
-            'legend'   => ['display' => false],
+            'plugins'  => ['legend'   => ['display' => false]],
             'tooltips' => ['intersect' => false],
         ]);
 
