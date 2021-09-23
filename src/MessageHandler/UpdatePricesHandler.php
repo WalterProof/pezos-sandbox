@@ -39,7 +39,7 @@ class UpdatePricesHandler implements MessageHandlerInterface
 
     private function fetchPricesLive(): PricesLiveGetResponse200
     {
-        $response = $this->teztoolsClient->request('GET', '/v1/prices');
+        $response = $this->teztoolsClient->request('GET', '/v1/prices-live');
 
         return $this->serializer->deserialize($response->getContent(), PricesLiveGetResponse200::class, 'json');
     }
