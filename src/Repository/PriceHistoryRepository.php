@@ -42,24 +42,35 @@ class PriceHistoryRepository extends ServiceEntityRepository
      */
     public function fromDate(
         string $token,
+        ?string $datePart,
         ?\DateTimeInterface $fromDate = null
     ): array {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p')
-            ->where('p.token = :token')
-            ->orderBy('p.timestamp', 'asc');
+        $conn = $this->getEntityManager()->getConnection();
+        $sql  =
+            'SELECT '.
+            (null !== $datePart
+                ? sprintf(
+                    "DATE_TRUNC('%s', timestamp) as timestamp, avg(price) AS price",
+                    $datePart
+                )
+                : 'timestamp, price').
+            ' FROM price_history WHERE token = :token'.
+            (null !== $fromDate ? ' AND timestamp > :fromDate' : '');
+
+        if (null !== $datePart) {
+            $sql .= ' GROUP BY timestamp';
+        }
+
+        $sql .= ' ORDER BY timestamp ASC';
 
         $parameters = [
             'token' => $token,
         ];
-        if (null !== $fromDate) {
-            $qb = $qb->andWhere('p.timestamp > :fromDate');
 
+        if (null !== $fromDate) {
             $parameters['fromDate'] = $fromDate->format('Y-m-d H:i:s');
         }
 
-        $qb = $qb->setParameters($parameters);
-
-        return $qb->getQuery()->getScalarResult();
+        return $conn->executeQuery($sql, $parameters)->fetchAllAssociative();
     }
 }

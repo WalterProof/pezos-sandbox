@@ -43,16 +43,18 @@ class HomeController extends AbstractController
         /** @var Contract $selectedToken */
         $selectedToken    = array_pop($filtered);
 
-        $interval     = $this->session->get('time_interval');
-        $fromDate     = 'max' !== $interval ? $this->clock->currentTime()->modify($interval) : null;
+        $interval = $this->session->get('time_interval');
+        $fromDate = 'max' !== $interval ? $this->clock->currentTime()->modify($interval) : null;
+        $datePart = match ($interval) {
+            '-24 hours', '-7 days', '-14 days', '-30 days' => null,
+            '-90 days', '-180 days' => 'minute',
+            '180 days', '-1 year', 'max' => 'hour',
+        };
 
-        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $fromDate);
+        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $datePart, $fromDate);
 
-        $prices = $timestamps = [];
-        foreach ($history as $snap) {
-            $prices[]     = $snap['p_price'];
-            $timestamps[] = $snap['p_timestamp']->format('Y-m-d H:i:s');
-        }
+        $prices     = array_column($history, 'price');
+        $timestamps = array_column($history, 'timestamp');
 
         $chart        = $chartBuilder->createChart(Chart::TYPE_LINE);
         $chart->setData([
@@ -70,7 +72,7 @@ class HomeController extends AbstractController
             ],
         ]);
 
-        $unit     = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
+        $unit = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
         $chart->setOptions([
             'animation'  => false,
             'responsive' => true,
