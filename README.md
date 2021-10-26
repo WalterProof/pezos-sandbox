@@ -10,6 +10,12 @@ Launch infra:
 docker-compose up -d
 ```
 
+Migrate db:
+
+```
+./bin/console/ doctrine:migrations:migrate
+```
+
 Launch PHP server:
 
 ```
@@ -20,6 +26,12 @@ Launch webpack:
 
 ```
 yarn dev-server
+```
+
+Bootstrap prices:
+
+```
+./bin/console app:prices:bootstrap  
 ```
 
 ## Prod

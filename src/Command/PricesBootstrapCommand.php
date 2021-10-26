@@ -21,6 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class PricesBootstrapCommand extends Command
 {
+    private const SKIPPED_CONTRACTS = ['KT1QDt84bd4YUfE3ZJQYAu2Ckb7ZYNaWytee_0'];
     private const NB_FIELDS   = 3;
     private const BATCH_LIMIT = self::NB_FIELDS * 10000;
 
@@ -47,6 +48,11 @@ class PricesBootstrapCommand extends Command
         $bootstrapped = $this->priceHistoryRepository->findAllTokens();
 
         foreach ($contracts as $contract) {
+            // skip
+            if (in_array($contract->identifier, self::SKIPPED_CONTRACTS)) {
+                continue;
+            }
+
             if (\in_array($contract->identifier, $bootstrapped)) {
                 continue;
             }
@@ -60,11 +66,6 @@ class PricesBootstrapCommand extends Command
 
             $params = [];
             foreach ($prices as $price) {
-                // skip some weird stuff
-                // (observed: KT1QDt84bd4YUfE3ZJQYAu2Ckb7ZYNaWytee_0)
-                if ($price['price'] > 10000) {
-                    continue;
-                }
                 $params[] = $contract->identifier;
                 $params[] = $price['timestamp'];
                 $params[] = $price['price'];
@@ -75,7 +76,7 @@ class PricesBootstrapCommand extends Command
             do {
                 $p   = \array_slice($params, $offset, self::BATCH_LIMIT);
                 $sql = 'INSERT INTO price_history(token, timestamp, price) VALUES'
-                    .implode(',', array_fill(0, \count($p) / self::NB_FIELDS, '(?, ?, ?)'));
+                    . implode(',', array_fill(0, \count($p) / self::NB_FIELDS, '(?, ?, ?)'));
                 $conn->executeStatement($sql, $p);
                 $offset += self::BATCH_LIMIT;
             } while (\count($p) !== $rest);
@@ -98,10 +99,10 @@ class PricesBootstrapCommand extends Command
         $response  = $this->teztoolsClient->request('GET', '/v1/contracts');
 
         $contracts = $this->serializer->deserialize(
-                $response->getContent(),
-                ContractsGetResponse200::class,
-                'json',
-            );
+            $response->getContent(),
+            ContractsGetResponse200::class,
+            'json',
+        );
 
         return $contracts->contracts;
     }
