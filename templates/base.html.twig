@@ -20,12 +20,17 @@
         {% endif %}
     </head>
     <body class="dark">
-        <div class="container">
+        <main class="container">
             {% include '_navbar.html.twig' %}
             {% block body %}
 
             {% endblock %}
-        </div>
+        </main>
+        <footer>
+          <div class="container">
+          powered by teztools api
+          </div>
+        </footer>
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}

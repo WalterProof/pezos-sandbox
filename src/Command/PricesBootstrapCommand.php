@@ -21,7 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class PricesBootstrapCommand extends Command
 {
-    private const SKIPPED_CONTRACTS = ['KT1QDt84bd4YUfE3ZJQYAu2Ckb7ZYNaWytee_0'];
+    private const SKIPPED_CONTRACTS = ["KT1QDt84bd4YUfE3ZJQYAu2Ckb7ZYNaWytee_0"];
     private const NB_FIELDS   = 3;
     private const BATCH_LIMIT = self::NB_FIELDS * 10000;
 
