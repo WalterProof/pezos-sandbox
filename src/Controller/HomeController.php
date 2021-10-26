@@ -88,8 +88,10 @@ class HomeController extends AbstractController
                     ['ticks' => ['min' => min($prices), 'max' => max($prices)]],
                 ],
             ],
-            'plugins'  => ['legend'   => ['display' => false]],
-            'tooltips' => ['intersect' => false],
+            'plugins'  => [
+                'legend'   => ['display' => false],
+                'tooltip' => ['intersect' => false],
+            ],
         ]);
 
         return $this->render('homepage.html.twig', [
