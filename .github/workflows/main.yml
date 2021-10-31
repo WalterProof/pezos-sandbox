@@ -2,7 +2,7 @@ name: main
 on:
     push:
         branches:
-            - pezos.fi
+            - main 
 
 jobs:
     build:
