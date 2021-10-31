@@ -1,4 +1,4 @@
-FROM composer AS composer
+FROM composer:2 AS composer
 
 # copying the source directory and install the dependencies with composer
 COPY . /app
@@ -9,14 +9,14 @@ RUN composer install \
   --no-interaction \
   --no-progress
 
-FROM node AS node
+FROM node:fermium-alpine3.14 AS node
 
 WORKDIR /app
 COPY --from=composer /app /app
 
 RUN set -eux; \
-    yarn install && yarn run build; \
-    rm -rf node_modules
+  yarn install && yarn run build; \
+  rm -rf node_modules
 
 FROM alpine:3.14 as pezos
 LABEL Maintainer="Tim de Pater <code@trafex.nl>"
