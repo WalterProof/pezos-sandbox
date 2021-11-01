@@ -34,10 +34,12 @@ class UpdatePricesHandler implements MessageHandlerInterface
 
         $conn = $this->em->getConnection();
 
+        $newIdentifiers = [];
         foreach ($prices->contracts  as $contract) {
             $identifier = $contract->tokenAddress.(isset($contract->tokenId) ? '_'.$contract->tokenId : '');
-            if (!\in_array($identifier, $identifiers)) {
+            if (!\in_array($identifier, $identifiers) && !in_array($identifier, $newIdentifiers)) {
                 $this->newContract($identifier);
+                $newIdentifiers[] = $identifier;
             }
 
             $conn->executeStatement('INSERT INTO price_history(token, timestamp, price) VALUES(?,?,?)', [$identifier, $contract->timestamp, $contract->currentPrice]);
