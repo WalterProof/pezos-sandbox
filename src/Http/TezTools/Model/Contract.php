@@ -15,10 +15,15 @@ class Contract
     public string $name;
     public string $type;
     public string $address;
-    public string $thumbnailUri;
     public int $decimals;
-    public string $tags;
+    public string $totalSupply;
     public array $apps;
+    public string $tags;
+    public ?string $websiteLink  = null;
+    public ?string $telegramLink = null;
+    public ?string $twitterLink  = null;
+    public ?string $discordLink  = null;
+    public ?string $thumbnailUri = null;
 
     public function setApps(array $apps)
     {

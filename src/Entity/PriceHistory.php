@@ -30,7 +30,7 @@ class PriceHistory
     private $timestamp;
 
     /**
-     * @ORM\Column(type="decimal", precision=24, scale=18)
+     * @ORM\Column(type="decimal", precision=27, scale=18)
      */
     private $price;
 

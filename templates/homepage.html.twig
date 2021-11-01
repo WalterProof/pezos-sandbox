@@ -29,6 +29,17 @@
             </form>
         </div>
 
+        <p class="text-white">
+            <strong>{{ selectedToken.name }}</strong>
+            is a <strong>{{ selectedToken.type }}</strong> token. It currently has
+            a total supply of <strong>
+                {{ selectedToken.totalSupply|number_format }}*
+            </strong>.
+            <br />
+            * this might not be accurate (burned token and special cases aren't yet
+            handled)
+        </p>
+
         <div class="custom-radio-buttons"
             {{ stimulus_controller('time_interval_form') }}>
             {% form_theme timeIntervalForm

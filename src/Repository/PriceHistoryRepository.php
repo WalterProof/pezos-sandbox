@@ -22,11 +22,9 @@ class PriceHistoryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param mixed $value
-     *
      * @return string[] Returns an array of token identifiers
      */
-    public function findAllTokens()
+    public function findAllTokens() :array
     {
         $res = $this->createQueryBuilder('p')
             ->select('p.token')

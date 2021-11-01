@@ -7,6 +7,7 @@ namespace App\Http\TezTools;
 use App\Http\TezTools\Model\PriceHistory;
 use App\Http\TezTools\Response\ContractsGetResponse200;
 use App\Http\TezTools\Response\XtzPriceGetResponse200;
+use DateInterval;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -24,7 +25,7 @@ class CachedClient
     public function fetchContracts(): array
     {
         return $this->cache->get('tt_contracts', function (ItemInterface $item) {
-            $item->expiresAfter(null);
+            $item->expiresAfter(new DateInterval('PT1H'));
 
             $response  = $this->teztoolsClient->request('GET', '/v1/contracts');
 

@@ -7,8 +7,8 @@ namespace App\Controller;
 use App\Builder\ChartBuilder;
 use App\Form\TimeIntervalForm;
 use App\Http\TezTools\CachedClient;
-use App\Http\TezTools\Model\Contract;
 use App\Model\Chart;
+use App\Repository\ContractRepository;
 use App\Repository\PriceHistoryRepository;
 use App\System\Clock;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +24,7 @@ class HomeController extends AbstractController
     public function __construct(
         private CachedClient $teztools,
         private PriceHistoryRepository $priceHistoryRepository,
+        private ContractRepository $contractRepository,
         private SessionInterface $session,
         private Clock $clock
     ) {
@@ -38,10 +39,10 @@ class HomeController extends AbstractController
         }
 
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
-        $tokens           = $this->teztools->fetchContracts();
-        $filtered         = array_filter($tokens, fn (Contract $contract): bool => $contract->identifier === $identifier);
-        /** @var Contract $selectedToken */
-        $selectedToken    = array_pop($filtered);
+        $contracts        = $this->contractRepository->findAllSelectable();
+        $currentContract  = $this->contractRepository->findOneBy(
+            ['identifier' => $identifier]
+        );
 
         $interval = $this->session->get('time_interval');
         $fromDate = 'max' !== $interval ? $this->clock->currentTime()->modify($interval) : null;
@@ -51,7 +52,7 @@ class HomeController extends AbstractController
             '180 days', '-1 year', 'max' => 'hour',
         };
 
-        $history = $this->priceHistoryRepository->fromDate($selectedToken->identifier, $datePart, $fromDate);
+        $history = $this->priceHistoryRepository->fromDate($identifier, $datePart, $fromDate);
 
         $prices     = array_column($history, 'price');
         $timestamps = array_column($history, 'timestamp');
@@ -90,13 +91,13 @@ class HomeController extends AbstractController
             ],
             'plugins'  => [
                 'legend'   => ['display' => false],
-                'tooltip' => ['intersect' => false],
+                'tooltip'  => ['intersect' => false],
             ],
         ]);
 
         return $this->render('homepage.html.twig', [
-            'tokens'           => $tokens,
-            'selectedToken'    => $selectedToken,
+            'tokens'           => $contracts,
+            'selectedToken'    => $currentContract,
             'chart'            => $chart,
             'timeIntervalForm' => $timeIntervalForm->createView(),
         ]);

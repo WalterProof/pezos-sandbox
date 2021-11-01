@@ -16,23 +16,19 @@ class ContractsGetResponse200
         $objectNormalizer = new ObjectNormalizer();
 
         foreach ($contracts as $data) {
+            // skipping bad metadata
+            if (!isset($data['symbol']) || !isset($data['name'])) {
+                continue;
+            }
+
             $contract = $objectNormalizer->denormalize($data, Contract::class);
 
-            if (isset($data['tokenAddress'])) {
-                if (isset($data['tokenId'])) {
-                    $contract->identifier = sprintf(
-                        '%s_%d',
-                        $data['tokenAddress'],
-                        $data['tokenId']
-                    );
-                } else {
-                    $contract->identifier = $data['tokenAddress'];
-                }
-            }
+            $contract->identifier = isset($data['tokenId'])
+                ? sprintf('%s_%d', $data['tokenAddress'], $data['tokenId'])
+                : $data['tokenAddress'];
 
-            if (!isset($data['symbol'])) {
-                $contract->symbol = 'UNKNOWN';
-            }
+            $contract->totalSupply =
+                (string) ($data['totalSupply'] / pow(10, $data['decimals']));
 
             $this->contracts[] = $contract;
         }
