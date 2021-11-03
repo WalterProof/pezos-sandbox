@@ -12,7 +12,7 @@ class Contract
     public string $symbol;
     public string $tokenAddress;
     public int $tokenId;
-    public string $name;
+    public ?string $name = null;
     public string $type;
     public string $address;
     public int $decimals;

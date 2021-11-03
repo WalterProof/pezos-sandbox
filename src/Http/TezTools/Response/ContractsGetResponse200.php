@@ -17,7 +17,7 @@ class ContractsGetResponse200
 
         foreach ($contracts as $data) {
             // skipping bad metadata
-            if (!isset($data['symbol']) || !isset($data['name'])) {
+            if (!isset($data['symbol']) || !isset($data['totalSupply'])) {
                 continue;
             }
 
