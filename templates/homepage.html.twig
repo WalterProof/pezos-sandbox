@@ -19,7 +19,7 @@
                             <option value="{{ t.identifier }}"
                                 {{ selected }}
                                 class="">
-                                {{ t.symbol }} {% if t.name is defined %}
+                                {{ t.symbol }} {% if t.name is not empty %}
                                     ({{ t.name }})
                                 {% endif %}
                             </option>
@@ -28,17 +28,6 @@
                 </div>
             </form>
         </div>
-
-        <p class="text-white">
-            <strong>{{ selectedToken.symbol }}</strong>
-            is a <strong>{{ selectedToken.type }}</strong> token. It currently has
-            a total supply of <strong>
-                {{ selectedToken.totalSupply|number_format }}*
-            </strong>.
-            <br />
-            * this might not be accurate (burned token and special cases aren't yet
-            handled)
-        </p>
 
         <div class="custom-radio-buttons"
             {{ stimulus_controller('time_interval_form') }}>
@@ -50,5 +39,21 @@
         </div>
 
         {{ render_chart(chart) }}
+
+        <p class="text-white"
+            style="background-image: url({{
+            selectedToken.thumbnailUri
+            }}); background-size: 100px 100px; background-position: right; background-repeat: no-repeat">
+            <strong>{{ make_token_link(selectedToken) }}</strong>
+            is a <strong>{{ selectedToken.type }}</strong> token. It currently has
+            a total supply of <strong>
+                {{ selectedToken.totalSupply|number_format }}*
+            </strong>.
+            <br />
+            * this might not be accurate (burned token and special cases aren't yet
+            handled)
+            <br />
+            {{ make_social_links(selectedToken) }}
+        </p>
     </div>
 {% endblock %}
