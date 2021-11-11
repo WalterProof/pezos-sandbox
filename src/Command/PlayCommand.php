@@ -39,7 +39,7 @@ class PlayCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $objectNormalizer = new ObjectNormalizer();
-        $response         = $this->teztoolsClient->request('GET', sprintf('/v1/%s/contract', 'KT1Ava7Qm338ZJj83P1ZhNbGkaRZM8N1FsPD_0'));
+        $response         = $this->teztoolsClient->request('GET', sprintf('/v1/%s/contract', 'KT1VHd7ysjnvxEzwtjBAmYAmasvVCfPpSkiG_0'));
         $model            = $objectNormalizer->denormalize(json_decode($response->getContent(), true), ModelContract::class);
 
         dump($model);

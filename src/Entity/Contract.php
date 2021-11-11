@@ -74,6 +74,21 @@ class Contract
      */
     private $discordLink;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":"0"})
+     */
+    private $shouldPreferSymbol;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $apps = [];
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $tags = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -207,6 +222,42 @@ class Contract
     public function setDiscordLink(?string $discordLink): self
     {
         $this->discordLink = $discordLink;
+
+        return $this;
+    }
+
+    public function getShouldPreferSymbol(): ?bool
+    {
+        return $this->shouldPreferSymbol;
+    }
+
+    public function setShouldPreferSymbol(bool $shouldPreferSymbol): self
+    {
+        $this->shouldPreferSymbol = $shouldPreferSymbol;
+
+        return $this;
+    }
+
+    public function getApps(): ?array
+    {
+        return $this->apps;
+    }
+
+    public function setApps(?array $apps): self
+    {
+        $this->apps = $apps;
+
+        return $this;
+    }
+
+    public function getTags(): ?array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?array $tags): self
+    {
+        $this->tags = $tags;
 
         return $this;
     }

@@ -42,7 +42,9 @@
 
         <p class="text-white"
             style="background-image: url({{
-            selectedToken.thumbnailUri
+            cleanse_thumbnail_uri(
+                selectedToken.thumbnailUri
+            )
             }}); background-size: 100px 100px; background-position: right; background-repeat: no-repeat">
             <strong>{{ make_token_link(selectedToken) }}</strong>
             is a <strong>{{ selectedToken.type }}</strong> token. It currently has
@@ -54,6 +56,7 @@
             handled)
             <br />
             {{ make_social_links(selectedToken) }}
+            {{ make_apps_box(selectedToken.apps, selectedToken.identifier, selectedToken.symbol) }}
         </p>
     </div>
 {% endblock %}

@@ -29,6 +29,17 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction(
+                'cleanse_thumbnail_uri',
+                [$this, 'cleanseThumbnailUri'],
+                ['is_safe' => ['html']]
+            ),
+            new TwigFunction(
+                'make_apps_box',
+                [$this, 'makeAppsBox'],
+                ['is_safe' => ['html']]
+            ),
+
+            new TwigFunction(
                 'make_token_link',
                 [$this, 'makeTokenLink'],
                 ['is_safe' => ['html']]
@@ -39,6 +50,54 @@ class AppExtension extends AbstractExtension
                 ['is_safe' => ['html']]
             ),
         ];
+    }
+
+    public function cleanseThumbnailUri(string $uri): string
+    {
+        if (0 === strpos($uri, 'ipfs://')) {
+            return 'https://ipfs.io/ipfs/'.substr($uri, 7);
+        }
+
+        return $uri;
+    }
+
+    public function makeAppsBox(
+        array $apps,
+        string $identifier,
+        string $symbol
+    ): string {
+        $amms = array_filter(
+            $apps,
+            fn (array $app): bool => 'AMM' === $app['type'] && 'LB' !== $app['name']
+        );
+
+        $html = '';
+
+        if (\count($amms) > 0) {
+            $html .= '<ul class="text-white">';
+        }
+        foreach ($amms as $amm) {
+            $links = '';
+            if ('QUIPUSWAP' === $amm['name']) {
+                $links .= sprintf(
+                    '<a href="https://quipuswap.com/swap?to=%1$s" class="text-green-400" target="_new">BUY</a> / <a href="https://quipuswap.com/swap?from=%1$s" class="text-red-400" target="_new">SELL</a>',
+                    $identifier
+                );
+            }
+            if ('PLENTY' === $amm['name']) {
+                $links .= sprintf(
+                    '<a href="https://www.plentydefi.com/swap?from=PLENTY&to=%1$s" class="text-green-400" target="_new">BUY</a>',
+                    $symbol
+                );
+            }
+
+            $html .= sprintf('<li>Trade on %s: %s</li>', $amm['name'], $links);
+        }
+        if (\count($amms) > 0) {
+            $html .= '</ul>';
+        }
+
+        return $html;
     }
 
     public function makeTokenLink(Contract $token): string
@@ -54,7 +113,7 @@ class AppExtension extends AbstractExtension
 
         if ($token->getDiscordLink()) {
             $links[] = $this->makeLink(
-                $this->fixUrl($token->getDiscordLink()),
+                $this->cleanseUrl($token->getDiscordLink()),
                 'Discord'
             );
         }
@@ -72,7 +131,7 @@ class AppExtension extends AbstractExtension
             : '';
     }
 
-    private function fixUrl(string $url): string
+    private function cleanseUrl(string $url): string
     {
         if (0 !== strpos($url, 'http://') || 0 !== strpos($url, 'https://')) {
             return 'https://'.$url;

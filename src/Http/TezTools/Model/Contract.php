@@ -10,6 +10,7 @@ class Contract
 {
     public string $identifier;
     public string $symbol;
+    public bool $shouldPreferSymbol = false;
     public string $tokenAddress;
     public int $tokenId;
     public ?string $name = null;
@@ -17,13 +18,18 @@ class Contract
     public string $address;
     public int $decimals;
     public string $totalSupply;
-    public array $apps;
-    public string $tags;
-    public ?string $websiteLink  = null;
+    public array $apps = [];
+    public array $tags = [];
+    public ?string $websiteLink = null;
     public ?string $telegramLink = null;
-    public ?string $twitterLink  = null;
-    public ?string $discordLink  = null;
+    public ?string $twitterLink = null;
+    public ?string $discordLink = null;
     public ?string $thumbnailUri = null;
+
+    public function setTags(string $tags)
+    {
+        $this->tags = explode(',', $tags);
+    }
 
     public function setApps(array $apps)
     {

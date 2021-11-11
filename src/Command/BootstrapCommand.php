@@ -40,6 +40,7 @@ class BootstrapCommand extends Command
         parent::__construct();
 
         $this->conn = $this->em->getConnection();
+        $this->conn->getConfiguration()->setSQLLogger(null);
     }
 
     protected function configure(): void
@@ -52,6 +53,8 @@ class BootstrapCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
+            $io->info('Destroy all contracts and prices');
+            $this->deleteAllFrom('contract', 'price_history');
             $io->info('Bootstrapping contracts');
             $count = $this->bootstrapContracts();
             $io->success(sprintf('Bootstrapped %d contracts', $count));
@@ -93,8 +96,11 @@ class BootstrapCommand extends Command
             $contract = (new Contract())
                 ->setIdentifier($c->identifier)
                 ->setSymbol($c->symbol)
+                ->setShouldPreferSymbol($c->shouldPreferSymbol)
                 ->setName($c->name)
                 ->setType($c->type)
+                ->setApps($c->apps)
+                ->setTags($c->tags)
                 ->setDecimals($c->decimals)
                 ->setTotalSupply($c->totalSupply)
                 ->setThumbnailUri($c->thumbnailUri)
@@ -123,23 +129,27 @@ class BootstrapCommand extends Command
         $offset = 0;
         $rest   = \count($prices) % self::PRICES_BATCH_LIMIT;
         do {
-            $params = array_reduce(array_map(
-                fn (array $row): array => [$identifier, $row['timestamp'], $row['price']],
-                \array_slice($prices, $offset, self::PRICES_BATCH_LIMIT)
-            ), fn ($carry, $item) => array_merge($carry, $item), []);
-
-            $this->runOneBatch($params);
+            $count = $this->runOneBatch(
+              $identifier,
+              \array_slice($prices, $offset, self::PRICES_BATCH_LIMIT)
+            );
             $offset += self::PRICES_BATCH_LIMIT;
-        } while (\count($params) / 3 !== $rest);
+        } while ($count !== $rest);
 
         return \count($prices);
     }
 
-    private function runOneBatch(array $params)
+    private function runOneBatch(string $identifier, array $prices): int
     {
+        $params = [];
+        foreach ($prices as $price) {
+            array_push($params, $identifier, $price['timestamp'], $price['price']);
+        }
+
         $sql = 'INSERT INTO price_history(token, timestamp, price) VALUES'
             .implode(',', array_fill(0, \count($params) / 3, '(?, ?, ?)'));
-        $this->conn->executeStatement($sql, $params);
+
+        return $this->conn->executeStatement($sql, $params);
     }
 
     private function fetchContracts(): array
@@ -168,5 +178,12 @@ class BootstrapCommand extends Command
         }
 
         return $json;
+    }
+
+    private function deleteAllFrom(...$tables)
+    {
+        foreach ($tables as $name) {
+            $this->conn->executeStatement(sprintf('DELETE FROM %s', $name));
+        }
     }
 }
