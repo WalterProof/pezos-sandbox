@@ -106,6 +106,8 @@ if (Encore.isProduction()) {
                     /block/,
                     /text-gray-800/,
                     /inactive/,
+                    /amm-buy/,
+                    /amm-sell/,
                 ],
                 deep: [/^choices/, /^custom-radio-buttons/],
             },
