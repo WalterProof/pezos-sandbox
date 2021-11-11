@@ -52,13 +52,13 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function cleanseThumbnailUri(string $uri): string
+    public function cleanseThumbnailUri(?string $uri): ?string
     {
-        if (0 === strpos($uri, 'ipfs://')) {
-            return 'https://ipfs.io/ipfs/'.substr($uri, 7);
+        if (null === $uri || 0 !== strpos($uri, 'ipfs://')) {
+            return $uri;
         }
 
-        return $uri;
+        return 'https://ipfs.io/ipfs/'.substr($uri, 7);
     }
 
     public function makeAppsBox(
@@ -68,7 +68,8 @@ class AppExtension extends AbstractExtension
     ): string {
         $amms = array_filter(
             $apps,
-            fn (array $app): bool => 'AMM' === $app['type'] && 'LB' !== $app['name']
+            fn (array $app): bool => 'AMM' === $app['type'] &&
+                'LB' !== $app['name']
         );
 
         $html = '';
@@ -80,14 +81,16 @@ class AppExtension extends AbstractExtension
             $links = '';
             if ('QUIPUSWAP' === $amm['name']) {
                 $links .= sprintf(
-                    '<a href="https://quipuswap.com/swap?to=%1$s" class="text-green-400" target="_new">BUY</a> / <a href="https://quipuswap.com/swap?from=%1$s" class="text-red-400" target="_new">SELL</a>',
+                    '<a href="https://quipuswap.com/swap?to=%1$s" class="amm-buy" target="_new">BUY</a> / <a href="https://quipuswap.com/swap?from=%1$s" class="amm-sell" target="_new">SELL</a>',
                     $identifier
                 );
             }
             if ('PLENTY' === $amm['name']) {
                 $links .= sprintf(
-                    '<a href="https://www.plentydefi.com/swap?from=PLENTY&to=%1$s" class="text-green-400" target="_new">BUY</a>',
-                    $symbol
+                    '<a href="https://www.plentydefi.com/swap?from=PLENTY&to=%s" class="%s" target="_new">%s</a>',
+                    $symbol,
+                    'PLENTY' === $symbol ? 'amm-sell' : 'amm-buy',
+                    'PLENTY' === $symbol ? 'SELL' : 'BUY'
                 );
             }
 
