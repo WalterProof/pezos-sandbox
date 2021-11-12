@@ -8,6 +8,6 @@ class SystemClock implements Clock
 {
     public function currentTime(): \DateTimeImmutable
     {
-        return new \DateTimeImmutable('last week', new \DateTimeZone('UTC'));
+        return new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
     }
 }
