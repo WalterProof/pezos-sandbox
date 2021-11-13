@@ -30,7 +30,7 @@ jobs:
                   known_hosts: ${{ secrets.KNOWN_HOSTS }}
             - name: Deploy
               run: |
-                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rmi bzzhh/pezos:latest"
+                  ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rmi -f bzzhh/pezos:latest"
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "echo ${{ secrets.DOCKER_PASSWORD}} | docker login --username bzzhh --password-stdin && docker pull bzzhh/pezos:latest"
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker rm -f pezos"
                   ssh deploy@${{ secrets.PROD_SERVER_IP }} "docker run --name pezos -p 7800:8080 -d bzzhh/pezos:latest"
