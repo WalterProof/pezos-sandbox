@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'app:prices:live',
-    description: 'Add a short description for your command',
+    description: 'Daemon for prices history updates commands messages',
 )]
 class PricesLiveCommand extends Command
 {
