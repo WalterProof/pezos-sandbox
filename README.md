@@ -55,3 +55,4 @@ TODO:
 - [ ] datasource selector (teztools and tzkt)
 - [ ] candle charts with [chartjs-chart-financial](https://github.com/chartjs/chartjs-chart-financial)
 - [ ] env vars on run instead of build, to allow using public docker image
+- [ ] admin for metadata (and sync with https://github.com/jmagly/build.teztools.io/tree/main/communitydata)
