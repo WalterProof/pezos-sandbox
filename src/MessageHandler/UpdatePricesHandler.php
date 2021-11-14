@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Entity\Contract;
+use App\Entity\PriceHistory;
 use App\Http\TezTools\Model\Contract as ModelContract;
 use App\Http\TezTools\Response\PricesLiveGetResponse200;
 use App\Message\UpdatePrices;
@@ -32,21 +33,29 @@ class UpdatePricesHandler implements MessageHandlerInterface
         $identifiers = $this->contractRepository->findAllIdentifiers();
         $prices      = $this->fetchPricesLive();
 
-        $conn = $this->em->getConnection();
-
         $newIdentifiers = [];
         foreach ($prices->contracts  as $contract) {
-            $identifier = $contract->tokenAddress.(isset($contract->tokenId) ? '_'.$contract->tokenId : '');
-            if (!\in_array($identifier, $identifiers) && !in_array($identifier, $newIdentifiers)) {
-                $this->newContract($identifier);
+            $identifier = $contract->identifier;
+            if (!\in_array($identifier, $identifiers) && !\in_array($identifier, $newIdentifiers)) {
+                $this->createContract($identifier);
                 $newIdentifiers[] = $identifier;
             }
 
-            $conn->executeStatement('INSERT INTO price_history(token, timestamp, price) VALUES(?,?,?)', [$identifier, $contract->timestamp, $contract->currentPrice]);
+            $p = (new PriceHistory())
+              ->setToken($identifier)
+              ->setPrice((string) $contract->currentPrice)
+              ->setTezpool((string) $contract->tezPool)
+              ->setTokenpool((string) $contract->tokenPool)
+              ->setTimestamp(new \DateTime($contract->timestamp))
+            ;
+
+            $this->em->persist($p);
         }
+
+        $this->em->flush();
     }
 
-    private function newContract(string $identifier)
+    private function createContract(string $identifier)
     {
         $response         = $this->teztoolsClient->request('GET', sprintf('/v1/%s/contract', $identifier));
         $objectNormalizer = new ObjectNormalizer();
@@ -54,7 +63,7 @@ class UpdatePricesHandler implements MessageHandlerInterface
             json_decode($response->getContent(), true),
             ModelContract::class
         );
-
+        /** @var ModelContract $model */
         $identifier = isset($model->tokenId)
                 ? sprintf('%s_%d', $model->tokenAddress, $model->tokenId)
                 : $model->tokenAddress;
@@ -65,8 +74,11 @@ class UpdatePricesHandler implements MessageHandlerInterface
         $contract = (new Contract())
                 ->setIdentifier($identifier)
                 ->setSymbol($model->symbol)
+                ->setShouldPreferSymbol($model->shouldPreferSymbol)
                 ->setName($model->name)
                 ->setType($model->type)
+                ->setApps($model->apps)
+                ->setTags($model->tags)
                 ->setDecimals($model->decimals)
                 ->setTotalSupply($totalSupply)
                 ->setThumbnailUri($model->thumbnailUri)
