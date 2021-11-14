@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Contract;
+use App\Entity\PriceHistory;
 use App\Http\TezTools\Response\ContractsGetResponse200;
 use App\Repository\ContractRepository;
 use App\Repository\PriceHistoryRepository;
+use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonMachine\JsonMachine;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -69,16 +72,13 @@ class BootstrapCommand extends Command
         foreach ($identifiers as $identifier) {
             try {
                 $io->info(sprintf('Bootstrapping prices data for %s', $identifier));
-                $count = $this->bootstrapPrices($identifier);
-                $io->success(sprintf('Inserted %d tokens prices', $count));
+                $this->bootstrapPrices($identifier);
+                $io->success('Done');
             } catch (\Exception $e) {
                 $io->error($e->getMessage());
 
                 return Command::FAILURE;
             }
-
-            // be a gentleman with the api
-            sleep(3);
         }
 
         $this->stopwatch->stop('bootstrap');
@@ -118,38 +118,29 @@ class BootstrapCommand extends Command
         return $count;
     }
 
-    private function bootstrapPrices(string $identifier): ?int
+    private function bootstrapPrices(string $identifier): void
     {
-        $prices = $this->fetchPriceHistory($identifier);
-        $prices = array_filter(
-            $prices,
-            fn (array $item): bool => isset($item['price']) && isset($item['timestamp'])
-        );
+        $jsonChunks = $this->fetchPriceHistory($identifier);
 
-        $offset = 0;
-        $rest   = \count($prices) % self::PRICES_BATCH_LIMIT;
-        do {
-            $count = $this->runOneBatch(
-              $identifier,
-              \array_slice($prices, $offset, self::PRICES_BATCH_LIMIT)
-            );
-            $offset += self::PRICES_BATCH_LIMIT;
-        } while ($count !== $rest);
+        foreach (JsonMachine::fromIterable($jsonChunks) as $index => $price) {
+            $p = (new PriceHistory())
+              ->setToken($identifier)
+              ->setPrice((string) $price['price'])
+              ->setTezpool((string) $price['tezpool'])
+              ->setTokenpool((string) $price['tokenpool'])
+              ->setTimestamp(new DateTime($price['timestamp']))
+            ;
 
-        return \count($prices);
-    }
+            $this->em->persist($p);
 
-    private function runOneBatch(string $identifier, array $prices): int
-    {
-        $params = [];
-        foreach ($prices as $price) {
-            array_push($params, $identifier, $price['timestamp'], $price['price']);
+            if ($index % static::PRICES_BATCH_LIMIT) {
+                $this->em->flush();
+                $this->em->clear();
+            }
         }
 
-        $sql = 'INSERT INTO price_history(token, timestamp, price) VALUES'
-            .implode(',', array_fill(0, \count($params) / 3, '(?, ?, ?)'));
-
-        return $this->conn->executeStatement($sql, $params);
+        $this->em->flush();
+        $this->em->clear();
     }
 
     private function fetchContracts(): array
@@ -165,19 +156,15 @@ class BootstrapCommand extends Command
         return $contracts->contracts;
     }
 
-    private function fetchPriceHistory(string $identifier): array
+    private function fetchPriceHistory(string $identifier): \Generator
     {
         $url = sprintf('/v1/%s/price-history', $identifier);
 
         $response = $this->teztoolsClient->request('GET', $url, ['timeout' => 10]);
 
-        $json = json_decode($response->getContent(), true);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \Exception(sprintf('Could not decode response from %s: %s', $url, json_last_error_msg()));
+        foreach ($this->teztoolsClient->stream($response) as $chunk) {
+            yield $chunk->getContent();
         }
-
-        return $json;
     }
 
     private function deleteAllFrom(...$tables)

@@ -58,7 +58,7 @@ class AppExtension extends AbstractExtension
             return $uri;
         }
 
-        return 'https://ipfs.io/ipfs/'.substr($uri, 7);
+        return 'https://ipfs.io/ipfs/' . substr($uri, 7);
     }
 
     public function makeAppsBox(
@@ -68,14 +68,14 @@ class AppExtension extends AbstractExtension
     ): string {
         $amms = array_filter(
             $apps,
-            fn (array $app): bool => 'AMM' === $app['type'] &&
+            fn(array $app): bool => 'AMM' === $app['type'] &&
                 'LB' !== $app['name']
         );
 
         $html = '';
 
         if (\count($amms) > 0) {
-            $html .= '<ul class="text-white">';
+            $html .= '<ul class="apps">';
         }
         foreach ($amms as $amm) {
             $links = '';
@@ -130,14 +130,14 @@ class AppExtension extends AbstractExtension
         }
 
         return \count($links) > 0
-            ? 'Socialize on '.implode(', ', $links)
+            ? 'Socialize on ' . implode(', ', $links)
             : '';
     }
 
     private function cleanseUrl(string $url): string
     {
         if (0 !== strpos($url, 'http://') || 0 !== strpos($url, 'https://')) {
-            return 'https://'.$url;
+            return 'https://' . $url;
         }
 
         return $url;

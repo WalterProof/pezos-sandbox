@@ -34,6 +34,16 @@ class PriceHistory
      */
     private $price;
 
+    /**
+     * @ORM\Column(type="decimal", precision=16, scale=6)
+     */
+    private $tezpool;
+
+    /**
+     * @ORM\Column(type="decimal", precision=32, scale=18)
+     */
+    private $tokenpool;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +81,30 @@ class PriceHistory
     public function setPrice(string $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getTezpool(): ?string
+    {
+        return $this->tezpool;
+    }
+
+    public function setTezpool(string $tezpool): self
+    {
+        $this->tezpool = $tezpool;
+
+        return $this;
+    }
+
+    public function getTokenpool(): ?string
+    {
+        return $this->tokenpool;
+    }
+
+    public function setTokenpool(string $tokenpool): self
+    {
+        $this->tokenpool = $tokenpool;
 
         return $this;
     }

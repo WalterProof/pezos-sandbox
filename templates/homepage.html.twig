@@ -40,23 +40,24 @@
 
         {{ render_chart(chart) }}
 
-        <p class="text-white"
+        <div class="text-white"
             style="background-image: url({{
             cleanse_thumbnail_uri(
                 selectedToken.thumbnailUri
             )
             }}); background-size: 100px 100px; background-position: right; background-repeat: no-repeat">
-            <strong>{{ make_token_link(selectedToken) }}</strong>
+          <p><strong>{{ make_token_link(selectedToken) }}</strong>
             is a <strong>{{ selectedToken.type }}</strong> token. It currently has
             a total supply of <strong>
                 {{ selectedToken.totalSupply|number_format }}*
             </strong>.
-            <br />
+          </p>
+          <p class="social-links"> {{ make_social_links(selectedToken) }}</p>
+          {{ make_apps_box(selectedToken.apps, selectedToken.identifier, selectedToken.symbol) }}
+            <p class="annot">
             * this might not be accurate (burned token and special cases aren't yet
             handled)
-            <br />
-            {{ make_social_links(selectedToken) }}
-            {{ make_apps_box(selectedToken.apps, selectedToken.identifier, selectedToken.symbol) }}
-        </p>
+            </p>
+        </div>
     </div>
 {% endblock %}
