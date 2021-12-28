@@ -39,6 +39,12 @@ class ContractRepository extends ServiceEntityRepository
             ->getScalarResult();
     }
 
+    public function findAllWithPool()
+    {
+        //SELECT * FROM contract JOIN (SELECT ph1.* FROM price_history ph1 JOIN (SELECT token, MAX(timestamp) ts from price_history group by token) ph2 ON ph1.token = ph2.token A
+        // ND ph1.timestamp = ph2.ts WHERE tezpool > 0) p ON contract.identifier = p.token;
+    }
+
     // /**
     //  * @return Contract[] Returns an array of Contract objects
     //  */

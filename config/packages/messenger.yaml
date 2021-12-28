@@ -12,3 +12,10 @@ framework:
         routing:
             # Route your messages to the transports
             'App\Message\UpdatePrices': async
+
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - doctrine_ping_connection
+                    - doctrine_close_connection
+                    - doctrine_transaction
