@@ -110,12 +110,14 @@ class HomeController extends AbstractController
      */
     public function timeInterval(Request $request): Response
     {
+        $session    = $this->requestStack->getSession();
+
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
         $timeIntervalForm->handleRequest($request);
 
         if ($timeIntervalForm->isSubmitted() && $timeIntervalForm->isValid()) {
             $formData = $timeIntervalForm->getData();
-            $this->session->set('time_interval', $formData['interval']);
+            $session->set('time_interval', $formData['interval']);
         }
 
         return $this->redirect($request->server->get('HTTP_REFERER'));
