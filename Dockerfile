@@ -15,6 +15,7 @@ WORKDIR /app
 COPY --from=composer /app /app
 
 RUN set -eux; \
+  apk --no-cache add git; \
   yarn install && yarn run build; \
   rm -rf node_modules
 

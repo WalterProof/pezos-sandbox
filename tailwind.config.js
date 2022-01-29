@@ -1,6 +1,6 @@
 module.exports = {
-    purge: [],
-    darkMode: 'class', // or 'media' or 'class'
+    content: ['./assets/**/*.js', './templates/**/*.{html,twig}'],
+    darkMode: 'class',
     theme: {
         container: {
             center: true,

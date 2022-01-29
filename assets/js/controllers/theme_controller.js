@@ -1,4 +1,4 @@
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 import { addClass, hasClass, removeClass } from '../util/class';
 
 export default class extends Controller {

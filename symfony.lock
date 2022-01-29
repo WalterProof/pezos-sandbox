@@ -12,7 +12,7 @@
         "version": "2.0.2"
     },
     "doctrine/annotations": {
-        "version": "1.0",
+        "version": "1.13",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -30,21 +30,21 @@
         "version": "1.6.8"
     },
     "doctrine/common": {
-        "version": "3.1.2"
+        "version": "3.2.1"
     },
     "doctrine/dbal": {
-        "version": "2.13.3"
+        "version": "3.3.0"
     },
     "doctrine/deprecations": {
         "version": "v0.5.3"
     },
     "doctrine/doctrine-bundle": {
-        "version": "2.4",
+        "version": "2.5",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "2.4",
-            "ref": "bac5c852ff628886de2753215fe5eb1f9ce980fb"
+            "ref": "f98f1affe028f8153a459d15f220ada3826b5aa2"
         },
         "files": [
             "config/packages/doctrine.yaml",
@@ -55,7 +55,7 @@
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
-        "version": "3.1",
+        "version": "3.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -71,25 +71,25 @@
         "version": "1.1.1"
     },
     "doctrine/inflector": {
-        "version": "2.0.3"
+        "version": "2.0.4"
     },
     "doctrine/instantiator": {
         "version": "1.4.0"
     },
     "doctrine/lexer": {
-        "version": "1.2.1"
+        "version": "1.2.2"
     },
     "doctrine/migrations": {
-        "version": "3.2.1"
+        "version": "3.4.0"
     },
     "doctrine/orm": {
-        "version": "2.9.5"
+        "version": "2.11.0"
     },
     "doctrine/persistence": {
-        "version": "2.2.2"
+        "version": "2.3.0"
     },
     "doctrine/sql-formatter": {
-        "version": "1.1.1"
+        "version": "1.1.2"
     },
     "friendsofphp/php-cs-fixer": {
         "version": "3.0",
@@ -110,13 +110,13 @@
         "version": "0.7.0"
     },
     "laminas/laminas-code": {
-        "version": "4.4.2"
+        "version": "4.5.1"
     },
     "monolog/monolog": {
-        "version": "2.3.2"
+        "version": "2.3.5"
     },
     "nikic/php-parser": {
-        "version": "v4.12.0"
+        "version": "v4.13.2"
     },
     "php-cs-fixer/diff": {
         "version": "v2.0.2"
@@ -129,6 +129,9 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "1.2.0"
     },
     "predis/predis": {
         "version": "v1.1.7"
@@ -149,7 +152,7 @@
         "version": "v5.3.7"
     },
     "symfony/asset": {
-        "version": "v5.3.4"
+        "version": "v6.0.3"
     },
     "symfony/cache": {
         "version": "v5.3.7"
@@ -173,7 +176,7 @@
         ]
     },
     "symfony/debug-bundle": {
-        "version": "4.1",
+        "version": "6.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -191,7 +194,7 @@
         "version": "v2.4.0"
     },
     "symfony/doctrine-bridge": {
-        "version": "v5.3.7"
+        "version": "v6.0.3"
     },
     "symfony/doctrine-messenger": {
         "version": "v5.3.7"
@@ -249,10 +252,10 @@
         ]
     },
     "symfony/http-client": {
-        "version": "v5.3.7"
+        "version": "v6.0.3"
     },
     "symfony/http-client-contracts": {
-        "version": "v2.4.0"
+        "version": "v3.0.0"
     },
     "symfony/http-foundation": {
         "version": "v5.3.7"
@@ -261,7 +264,7 @@
         "version": "v5.3.7"
     },
     "symfony/maker-bundle": {
-        "version": "1.0",
+        "version": "1.36",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -270,7 +273,7 @@
         }
     },
     "symfony/messenger": {
-        "version": "4.3",
+        "version": "6.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -282,7 +285,7 @@
         ]
     },
     "symfony/monolog-bridge": {
-        "version": "v5.3.7"
+        "version": "v6.0.3"
     },
     "symfony/monolog-bundle": {
         "version": "3.7",
@@ -333,7 +336,7 @@
         "version": "v5.3.7"
     },
     "symfony/proxy-manager-bridge": {
-        "version": "v5.3.4"
+        "version": "v6.0.3"
     },
     "symfony/redis-messenger": {
         "version": "v5.3.7"
@@ -361,29 +364,32 @@
         "version": "v2.4.0"
     },
     "symfony/stopwatch": {
-        "version": "v5.3.4"
+        "version": "v6.0.3"
     },
     "symfony/string": {
         "version": "v5.3.7"
     },
     "symfony/translation-contracts": {
-        "version": "v2.4.0"
+        "version": "v3.0.0"
     },
     "symfony/twig-bridge": {
-        "version": "v5.3.7"
+        "version": "v6.0.3"
     },
     "symfony/twig-bundle": {
-        "version": "5.3",
+        "version": "6.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "5.3",
-            "ref": "3dd530739a4284e3272274c128dbb7a8140a66f1"
+            "version": "5.4",
+            "ref": "bffbb8f1a849736e64006735afae730cb428b6ff"
         },
         "files": [
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
+    },
+    "symfony/ux-chartjs": {
+        "version": "v2.0.1"
     },
     "symfony/var-dumper": {
         "version": "v5.3.7"
@@ -392,7 +398,7 @@
         "version": "v5.3.7"
     },
     "symfony/web-profiler-bundle": {
-        "version": "3.3",
+        "version": "6.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
@@ -406,12 +412,12 @@
         ]
     },
     "symfony/webpack-encore-bundle": {
-        "version": "1.9",
+        "version": "1.13",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "1.9",
-            "ref": "404714014dd6ff7de9aa0f9582d592147359e617"
+            "ref": "d2d1e09675fff3fa4193aa9950a7c39934524a25"
         },
         "files": [
             "assets/app.js",
@@ -431,7 +437,7 @@
         "version": "v5.3.6"
     },
     "twig/twig": {
-        "version": "v3.3.2"
+        "version": "v3.3.7"
     },
     "webmozart/assert": {
         "version": "1.10.0"

@@ -1,8 +1,4 @@
 const Encore = require('@symfony/webpack-encore');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const PurgeCssPlugin = require('purgecss-webpack-plugin');
-const glob = require('glob-all');
-const path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -59,59 +55,22 @@ Encore
         config.corejs = 3;
     })
 
-    .enablePostCssLoader()
-    .configureDevServerOptions((options) => {
-        // hotfix for webpack-dev-server 4.0.0rc0
-        // @see: https://github.com/symfony/webpack-encore/issues/951#issuecomment-840719271
+    .enablePostCssLoader();
 
-        delete options.client;
-    })
-    // enables Sass/SCSS support
-    // .enableSassLoader()
+// enables Sass/SCSS support
+//.enableSassLoader()
 
-    // uncomment if you use TypeScript
-    //.enableTypeScriptLoader()
+// uncomment if you use TypeScript
+//.enableTypeScriptLoader()
 
-    // uncomment if you use React
-    //.enableReactPreset()
+// uncomment if you use React
+//.enableReactPreset()
 
-    // uncomment to get integrity="..." attributes on your script & link tags
-    // requires WebpackEncoreBundle 1.4 or higher
-    //.enableIntegrityHashes(Encore.isProduction())
+// uncomment to get integrity="..." attributes on your script & link tags
+// requires WebpackEncoreBundle 1.4 or higher
+//.enableIntegrityHashes(Encore.isProduction())
 
-    // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
-    .addPlugin(new NodePolyfillPlugin());
+// uncomment if you're having problems with a jQuery plugin
+//.autoProvidejQuery()
 
-if (Encore.isProduction()) {
-    Encore.addPlugin(
-        new PurgeCssPlugin({
-            paths: glob.sync([
-                path.join(__dirname, 'templates/**/*.html.twig'),
-            ]),
-            content: ['**/*.twig'],
-            defaultExtractor: (content) => {
-                return content.match(/[\w-/:]+(?<!:)/g) || [];
-            },
-            safelist: {
-                // https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js
-                standard: [
-                    /type/,
-                    /textarea/,
-                    /select/,
-                    /hidden/,
-                    /is-active/,
-                    /text-red-700/,
-                    /required/,
-                    /block/,
-                    /text-gray-800/,
-                    /inactive/,
-                    /amm-buy/,
-                    /amm-sell/,
-                ],
-                deep: [/^choices/, /^custom-radio-buttons/],
-            },
-        })
-    );
-}
 module.exports = Encore.getWebpackConfig();

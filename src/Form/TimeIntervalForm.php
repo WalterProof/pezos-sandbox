@@ -7,21 +7,16 @@ namespace App\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class TimeIntervalForm extends AbstractType
 {
-    private SessionInterface $session;
-    private UrlGeneratorInterface $urlGenerator;
-
     public function __construct(
-        SessionInterface $session,
-        UrlGeneratorInterface $urlGenerator
+        private RequestStack $requestStack,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->session      = $session;
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -40,7 +35,7 @@ final class TimeIntervalForm extends AbstractType
             'label'    => false,
             'expanded' => true,
             'multiple' => false,
-            'data'     => $this->session->get('time_interval'),
+            'data'     => $this->requestStack->getSession()->get('time_interval'),
         ]);
     }
 

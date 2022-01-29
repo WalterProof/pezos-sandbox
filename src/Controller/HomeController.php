@@ -13,8 +13,8 @@ use App\Repository\PriceHistoryRepository;
 use App\System\Clock;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -25,7 +25,7 @@ class HomeController extends AbstractController
         private CachedClient $teztools,
         private PriceHistoryRepository $priceHistoryRepository,
         private ContractRepository $contractRepository,
-        private SessionInterface $session,
+        private RequestStack $requestStack,
         private Clock $clock
     ) {
     }
@@ -34,8 +34,9 @@ class HomeController extends AbstractController
     public function index(Request $request, ChartBuilder $chartBuilder): Response
     {
         $identifier = $request->query->get('identifier', self::DEFAULT_TOKEN_IDENTIFIER);
-        if (null === $this->session->get('time_interval')) {
-            $this->session->set('time_interval', '-24 hours');
+        $session    = $this->requestStack->getSession();
+        if (null === $session->get('time_interval')) {
+            $session->set('time_interval', '-24 hours');
         }
 
         $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
@@ -44,7 +45,7 @@ class HomeController extends AbstractController
             ['identifier' => $identifier]
         );
 
-        $interval = $this->session->get('time_interval');
+        $interval = $session->get('time_interval');
         $fromDate = 'max' !== $interval ? $this->clock->currentTime()->modify($interval) : null;
         $datePart = match ($interval) {
             '-24 hours', '-7 days', '-14 days', '-30 days' => null,
@@ -86,7 +87,8 @@ class HomeController extends AbstractController
                     'grid' => ['display' => false],
                 ],
                 'y' => [
-                    ['ticks' => ['min' => min($prices), 'max' => max($prices)]],
+                    'suggestedMin' => min($prices),
+                    'suggestedMax' => max($prices),
                 ],
             ],
             'plugins'  => [

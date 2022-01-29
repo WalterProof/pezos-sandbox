@@ -16,10 +16,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[AsCommand(
-    name: 'app:play',
-    description: 'Debug',
-)]
+#[AsCommand(name: 'app:play', description: 'Debug')]
 class PlayCommand extends Command
 {
     public function __construct(
@@ -27,7 +24,7 @@ class PlayCommand extends Command
         private PriceHistoryRepository $priceHistoryRepository,
         private ContractRepository $contractRepository,
         private SerializerInterface $serializer,
-        private HttpClientInterface $teztoolsClient,
+        private HttpClientInterface $teztoolsClient
     ) {
         parent::__construct();
     }
@@ -36,20 +33,28 @@ class PlayCommand extends Command
     {
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
         $objectNormalizer = new ObjectNormalizer();
-        $response         = $this->teztoolsClient->request('GET', sprintf('/v1/%s/contract', 'KT1VHd7ysjnvxEzwtjBAmYAmasvVCfPpSkiG_0'));
-        $model            = $objectNormalizer->denormalize(json_decode($response->getContent(), true), ModelContract::class);
+        $response = $this->teztoolsClient->request(
+            'GET',
+            sprintf('/v1/%s/contract', 'KT1VHd7ysjnvxEzwtjBAmYAmasvVCfPpSkiG_0')
+        );
+        $model = $objectNormalizer->denormalize(
+            json_decode($response->getContent(), true),
+            ModelContract::class
+        );
 
         dump($model);
 
         $identifier = isset($model->tokenId)
-                ? sprintf('%s_%d', $model->tokenAddress, $model->tokenId)
-                : $model->tokenAddress;
+            ? sprintf('%s_%d', $model->tokenAddress, $model->tokenId)
+            : $model->tokenAddress;
 
         $totalSupply =
-                (string) ($model->totalSupply / pow(10, $model->decimals));
+            (string) ($model->totalSupply / pow(10, $model->decimals));
 
         dump($identifier, $totalSupply, $model);
 
