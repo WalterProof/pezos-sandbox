@@ -7,41 +7,29 @@ namespace App\Entity;
 use App\Repository\PriceHistoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PriceHistoryRepository::class)
- */
+#[ORM\Entity(repositoryClass: PriceHistoryRepository::class)]
 class PriceHistory
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+     #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $token;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $timestamp;
 
-    /**
-     * @ORM\Column(type="decimal", precision=27, scale=18)
-     */
+    #[ORM\Column(type: 'decimal', precision: 27, scale: 18)]
+
     private $price;
 
-    /**
-     * @ORM\Column(type="decimal", precision=16, scale=6)
-     */
+    #[ORM\Column(type: 'decimal', precision: 16, scale: 6)]
+
     private $tezpool;
 
-    /**
-     * @ORM\Column(type="decimal", precision=32, scale=18)
-     */
+    #[ORM\Column(type: 'decimal', precision: 32, scale: 18)]
     private $tokenpool;
 
     public function getId(): ?int
