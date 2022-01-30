@@ -27,13 +27,24 @@
             </form>
         </div>
 
-        <div class="custom-radio-buttons"
-            {{ stimulus_controller('time_interval_form') }}>
-            {% form_theme timeIntervalForm
-                with['form_div_layout.html.twig']
-                only
-            %}
-            {{ form(timeIntervalForm) }}
+        <div class="space-y-1 bg-gray-600">
+            <div class="custom-radio-buttons"
+                {{ stimulus_controller('persistent_choice_form') }}>
+                {% form_theme timeIntervalForm
+                    with['form_div_layout.html.twig']
+                    only
+                %}
+                {{ form(timeIntervalForm) }}
+            </div>
+
+            <div class="custom-radio-buttons"
+                {{ stimulus_controller('persistent_choice_form') }}>
+                {% form_theme chartForm
+                    with['form_div_layout.html.twig']
+                    only
+                %}
+                {{ form(chartForm) }}
+            </div>
         </div>
 
         {{ render_chart(chart) }}

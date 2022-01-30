@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class PriceHistory
 {
     #[ORM\Id]
-     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-     #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -22,11 +22,9 @@ class PriceHistory
     private $timestamp;
 
     #[ORM\Column(type: 'decimal', precision: 27, scale: 18)]
-
     private $price;
 
     #[ORM\Column(type: 'decimal', precision: 16, scale: 6)]
-
     private $tezpool;
 
     #[ORM\Column(type: 'decimal', precision: 32, scale: 18)]

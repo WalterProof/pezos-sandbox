@@ -24,7 +24,7 @@ class PriceHistoryRepository extends ServiceEntityRepository
     /**
      * @return string[] Returns an array of token identifiers
      */
-    public function findAllTokens() :array
+    public function findAllTokens(): array
     {
         $res = $this->createQueryBuilder('p')
             ->select('p.token')
@@ -38,7 +38,7 @@ class PriceHistoryRepository extends ServiceEntityRepository
     /**
      * @return PriceHistory[]
      */
-    public function fromDate(
+    public function pricesFromDate(
         string $token,
         ?string $datePart,
         ?\DateTimeInterface $fromDate = null
@@ -58,6 +58,31 @@ class PriceHistoryRepository extends ServiceEntityRepository
         if (null !== $datePart) {
             $sql .= ' GROUP BY timestamp';
         }
+
+        $sql .= ' ORDER BY timestamp ASC';
+
+        $parameters = [
+            'token' => $token,
+        ];
+
+        if (null !== $fromDate) {
+            $parameters['fromDate'] = $fromDate->format('Y-m-d H:i:s');
+        }
+
+        return $conn->executeQuery($sql, $parameters)->fetchAllAssociative();
+    }
+
+    /**
+     * @return PriceHistory[]
+     */
+    public function poolsFromDate(
+        string $token,
+        ?\DateTimeInterface $fromDate = null
+    ): array {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql  =
+            'SELECT timestamp, price, tezpool, tokenpool FROM price_history WHERE token = :token'.
+            (null !== $fromDate ? ' AND timestamp > :fromDate' : '');
 
         $sql .= ' ORDER BY timestamp ASC';
 
