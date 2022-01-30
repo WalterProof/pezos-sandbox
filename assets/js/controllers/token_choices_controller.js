@@ -9,6 +9,9 @@ export default class extends Controller {
     connect() {
         new Choices('#token-choices', {
             shouldSort: false,
+            fuseOptions: {
+                distance: 400,
+            },
         });
         removeClass(this.formTarget, 'hidden');
         addClass(this.holderTarget, 'hidden');

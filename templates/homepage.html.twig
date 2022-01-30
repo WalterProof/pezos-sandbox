@@ -16,9 +16,7 @@
                                 ? 'selected'
                                 : ''
                             %}
-                            <option value="{{ t.identifier }}"
-                                {{ selected }}
-                                class="">
+                            <option value="{{ t.identifier }}" {{ selected }}>
                                 {{ t.symbol }} {% if t.name is not empty %}
                                     ({{ t.name }})
                                 {% endif %}
