@@ -151,11 +151,13 @@ class HomeController extends AbstractController
                     'time' => [
                         'unit' => $unit,
                     ],
-                    'grid' => ['display' => false],
+                    'grid'  => ['display' => false],
+                    'ticks' => ['color' => 'lightblue'],
                 ],
                 'y' => [
                     'suggestedMin' => min($prices),
                     'suggestedMax' => max($prices),
+                    'ticks'        => ['color' => 'lightblue'],
                 ],
             ],
             'plugins'  => [
@@ -197,6 +199,7 @@ class HomeController extends AbstractController
                 ],
                 [
                     'label'           => $symbol,
+                    'color'           => 'lightblue',
                     'fill'            => false,
                     'borderColor'     => 'rgb(245,158,11)',
                     'backgroundColor' => 'rgb(245,158,11)',
@@ -211,30 +214,37 @@ class HomeController extends AbstractController
 
         $unit = $interval && strpos($interval, 'hours') ? 'hour' : 'day';
         $chart->setOptions([
-            'animation' => false,
-            'tooltips'  => ['intersect' => false, 'mode' => 'index'],
-            'scales'    => [
+            'animation'  => false,
+            'responsive' => true,
+            'plugins'    => [
+                'legend'   => ['labels' => ['color' => 'lightblue']],
+                'tooltip'  => ['intersect' => false],
+            ],
+            'scales'     => [
                 'x' => [
                     'type' => 'time',
                     'time' => [
                         'unit' => $unit,
                     ],
-                    'gridLines' => ['display' => false],
+                    'grid'  => ['display' => false],
+                    'ticks' => ['color' => 'lightblue'],
                 ],
                 'tez' => [
                     'id'       => 'tez',
                     'position' => 'left',
                     'ticks'    => [
-                        'min' => min($tezpool),
-                        'max' => max($tezpool),
+                        'min'   => min($tezpool),
+                        'max'   => max($tezpool),
+                        'color' => 'lightblue',
                     ],
                 ],
                 'token' => [
                     'id'       => 'token',
                     'position' => 'right',
                     'ticks'    => [
-                        'min' => min($tokenpool),
-                        'max' => max($tokenpool),
+                        'min'   => min($tokenpool),
+                        'max'   => max($tokenpool),
+                        'color' => 'lightblue',
                     ],
                 ],
             ],
