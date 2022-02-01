@@ -9,6 +9,14 @@ export default class extends Controller {
             payload.options = {};
         }
 
+        if (payload.options.scales.hasOwnProperty('tez')) {
+            payload.options.scales.tez.ticks.callback = this.nFormat
+        }
+
+        if (payload.options.scales.hasOwnProperty('token')) {
+            payload.options.scales.token.ticks.callback = this.nFormat
+        }
+
         this._dispatchEvent('chartjs:pre-connect', {
             options: payload.options,
         });
@@ -28,5 +36,21 @@ export default class extends Controller {
         userEvent.initCustomEvent(name, canBubble, cancelable, payload);
 
         this.element.dispatchEvent(userEvent);
+    }
+
+    nFormat(num) {
+        const fmt = (v) => v.toFixed(3).replace(/0+$/, '').replace(/\.$/,'')
+
+        if (num >= 1000000000) {
+            return fmt(num / 1000000000) + 'B';
+        }
+        if (num >= 1000000) {
+            return fmt(num / 1000000) + 'M';
+        }
+        if (num >= 1000) {
+            return fmt(num / 1000) + 'K';
+        }
+
+        return num;
     }
 }

@@ -155,8 +155,6 @@ class HomeController extends AbstractController
                     'ticks' => ['color' => 'lightblue'],
                 ],
                 'y' => [
-                    'suggestedMin' => min($prices),
-                    'suggestedMax' => max($prices),
                     'ticks'        => ['color' => 'lightblue'],
                 ],
             ],
@@ -233,8 +231,6 @@ class HomeController extends AbstractController
                     'id'       => 'tez',
                     'position' => 'left',
                     'ticks'    => [
-                        'min'   => min($tezpool),
-                        'max'   => max($tezpool),
                         'color' => 'lightblue',
                     ],
                 ],
@@ -242,8 +238,6 @@ class HomeController extends AbstractController
                     'id'       => 'token',
                     'position' => 'right',
                     'ticks'    => [
-                        'min'   => min($tokenpool),
-                        'max'   => max($tokenpool),
                         'color' => 'lightblue',
                     ],
                 ],
