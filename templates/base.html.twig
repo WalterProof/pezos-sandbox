@@ -10,7 +10,13 @@
             {% endblock %}
         </title>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            <style type="text/css" media="screen">
+            body {background:#333;color:#fff}
+            a:link { color:#33348e; text-decoration: none; }
+            a:visited { color:royalblue; text-decoration: none; }
+            a:hover { color:royalblue; text-decoration: none; }
+            a:active { color:royalblue; text-decoration: underline; }
+            </style>
         {% endblock %}
         {% if app.environment == 'prod' %}
             <script async
@@ -19,9 +25,8 @@
                 src="https://pezos-stats.duckdns.org/js/plausible.js"></script>
         {% endif %}
     </head>
-    <body class="dark">
+    <body>
         <main class="container">
-            {% include '_navbar.html.twig' %}
             {% block body %}
 
             {% endblock %}
@@ -29,12 +34,14 @@
         <footer>
             <div>
               <p>
-                <a href="https://github.com/der-alter/pezos-sandbox">https://github.com/der-alter/pezos-sandbox</a>
+                <a href="https://github.com/der-alter/pezos-sandbox">
+                    https://github.com/der-alter/pezos-sandbox
+                </a>
               </p>
             </div>
         </footer>
         {% block javascripts %}
-            {#{ encore_entry_script_tags('app') }#}
         {% endblock %}
     </body>
 </html>
+

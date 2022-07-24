@@ -1,9 +1,0 @@
-version,executed_at,execution_time
-DoctrineMigrations\Version20210614183545,2021-06-27 21:44:19,387
-DoctrineMigrations\Version20210621210946,2021-06-27 21:44:20,1
-DoctrineMigrations\Version20210627200257,2021-06-27 21:44:20,52
-DoctrineMigrations\Version20210714135357,2021-07-14 17:09:25,24
-DoctrineMigrations\Version20210714170301,2021-07-14 17:10:48,20
-DoctrineMigrations\Version20210715211743,2021-07-20 22:55:00,24
-DoctrineMigrations\Version20210720211821,2021-07-20 22:55:00,6
-DoctrineMigrations\Version20210801184737,2021-08-01 19:39:16,20
