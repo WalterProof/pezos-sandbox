@@ -13,7 +13,7 @@ docker compose up -d
 Migrate db:
 
 ```sh
-./bin/console/ doctrine:migrations:migrate
+./bin/console doctrine:migrations:migrate
 ```
 
 Launch PHP server:

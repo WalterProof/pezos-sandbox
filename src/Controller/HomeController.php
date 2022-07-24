@@ -34,45 +34,7 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home')]
     public function index(Request $request, ChartBuilder $chartBuilder): Response
     {
-        $identifier = $request->query->get('identifier', self::DEFAULT_TOKEN_IDENTIFIER);
-        $session    = $this->requestStack->getSession();
-        if (null === $session->get('time_interval')) {
-            $session->set('time_interval', '-24 hours');
-        }
-        if (null === $session->get('chart_kind')) {
-            $session->set('chart_kind', 'prices');
-        }
-
-        $timeIntervalForm = $this->createForm(TimeIntervalForm::class);
-        $chartForm        = $this->createForm(ChartForm::class);
-        $contracts        = $this->contractRepository->findAllSelectable();
-
-        $currentContract  = $this->contractRepository->findOneBy(
-            ['identifier' => $identifier]
-        );
-
-        $interval = $session->get('time_interval');
-
-        $chart = match ($session->get('chart_kind')) {
-            'prices'   => $this->getPricesChart($chartBuilder, $identifier, $interval),
-              'pools'  => $this->getPoolsChart(
-                $chartBuilder,
-                $identifier,
-                current(array_filter(
-                    $contracts,
-                    fn (array $token) => $identifier === $token['identifier']
-                   ))['symbol'],
-                $interval
-              )
-        };
-
-        return $this->render('homepage.html.twig', [
-            'tokens'           => $contracts,
-            'selectedToken'    => $currentContract,
-            'chart'            => $chart,
-            'timeIntervalForm' => $timeIntervalForm->createView(),
-            'chartForm'        => $chartForm->createView(),
-        ]);
+        return $this->render('homepage.html.twig', []);
     }
 
     #[Route('/token/time-interval', name: '_app_time_interval', methods: ['POST'])]

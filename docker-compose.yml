@@ -17,13 +17,6 @@ services:
             - 5432:5432
         command: ['postgres', '-c', 'log_statement=all']
 
-    redis:
-        image: 'redis:alpine'
-        ports:
-            - '6379:6379'
-        volumes:
-            - redis_data:/data
-
     adminer:
         image: adminer
         ports:

@@ -9,7 +9,7 @@ RUN composer install \
   --no-interaction \
   --no-progress
 
-FROM node:fermium-alpine3.14 AS node
+FROM node:fermium-alpine3.15 AS node
 
 WORKDIR /app
 COPY --from=composer /app /app
@@ -19,7 +19,7 @@ RUN set -eux; \
   yarn install && yarn run build; \
   rm -rf node_modules
 
-FROM alpine:3.14 as pezos
+FROM alpine:3.15 as pezos
 LABEL Maintainer="Tim de Pater <code@trafex.nl>"
 LABEL Description="Lightweight container with Nginx 1.20 & PHP 8.0 based on Alpine Linux."
 

@@ -1,72 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="space-y-4">
-        <div {{ stimulus_controller('token-choices') }}>
-            <div class="w-full bg-gray-50 h-11"
-                data-token-choices-target="holder"></div>
-            <form data-token-choices-target="form" class="hidden">
-                <div>
-                    <select class="form-control"
-                        id="token-choices"
-                        onchange="window.location.replace('?identifier=' + this.value)">
-                        {% for t in tokens %}
-                            {% set selected = t.identifier
-                                == selectedToken.identifier
-                                ? 'selected'
-                                : ''
-                            %}
-                            <option value="{{ t.identifier }}" {{ selected }}>
-                                {{ t.symbol }} {% if t.name is not empty %}
-                                    ({{ t.name }})
-                                {% endif %}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
-        </div>
-
-        <div class="space-y-1 bg-gray-600">
-            <div class="custom-radio-buttons"
-                {{ stimulus_controller('persistent_choice_form') }}>
-                {% form_theme timeIntervalForm
-                    with['form_div_layout.html.twig']
-                    only
-                %}
-                {{ form(timeIntervalForm) }}
-            </div>
-
-            <div class="custom-radio-buttons"
-                {{ stimulus_controller('persistent_choice_form') }}>
-                {% form_theme chartForm
-                    with['form_div_layout.html.twig']
-                    only
-                %}
-                {{ form(chartForm) }}
-            </div>
-        </div>
-
-        {{ render_chart(chart) }}
-
-        <div class="text-white"
-            style="background-image: url({{
-            cleanse_thumbnail_uri(
-                selectedToken.thumbnailUri
-            )
-            }}); background-size: 100px 100px; background-position: right; background-repeat: no-repeat">
-          <p><strong>{{ make_token_link(selectedToken) }}</strong>
-            is a <strong>{{ selectedToken.type }}</strong> token. It currently has
-            a total supply of <strong>
-                {{ selectedToken.totalSupply|number_format }}*
-            </strong>.
-          </p>
-          <p class="social-links"> {{ make_social_links(selectedToken) }}</p>
-          {{ make_apps_box(selectedToken.apps, selectedToken.identifier, selectedToken.symbol) }}
-            <p class="annot">
-            * this might not be accurate (burned token and special cases aren't yet
-            handled)
-            </p>
-        </div>
-    </div>
+  <p class="text-white">
+  Hey there, sorry everything has been broken for a while.<br/>
+  This site will soon be updated and fulfill its original purpose that was to experiment with PHP and Tezos.<br/>
+  Please come back soon, and keep building!
+  </p>
 {% endblock %}
