@@ -9,15 +9,15 @@ RUN composer install \
   --no-interaction \
   --no-progress
 
-FROM node:fermium-alpine3.15 AS node
+# FROM node:fermium-alpine3.15 AS node
 
-WORKDIR /app
-COPY --from=composer /app /app
+# WORKDIR /app
+# COPY --from=composer /app /app
 
-RUN set -eux; \
-  apk --no-cache add git; \
-  yarn install && yarn run build; \
-  rm -rf node_modules
+# RUN set -eux; \
+#   apk --no-cache add git; \
+#   yarn install && yarn run build; \
+#   rm -rf node_modules
 
 FROM alpine:3.15 as pezos
 LABEL Maintainer="Tim de Pater <code@trafex.nl>"
@@ -77,7 +77,7 @@ USER nobody
 
 # Add application
 WORKDIR /var/www/html
-COPY --chown=nobody --from=node /app /var/www/html
+# COPY --chown=nobody --from=node /app /var/www/html
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
